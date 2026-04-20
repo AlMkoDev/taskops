@@ -1,0 +1,70 @@
+
+> taskops-app@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.5.14
+   - Local:        http://localhost:3002
+   - Network:      http://10.248.135.175:3002
+
+ ✓ Starting...
+ ✓ Ready in 5s
+ ○ Compiling /api/v1/health ...
+ ✓ Compiled /api/v1/health in 6.5s (709 modules)
+ GET /api/v1/health 500 in 9278ms
+ GET / 200 in 9651ms
+ GET / 200 in 552ms
+ GET / 200 in 269ms
+ ○ Compiling /api/reports/[id]/notifications ...
+ ✓ Compiled /api/reports/[id]/notifications in 1626ms (700 modules)
+ GET /api/reports 500 in 2861ms
+ GET /api/reports 500 in 3200ms
+ ○ Compiling /api/reports/[id] ...
+ ✓ Compiled /api/reports/[id] in 653ms (702 modules)
+ PUT /api/reports/report_daily_ops_001 500 in 6811ms
+ GET /api/reports/report_daily_ops_001/notifications 500 in 12063ms
+ GET /api/reports/report_daily_ops_001/notifications 500 in 12152ms
+ GET /api/reports/report_daily_ops_001/audit 500 in 12472ms
+ GET /api/reports/report_daily_ops_001/audit 500 in 12477ms
+ GET /api/reports 500 in 402ms
+ GET /api/reports/report_daily_ops_001/audit 500 in 738ms
+ GET /api/reports 500 in 1273ms
+ GET /api/reports/report_daily_ops_001/audit 500 in 1858ms
+ GET /api/reports/report_daily_ops_001/notifications 500 in 2550ms
+ GET /api/reports/report_daily_ops_001/notifications 500 in 2673ms
+ PUT /api/reports/report_daily_ops_001 500 in 226ms
+ GET /api/reports 500 in 323ms
+ GET /api/reports 500 in 873ms
+ GET /api/reports/report_daily_ops_001/audit 500 in 1601ms
+ GET /api/reports/report_daily_ops_001/audit 500 in 1842ms
+ GET /api/reports/report_daily_ops_001/notifications 500 in 2361ms
+ GET /api/reports/report_daily_ops_001/notifications 500 in 2460ms
+ PUT /api/reports/report_daily_ops_001 500 in 353ms
+ GET / 200 in 778ms
+ GET /api/reports 500 in 170ms
+ GET /api/reports 500 in 408ms
+ GET /api/reports/report_daily_ops_001/audit 500 in 1047ms
+ GET /api/reports/report_daily_ops_001/audit 500 in 1194ms
+ GET /api/reports/report_daily_ops_001/notifications 500 in 1704ms
+ GET /api/reports/report_daily_ops_001/notifications 500 in 1805ms
+ PUT /api/reports/report_daily_ops_001 500 in 181ms
+ ✓ Compiled in 2.6s (680 modules)
+ ✓ Compiled in 1603ms (301 modules)
+ GET / 200 in 1120ms
+ GET / 200 in 157ms
+ ○ Compiling /api/reports/[id]/audit ...
+ ✓ Compiled /api/reports/[id]/audit in 2s (407 modules)
+ GET /api/reports/report_daily_ops_001/audit 200 in 3570ms
+ GET / 200 in 1917ms
+ ○ Compiling /api/reports/[id]/notifications ...
+ ✓ Compiled /api/reports/[id]/notifications in 1391ms (409 modules)
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 11.3s (1042 modules)
+ GET /api/reports/report_daily_ops_001/notifications 500 in 19908ms
+ GET / 500 in 43176ms
+ GET / 500 in 1723ms
+ GET / 500 in 1839ms
+ GET / 500 in 870ms
+ GET / 500 in 1995ms
+ GET / 500 in 791ms
+ GET / 500 in 1696ms
+ GET / 500 in 902ms

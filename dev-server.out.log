@@ -1,0 +1,1009 @@
+
+> taskops-app@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.5.14
+   - Local:        http://localhost:3000
+   - Network:      http://10.197.215.176:3000
+
+ ✓ Starting...
+ ✓ Ready in 13s
+ ○ Compiling / ...
+ ✓ Compiled / in 14.4s (693 modules)
+ GET / 200 in 16062ms
+ GET / 200 in 165ms
+ ○ Compiling /api/reports/[id]/notifications ...
+ ✓ Compiled /api/reports/[id]/notifications in 1927ms (697 modules)
+ GET /api/auth/session 200 in 2611ms
+ GET /api/auth/session 200 in 2636ms
+ ✓ Compiled in 498ms (299 modules)
+ ○ Compiling /api/auth/users ...
+ ✓ Compiled /api/auth/users in 1009ms (714 modules)
+ GET / 200 in 1700ms
+ GET /api/reports/report_1776594716326/notifications 401 in 4549ms
+ GET /api/reports/report_1776594716326/notifications 401 in 4551ms
+ GET /api/reports/report_1776594716326/audit 200 in 4624ms
+ GET /api/reports/report_1776594716326/audit 200 in 4638ms
+ GET /api/auth/users 200 in 2029ms
+ GET / 200 in 558ms
+ GET /api/auth/users 200 in 589ms
+ ○ Compiling /api/auth/sessions ...
+ ✓ Compiled /api/auth/sessions in 2s (705 modules)
+ GET / 200 in 1136ms
+ GET /api/auth/sessions 200 in 2020ms
+ GET /api/auth/sessions 200 in 2264ms
+ ✓ Compiled in 364ms (299 modules)
+ GET / 200 in 408ms
+ ○ Compiling /api/auth/activity ...
+ PUT /api/reports/report_1776594716326 200 in 3858ms
+ ✓ Compiled /api/auth/activity in 2.4s (721 modules)
+ GET / 200 in 2666ms
+ GET /api/auth/activity 200 in 2879ms
+ GET /api/reports/report_1776594716326/notifications 200 in 1410ms
+ GET /api/auth/activity 200 in 2807ms
+ GET /api/reports/report_1776594716326/audit 200 in 1422ms
+ GET / 200 in 421ms
+ ○ Compiling /api/reports ...
+ ✓ Compiled /api/reports in 980ms (709 modules)
+ GET /api/reports 200 in 1046ms
+ GET /api/reports 200 in 1056ms
+ GET / 200 in 491ms
+ ✓ Compiled in 489ms (299 modules)
+ GET / 200 in 292ms
+ ✓ Compiled in 358ms (299 modules)
+ PUT /api/reports/report_1776594716326 200 in 558ms
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 5.3s (1069 modules)
+ GET / 500 in 7658ms
+ GET /api/reports/report_1776594716326/audit 200 in 7567ms
+ GET / 200 in 1760ms
+ PUT /api/reports/report_1776594716326 200 in 5815ms
+ GET /api/reports/report_1776594716326/notifications 200 in 9563ms
+ GET /api/reports/report_1776594716326/notifications 401 in 156ms
+ GET /api/reports/report_1776594716326/audit 200 in 190ms
+ GET / 200 in 80ms
+ GET / 200 in 80ms
+ GET / 200 in 618ms
+ ✓ Compiled in 4.6s (451 modules)
+ ✓ Compiled in 516ms (451 modules)
+ GET / 200 in 520ms
+ GET / 200 in 86ms
+ GET /api/auth/session 200 in 172ms
+ GET /api/auth/session 200 in 230ms
+ GET /api/reports/report_1776594716326/notifications 200 in 391ms
+ GET /api/reports/report_1776594716326/audit 200 in 400ms
+ GET /api/reports/report_1776594716326/notifications 200 in 406ms
+ GET /api/reports/report_1776594716326/audit 200 in 413ms
+ ✓ Compiled in 1922ms (1069 modules)
+ GET /api/auth/users 500 in 2336ms
+ GET /api/auth/users 200 in 2150ms
+ GET / 200 in 508ms
+ ✓ Compiled in 585ms (451 modules)
+ GET /api/auth/sessions 200 in 480ms
+ ✓ Compiled in 373ms (451 modules)
+ PUT /api/reports/report_1776594716326 401 in 407ms
+ ✓ Compiled in 497ms (451 modules)
+ GET /api/auth/activity 200 in 599ms
+ ✓ Compiled in 449ms (451 modules)
+ GET /api/reports 200 in 518ms
+ ✓ Compiled in 494ms (451 modules)
+ GET / 200 in 526ms
+ GET /api/auth/session 200 in 266ms
+ GET /api/auth/session 200 in 427ms
+ GET /api/reports/report_1776594716326/audit 200 in 596ms
+ GET /api/reports/report_1776594716326/notifications 200 in 591ms
+ GET /api/reports/report_1776594716326/notifications 200 in 607ms
+ GET /api/reports/report_1776594716326/audit 200 in 632ms
+ ✓ Compiled in 629ms (451 modules)
+ GET /api/auth/users 200 in 661ms
+ ✓ Compiled in 567ms (451 modules)
+ GET /api/auth/users 200 in 879ms
+ GET / 200 in 650ms
+ ✓ Compiled in 486ms (451 modules)
+ GET /api/auth/sessions 200 in 990ms
+ GET / 200 in 843ms
+ GET /api/auth/sessions 200 in 1142ms
+ ✓ Compiled in 760ms (451 modules)
+ GET /api/auth/activity 200 in 1169ms
+ ✓ Compiled in 758ms (451 modules)
+ GET / 200 in 872ms
+ GET /api/auth/activity 200 in 1073ms
+ PUT /api/reports/report_1776594716326 401 in 777ms
+ ✓ Compiled in 947ms (451 modules)
+ GET /api/reports 200 in 1202ms
+ GET / 200 in 1176ms
+ GET /api/reports 200 in 1390ms
+ ✓ Compiled in 718ms (451 modules)
+ GET / 200 in 640ms
+ ✓ Compiled in 500ms (451 modules)
+ GET / 200 in 154ms
+ GET / 200 in 94ms
+ GET / 200 in 81ms
+ GET / 200 in 266ms
+ GET /api/reports/report_1776594716326/audit 401 in 164ms
+ GET /api/reports/report_1776594716326/audit 401 in 215ms
+ GET /api/reports/report_1776594716326/notifications 401 in 217ms
+ GET /api/auth/session 200 in 303ms
+ GET /api/auth/session 200 in 579ms
+ GET /api/reports/report_1776594716326/notifications 200 in 579ms
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 2.2s (1060 modules)
+ GET /api/auth/users 500 in 2727ms
+ GET /api/auth/users 200 in 2621ms
+ GET / 200 in 789ms
+ GET / 200 in 472ms
+ ○ Compiling /api/auth/sessions ...
+ ✓ Compiled /api/auth/sessions in 2.2s (1065 modules)
+ GET / 200 in 503ms
+ GET /api/auth/sessions 200 in 2115ms
+ ✓ Compiled in 490ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 2250ms
+ ○ Compiling /api/auth/activity ...
+ ✓ Compiled /api/auth/activity in 1738ms (1067 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 1717ms
+ GET /api/reports/report_1776594716326/notifications 200 in 1950ms
+ GET /api/auth/activity 200 in 2306ms
+ ✓ Compiled in 415ms (451 modules)
+ ○ Compiling /api/reports ...
+ ✓ Compiled /api/reports in 851ms (1069 modules)
+ GET /api/reports 200 in 1322ms
+ ✓ Compiled in 373ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 764ms
+ ✓ Compiled in 332ms (451 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 249ms
+ ✓ Compiled in 463ms (451 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 594ms
+ ✓ Compiled in 349ms (451 modules)
+ ✓ Compiled in 305ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 411ms
+ ✓ Compiled in 540ms (451 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 307ms
+ GET /api/reports/report_1776594716326/audit 200 in 628ms
+ ✓ Compiled in 462ms (451 modules)
+ ✓ Compiled in 311ms (451 modules)
+ ✓ Compiled in 449ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 554ms
+ ✓ Compiled in 562ms (451 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 511ms
+ ✓ Compiled in 688ms (451 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 937ms
+ ✓ Compiled in 516ms (451 modules)
+ ✓ Compiled in 461ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 584ms
+ ✓ Compiled in 670ms (451 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 596ms
+ ✓ Compiled in 946ms (451 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 1300ms
+ ✓ Compiled in 712ms (451 modules)
+ ✓ Compiled in 594ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 783ms
+ ✓ Compiled in 1066ms (451 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 949ms
+ ✓ Compiled in 1316ms (451 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 1842ms
+ ✓ Compiled in 710ms (451 modules)
+ ✓ Compiled in 704ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 926ms
+ ✓ Compiled in 716ms (451 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 422ms
+ GET /api/reports/report_1776594716326/audit 200 in 954ms
+ ✓ Compiled in 1271ms (451 modules)
+ ✓ Compiled in 1965ms (451 modules)
+ ✓ Compiled in 527ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 703ms
+ ✓ Compiled in 669ms (451 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 336ms
+ ✓ Compiled in 704ms (451 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 858ms
+ ✓ Compiled in 658ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 354ms
+ ✓ Compiled in 327ms (451 modules)
+ ✓ Compiled in 385ms (451 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 257ms
+ GET /api/reports/report_1776594716326/audit 200 in 306ms
+ ✓ Compiled in 541ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 413ms
+ ✓ Compiled in 369ms (451 modules)
+ ✓ Compiled in 410ms (451 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 290ms
+ GET /api/reports/report_1776594716326/notifications 200 in 675ms
+ ✓ Compiled in 560ms (451 modules)
+ ✓ Compiled in 430ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 323ms
+ ✓ Compiled in 298ms (451 modules)
+ ✓ Compiled in 338ms (451 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 248ms
+ GET /api/reports/report_1776594716326/audit 200 in 340ms
+ ✓ Compiled in 490ms (451 modules)
+ ✓ Compiled in 567ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 323ms
+ ✓ Compiled in 334ms (451 modules)
+ ✓ Compiled in 355ms (451 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 271ms
+ GET /api/reports/report_1776594716326/notifications 200 in 562ms
+ ✓ Compiled in 559ms (451 modules)
+ ✓ Compiled in 561ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 314ms
+ ✓ Compiled in 299ms (451 modules)
+ ✓ Compiled in 568ms (451 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 530ms
+ GET /api/reports/report_1776594716326/audit 200 in 1503ms
+ ✓ Compiled in 1285ms (451 modules)
+ ✓ Compiled in 608ms (451 modules)
+ ✓ Compiled in 409ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 500ms
+ ✓ Compiled in 662ms (451 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 389ms
+ ✓ Compiled in 839ms (451 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 1012ms
+ ✓ Compiled in 562ms (451 modules)
+ ✓ Compiled in 479ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 607ms
+ ✓ Compiled in 672ms (451 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 301ms
+ GET /api/reports/report_1776594716326/notifications 200 in 888ms
+ ✓ Compiled in 755ms (451 modules)
+ ✓ Compiled in 566ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 428ms
+ ✓ Compiled in 374ms (451 modules)
+ ✓ Compiled in 432ms (451 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 335ms
+ GET /api/reports/report_1776594716326/notifications 200 in 540ms
+ ✓ Compiled in 496ms (451 modules)
+ ✓ Compiled in 516ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 578ms
+ ✓ Compiled in 535ms (451 modules)
+ ✓ Compiled in 613ms (451 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 259ms
+ GET /api/reports/report_1776594716326/audit 200 in 600ms
+ ✓ Compiled in 525ms (451 modules)
+ ✓ Compiled in 480ms (451 modules)
+ ✓ Compiled in 290ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 364ms
+ ✓ Compiled in 327ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 368ms
+ ✓ Compiled in 464ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 582ms
+ ✓ Compiled in 352ms (450 modules)
+ ✓ Compiled in 309ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 380ms
+ ✓ Compiled in 334ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 360ms
+ ✓ Compiled in 401ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 557ms
+ ✓ Compiled in 302ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 320ms
+ ✓ Compiled in 287ms (450 modules)
+ ✓ Compiled in 328ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 199ms
+ GET /api/reports/report_1776594716326/audit 200 in 400ms
+ ✓ Compiled in 284ms (450 modules)
+ ✓ Compiled in 337ms (450 modules)
+ ✓ Compiled in 299ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 383ms
+ ✓ Compiled in 326ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 415ms
+ ✓ Compiled in 503ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 645ms
+ ✓ Compiled in 433ms (450 modules)
+ ✓ Compiled in 393ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 500ms
+ ✓ Compiled in 456ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 562ms
+ ✓ Compiled in 757ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 938ms
+ ✓ Compiled in 588ms (450 modules)
+ ✓ Compiled in 950ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 1145ms
+ ✓ Compiled in 797ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 736ms
+ ✓ Compiled in 822ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 1074ms
+ ✓ Compiled in 611ms (450 modules)
+ ✓ Compiled in 362ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 437ms
+ ✓ Compiled in 412ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 387ms
+ ✓ Compiled in 440ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 598ms
+ ✓ Compiled in 525ms (450 modules)
+ ✓ Compiled in 268ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 347ms
+ ✓ Compiled in 284ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 361ms
+ ✓ Compiled in 366ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 200 in 467ms
+ ✓ Compiled in 358ms (450 modules)
+ ✓ Compiled in 244ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 362ms
+ ✓ Compiled in 335ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 351ms
+ ✓ Compiled in 443ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 556ms
+ ✓ Compiled in 329ms (450 modules)
+ ✓ Compiled in 281ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 346ms
+ ✓ Compiled in 294ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 361ms
+ ✓ Compiled in 427ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 548ms
+ ✓ Compiled in 281ms (450 modules)
+ ✓ Compiled in 331ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 394ms
+ ✓ Compiled in 282ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 349ms
+ ✓ Compiled in 456ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 558ms
+ ✓ Compiled in 333ms (450 modules)
+ ✓ Compiled in 237ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 298ms
+ ✓ Compiled in 302ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 371ms
+ ✓ Compiled in 535ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 645ms
+ ✓ Compiled in 586ms (450 modules)
+ ✓ Compiled in 258ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 353ms
+ ✓ Compiled in 347ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 375ms
+ ✓ Compiled in 445ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 583ms
+ ✓ Compiled in 374ms (450 modules)
+ ✓ Compiled in 285ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 356ms
+ ✓ Compiled in 314ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 484ms
+ ✓ Compiled in 519ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 200 in 636ms
+ ✓ Compiled in 404ms (450 modules)
+ ✓ Compiled in 372ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 446ms
+ ✓ Compiled in 313ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 309ms
+ ✓ Compiled in 426ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 573ms
+ ✓ Compiled in 379ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 310ms
+ ✓ Compiled in 339ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 673ms
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 2.2s (1058 modules)
+ GET /api/reports/report_1776594716326/notifications 500 in 2713ms
+ PUT /api/reports/report_1776594716326 200 in 584ms
+ ✓ Compiled in 485ms (451 modules)
+ ✓ Compiled in 446ms (451 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 538ms
+ GET /api/reports/report_1776594716326/notifications 200 in 669ms
+ ✓ Compiled in 535ms (451 modules)
+ ✓ Compiled in 445ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 296ms
+ ✓ Compiled in 278ms (451 modules)
+ ✓ Compiled in 300ms (451 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 169ms
+ GET /api/reports/report_1776594716326/audit 200 in 332ms
+ ✓ Compiled in 298ms (451 modules)
+ ✓ Compiled in 273ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 297ms
+ ✓ Compiled in 274ms (451 modules)
+ ✓ Compiled in 379ms (451 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 432ms
+ GET /api/reports/report_1776594716326/notifications 200 in 630ms
+ ✓ Compiled in 604ms (451 modules)
+ ✓ Compiled in 417ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 395ms
+ ✓ Compiled in 349ms (451 modules)
+ ✓ Compiled in 444ms (451 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 318ms
+ GET /api/reports/report_1776594716326/audit 200 in 401ms
+ ✓ Compiled in 556ms (451 modules)
+ ✓ Compiled in 388ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 476ms
+ ✓ Compiled in 444ms (451 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 406ms
+ ✓ Compiled in 443ms (451 modules)
+ GET /api/reports/report_1776594716326/notifications 200 in 577ms
+ ✓ Compiled in 405ms (451 modules)
+ ✓ Compiled in 308ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 361ms
+ ✓ Compiled in 386ms (451 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 358ms
+ ✓ Compiled in 706ms (451 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 891ms
+ ✓ Compiled in 442ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 334ms
+ ✓ Compiled in 307ms (451 modules)
+ ✓ Compiled in 408ms (451 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 277ms
+ GET /api/reports/report_1776594716326/audit 200 in 604ms
+ ✓ Compiled in 1191ms (451 modules)
+ ✓ Compiled in 573ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 368ms
+ ✓ Compiled in 341ms (451 modules)
+ ✓ Compiled in 500ms (451 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 472ms
+ GET /api/reports/report_1776594716326/notifications 200 in 771ms
+ ✓ Compiled in 710ms (451 modules)
+ ✓ Compiled in 518ms (451 modules)
+ ✓ Compiled in 396ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 461ms
+ ✓ Compiled in 568ms (451 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 567ms
+ ✓ Compiled in 847ms (451 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 1137ms
+ ✓ Compiled in 532ms (451 modules)
+ ✓ Compiled in 309ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 374ms
+ ✓ Compiled in 419ms (451 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 318ms
+ ✓ Compiled in 570ms (451 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 733ms
+ ✓ Compiled in 563ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 374ms
+ ✓ Compiled in 348ms (451 modules)
+ ✓ Compiled in 387ms (451 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 263ms
+ GET /api/reports/report_1776594716326/audit 200 in 528ms
+ ✓ Compiled in 468ms (451 modules)
+ ✓ Compiled in 495ms (451 modules)
+ ✓ Compiled in 339ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 401ms
+ ✓ Compiled in 402ms (451 modules)
+ ✓ Compiled in 620ms (451 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 826ms
+ GET /api/reports/report_1776594716326/notifications 200 in 866ms
+ ✓ Compiled in 560ms (451 modules)
+ ✓ Compiled in 356ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 468ms
+ ✓ Compiled in 628ms (451 modules)
+ ✓ Compiled in 1111ms (451 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 1357ms
+ GET /api/reports/report_1776594716326/notifications 200 in 1375ms
+ ✓ Compiled in 619ms (451 modules)
+ ✓ Compiled in 323ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 414ms
+ ✓ Compiled in 456ms (451 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 421ms
+ ✓ Compiled in 707ms (451 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 890ms
+ ✓ Compiled in 466ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 365ms
+ ✓ Compiled in 374ms (451 modules)
+ ✓ Compiled in 389ms (451 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 295ms
+ GET /api/reports/report_1776594716326/notifications 200 in 489ms
+ ✓ Compiled in 430ms (451 modules)
+ ✓ Compiled in 423ms (451 modules)
+ ✓ Compiled in 390ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 458ms
+ ✓ Compiled in 373ms (451 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 285ms
+ ✓ Compiled in 460ms (451 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 600ms
+ ✓ Compiled in 389ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 389ms
+ ✓ Compiled in 364ms (451 modules)
+ ✓ Compiled in 316ms (451 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 185ms
+ GET /api/reports/report_1776594716326/audit 200 in 378ms
+ ✓ Compiled in 397ms (451 modules)
+ ✓ Compiled in 384ms (451 modules)
+ PUT /api/reports/report_1776594716326 200 in 315ms
+ ✓ Compiled in 301ms (450 modules)
+ ✓ Compiled in 445ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 319ms
+ GET /api/reports/report_1776594716326/audit 200 in 553ms
+ ✓ Compiled in 471ms (450 modules)
+ ✓ Compiled in 527ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 353ms
+ ✓ Compiled in 329ms (450 modules)
+ ✓ Compiled in 382ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 237ms
+ GET /api/reports/report_1776594716326/audit 200 in 571ms
+ ✓ Compiled in 462ms (450 modules)
+ ✓ Compiled in 622ms (450 modules)
+ ✓ Compiled in 312ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 373ms
+ ✓ Compiled in 382ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 433ms
+ ✓ Compiled in 550ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 681ms
+ ✓ Compiled in 449ms (450 modules)
+ ✓ Compiled in 285ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 365ms
+ ✓ Compiled in 376ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 266ms
+ ✓ Compiled in 516ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 651ms
+ ✓ Compiled in 340ms (450 modules)
+ ✓ Compiled in 507ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 674ms
+ ✓ Compiled in 642ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 549ms
+ ✓ Compiled in 714ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 916ms
+ ✓ Compiled in 545ms (450 modules)
+ ✓ Compiled in 339ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 415ms
+ ✓ Compiled in 503ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 601ms
+ ✓ Compiled in 696ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 902ms
+ ✓ Compiled in 576ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 330ms
+ ✓ Compiled in 315ms (450 modules)
+ ✓ Compiled in 446ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 283ms
+ GET /api/reports/report_1776594716326/audit 200 in 380ms
+ ✓ Compiled in 502ms (450 modules)
+ ✓ Compiled in 293ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 360ms
+ ✓ Compiled in 320ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 402ms
+ ✓ Compiled in 438ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 573ms
+ ✓ Compiled in 364ms (450 modules)
+ ✓ Compiled in 318ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 390ms
+ ✓ Compiled in 350ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 579ms
+ ✓ Compiled in 629ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 200 in 796ms
+ ✓ Compiled in 408ms (450 modules)
+ ✓ Compiled in 301ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 414ms
+ ✓ Compiled in 349ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 571ms
+ ✓ Compiled in 895ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 1054ms
+ ✓ Compiled in 719ms (450 modules)
+ ✓ Compiled in 282ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 369ms
+ ✓ Compiled in 372ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 424ms
+ ✓ Compiled in 521ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 639ms
+ ✓ Compiled in 414ms (450 modules)
+ ✓ Compiled in 226ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 326ms
+ ✓ Compiled in 312ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 314ms
+ ✓ Compiled in 472ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 580ms
+ ✓ Compiled in 361ms (450 modules)
+ ✓ Compiled in 305ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 391ms
+ ✓ Compiled in 290ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 323ms
+ GET /api/reports/report_1776594716326/audit 200 in 484ms
+ ✓ Compiled in 429ms (450 modules)
+ ✓ Compiled in 301ms (450 modules)
+ ✓ Compiled in 591ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 763ms
+ ✓ Compiled in 707ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 899ms
+ ✓ Compiled in 785ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 200 in 1121ms
+ ✓ Compiled in 1091ms (450 modules)
+ ✓ Compiled in 326ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 401ms
+ ✓ Compiled in 352ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 452ms
+ ✓ Compiled in 557ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 695ms
+ ✓ Compiled in 785ms (450 modules)
+ ✓ Compiled in 303ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 414ms
+ ✓ Compiled in 330ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 404ms
+ ✓ Compiled in 496ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 595ms
+ ✓ Compiled in 334ms (450 modules)
+ ✓ Compiled in 328ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 418ms
+ ✓ Compiled in 352ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 410ms
+ ✓ Compiled in 523ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 656ms
+ ✓ Compiled in 407ms (450 modules)
+ ✓ Compiled in 466ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 570ms
+ ✓ Compiled in 675ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 823ms
+ ✓ Compiled in 832ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 200 in 1061ms
+ ✓ Compiled in 550ms (450 modules)
+ ✓ Compiled in 306ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 378ms
+ ✓ Compiled in 318ms (450 modules)
+ ✓ Compiled in 480ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 596ms
+ GET /api/reports/report_1776594716326/notifications 200 in 607ms
+ ✓ Compiled in 344ms (450 modules)
+ ✓ Compiled in 283ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 360ms
+ ✓ Compiled in 276ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 335ms
+ ✓ Compiled in 445ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 571ms
+ ✓ Compiled in 352ms (450 modules)
+ ✓ Compiled in 324ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 431ms
+ ✓ Compiled in 349ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 250ms
+ ✓ Compiled in 506ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 631ms
+ ✓ Compiled in 401ms (450 modules)
+ ✓ Compiled in 304ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 392ms
+ ✓ Compiled in 333ms (450 modules)
+ ✓ Compiled in 537ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 652ms
+ GET /api/reports/report_1776594716326/notifications 200 in 662ms
+ ✓ Compiled in 359ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 289ms
+ ✓ Compiled in 298ms (450 modules)
+ ✓ Compiled in 344ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 203ms
+ GET /api/reports/report_1776594716326/audit 200 in 294ms
+ ✓ Compiled in 483ms (450 modules)
+ ✓ Compiled in 283ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 376ms
+ ✓ Compiled in 353ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 454ms
+ ✓ Compiled in 567ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 690ms
+ ✓ Compiled in 441ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 330ms
+ ✓ Compiled in 312ms (450 modules)
+ ✓ Compiled in 316ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 183ms
+ GET /api/reports/report_1776594716326/audit 200 in 277ms
+ ✓ Compiled in 460ms (450 modules)
+ ✓ Compiled in 297ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 362ms
+ ✓ Compiled in 362ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 435ms
+ ✓ Compiled in 639ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 848ms
+ ✓ Compiled in 909ms (450 modules)
+ ✓ Compiled in 264ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 343ms
+ ✓ Compiled in 327ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 359ms
+ ✓ Compiled in 445ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 564ms
+ ✓ Compiled in 407ms (450 modules)
+ ✓ Compiled in 329ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 434ms
+ ✓ Compiled in 367ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 455ms
+ ✓ Compiled in 607ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 741ms
+ ✓ Compiled in 535ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 409ms
+ ✓ Compiled in 384ms (450 modules)
+ ✓ Compiled in 347ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 240ms
+ GET /api/reports/report_1776594716326/notifications 200 in 769ms
+ ✓ Compiled in 791ms (450 modules)
+ ✓ Compiled in 708ms (450 modules)
+ ✓ Compiled in 310ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 415ms
+ ✓ Compiled in 473ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 574ms
+ ✓ Compiled in 696ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 873ms
+ ✓ Compiled in 602ms (450 modules)
+ ✓ Compiled in 370ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 453ms
+ ✓ Compiled in 517ms (450 modules)
+ ✓ Compiled in 657ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 847ms
+ GET /api/reports/report_1776594716326/notifications 200 in 871ms
+ ✓ Compiled in 550ms (450 modules)
+ ✓ Compiled in 335ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 427ms
+ ✓ Compiled in 474ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 555ms
+ ✓ Compiled in 682ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 828ms
+ ✓ Compiled in 558ms (450 modules)
+ ✓ Compiled in 382ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 860ms
+ ✓ Compiled in 854ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 456ms
+ ✓ Compiled in 547ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 684ms
+ ✓ Compiled in 507ms (450 modules)
+ ✓ Compiled in 312ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 372ms
+ ✓ Compiled in 404ms (450 modules)
+ ✓ Compiled in 600ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 750ms
+ GET /api/reports/report_1776594716326/notifications 200 in 773ms
+ ✓ Compiled in 441ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 302ms
+ ✓ Compiled in 270ms (450 modules)
+ ✓ Compiled in 324ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 195ms
+ GET /api/reports/report_1776594716326/audit 200 in 378ms
+ ✓ Compiled in 354ms (450 modules)
+ ✓ Compiled in 312ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 448ms
+ ✓ Compiled in 367ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 414ms
+ ✓ Compiled in 503ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 645ms
+ ✓ Compiled in 422ms (450 modules)
+ ✓ Compiled in 351ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 438ms
+ ✓ Compiled in 380ms (450 modules)
+ ✓ Compiled in 564ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 721ms
+ GET /api/reports/report_1776594716326/notifications 200 in 732ms
+ ✓ Compiled in 442ms (450 modules)
+ ✓ Compiled in 363ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 432ms
+ ✓ Compiled in 381ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 460ms
+ ✓ Compiled in 560ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 736ms
+ ✓ Compiled in 473ms (450 modules)
+ ✓ Compiled in 313ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 437ms
+ ✓ Compiled in 382ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 439ms
+ ✓ Compiled in 556ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 720ms
+ ✓ Compiled in 497ms (450 modules)
+ ✓ Compiled in 348ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 440ms
+ ✓ Compiled in 478ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 511ms
+ ✓ Compiled in 663ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 859ms
+ ✓ Compiled in 543ms (450 modules)
+ ✓ Compiled in 338ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 436ms
+ ✓ Compiled in 409ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 511ms
+ ✓ Compiled in 685ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 824ms
+ ✓ Compiled in 515ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 314ms
+ ✓ Compiled in 284ms (450 modules)
+ ✓ Compiled in 280ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 186ms
+ GET /api/reports/report_1776594716326/audit 200 in 254ms
+ ✓ Compiled in 408ms (450 modules)
+ ✓ Compiled in 367ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 440ms
+ ✓ Compiled in 333ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 227ms
+ ✓ Compiled in 442ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 560ms
+ ✓ Compiled in 432ms (450 modules)
+ ✓ Compiled in 324ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 416ms
+ ✓ Compiled in 370ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 563ms
+ ✓ Compiled in 747ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 895ms
+ ✓ Compiled in 435ms (450 modules)
+ ✓ Compiled in 313ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 366ms
+ ✓ Compiled in 327ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 433ms
+ ✓ Compiled in 551ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 698ms
+ ✓ Compiled in 435ms (450 modules)
+ ✓ Compiled in 350ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 432ms
+ ✓ Compiled in 349ms (450 modules)
+ ✓ Compiled in 523ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 662ms
+ GET /api/reports/report_1776594716326/notifications 200 in 671ms
+ ✓ Compiled in 429ms (450 modules)
+ ✓ Compiled in 393ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 468ms
+ ✓ Compiled in 395ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 503ms
+ ✓ Compiled in 634ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 789ms
+ ✓ Compiled in 391ms (450 modules)
+ ✓ Compiled in 327ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 399ms
+ ✓ Compiled in 413ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 472ms
+ ✓ Compiled in 633ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 797ms
+ ✓ Compiled in 534ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 349ms
+ ✓ Compiled in 313ms (450 modules)
+ ✓ Compiled in 390ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 257ms
+ GET /api/reports/report_1776594716326/notifications 200 in 626ms
+ ✓ Compiled in 534ms (450 modules)
+ ✓ Compiled in 412ms (450 modules)
+ ✓ Compiled in 258ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 334ms
+ ✓ Compiled in 692ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 784ms
+ ✓ Compiled in 544ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 1037ms
+ ✓ Compiled in 426ms (450 modules)
+ ✓ Compiled in 345ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 427ms
+ ✓ Compiled in 346ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 508ms
+ ✓ Compiled in 539ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 200 in 676ms
+ ✓ Compiled in 392ms (450 modules)
+ ✓ Compiled in 338ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 428ms
+ ✓ Compiled in 396ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 304ms
+ ✓ Compiled in 546ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 743ms
+ ✓ Compiled in 376ms (450 modules)
+ ✓ Compiled in 306ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 392ms
+ ✓ Compiled in 350ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 462ms
+ ✓ Compiled in 587ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 731ms
+ ✓ Compiled in 492ms (450 modules)
+ ✓ Compiled in 352ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 433ms
+ ✓ Compiled in 350ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 443ms
+ ✓ Compiled in 530ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 677ms
+ ✓ Compiled in 460ms (450 modules)
+ ✓ Compiled in 331ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 410ms
+ ✓ Compiled in 359ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 249ms
+ ✓ Compiled in 518ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 660ms
+ ✓ Compiled in 452ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 366ms
+ ✓ Compiled in 349ms (450 modules)
+ ✓ Compiled in 345ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 228ms
+ GET /api/reports/report_1776594716326/audit 200 in 318ms
+ ✓ Compiled in 440ms (450 modules)
+ ✓ Compiled in 266ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 339ms
+ ✓ Compiled in 338ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 338ms
+ ✓ Compiled in 419ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 555ms
+ ✓ Compiled in 380ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 303ms
+ ✓ Compiled in 266ms (450 modules)
+ ✓ Compiled in 306ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 423ms
+ ✓ Compiled in 443ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 200 in 601ms
+ ✓ Compiled in 412ms (450 modules)
+ ✓ Compiled in 332ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 427ms
+ ✓ Compiled in 344ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 227ms
+ ✓ Compiled in 677ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 792ms
+ ✓ Compiled in 571ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 340ms
+ ✓ Compiled in 305ms (450 modules)
+ ✓ Compiled in 328ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 211ms
+ GET /api/reports/report_1776594716326/audit 200 in 489ms
+ ✓ Compiled in 467ms (450 modules)
+ ✓ Compiled in 393ms (450 modules)
+ ✓ Compiled in 308ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 400ms
+ ✓ Compiled in 355ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 444ms
+ ✓ Compiled in 555ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 685ms
+ ✓ Compiled in 520ms (450 modules)
+ ✓ Compiled in 381ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 449ms
+ ✓ Compiled in 407ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 500ms
+ ✓ Compiled in 612ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 801ms
+ ✓ Compiled in 475ms (450 modules)
+ ✓ Compiled in 338ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 429ms
+ ✓ Compiled in 369ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 399ms
+ ✓ Compiled in 471ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 643ms
+ ✓ Compiled in 605ms (450 modules)
+ ✓ Compiled in 335ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 448ms
+ ✓ Compiled in 431ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 552ms
+ ✓ Compiled in 737ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 887ms
+ ✓ Compiled in 500ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 311ms
+ ✓ Compiled in 273ms (450 modules)
+ ✓ Compiled in 332ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 226ms
+ GET /api/reports/report_1776594716326/audit 200 in 442ms
+ ✓ Compiled in 410ms (450 modules)
+ ✓ Compiled in 391ms (450 modules)
+ ✓ Compiled in 348ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 437ms
+ ✓ Compiled in 366ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 404ms
+ ✓ Compiled in 496ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 630ms
+ ✓ Compiled in 382ms (450 modules)
+ ✓ Compiled in 746ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 1240ms
+ ✓ Compiled in 595ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 527ms
+ ✓ Compiled in 711ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 838ms
+ ✓ Compiled in 625ms (450 modules)
+ ✓ Compiled in 343ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 476ms
+ ✓ Compiled in 483ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 491ms
+ ✓ Compiled in 604ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 764ms
+ ✓ Compiled in 565ms (450 modules)
+ ✓ Compiled in 410ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 561ms
+ ✓ Compiled in 566ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 688ms
+ ✓ Compiled in 886ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 1102ms
+ ✓ Compiled in 591ms (450 modules)
+ ✓ Compiled in 468ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 541ms
+ ✓ Compiled in 574ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 772ms
+ ✓ Compiled in 929ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 200 in 1161ms
+ ✓ Compiled in 649ms (450 modules)
+ ✓ Compiled in 490ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 683ms
+ ✓ Compiled in 630ms (450 modules)
+ ✓ Compiled in 648ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 926ms
+ GET /api/reports/report_1776594716326/notifications 200 in 1015ms
+ ✓ Compiled in 596ms (450 modules)
+ ✓ Compiled in 318ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 416ms
+ ✓ Compiled in 352ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 404ms
+ ✓ Compiled in 430ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 620ms
+ ✓ Compiled in 507ms (450 modules)
+ ✓ Compiled in 394ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 481ms
+ ✓ Compiled in 453ms (450 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 505ms
+ ✓ Compiled in 703ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 862ms
+ ✓ Compiled in 612ms (450 modules)
+ ✓ Compiled in 455ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 587ms
+ ✓ Compiled in 605ms (450 modules)
+ ✓ Compiled in 691ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 912ms
+ GET /api/reports/report_1776594716326/notifications 200 in 948ms
+ ✓ Compiled in 588ms (450 modules)
+ ✓ Compiled in 351ms (450 modules)
+ PUT /api/reports/report_1776594716326 200 in 476ms
+ ✓ Compiled in 434ms (450 modules)
+ ✓ Compiled in 524ms (450 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 729ms
+ GET /api/reports/report_1776594716326/notifications 200 in 736ms
+ ✓ Compiled in 568ms (450 modules)
+ PUT /api/reports/report_1776594716326 500 in 511ms

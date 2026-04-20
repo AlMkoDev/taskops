@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project WBS Task Manager</title>
+<style>
+  :root {
+    --color-background-primary: #1e1e1e;
+    --color-background-secondary: #2a2a2a;
+    --color-background-info: #1a2d45;
+    --color-text-primary: #e8e8e8;
+    --color-text-secondary: #999999;
+    --color-text-info: #5ba3f5;
+    --color-text-success: #4caf6e;
+    --color-border-tertiary: #3a3a3a;
+    --color-border-secondary: #4a4a4a;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'SF Mono', 'Fira Mono', 'Consolas', monospace;
+    --border-radius-md: 8px;
+    --border-radius-lg: 10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: var(--color-background-primary); color: var(--color-text-primary); }
+  body { font-family: var(--font-sans); }
+  #app { display: flex; height: 100vh; min-height: 600px; overflow: hidden; }
+
+  /* Sidebar */
+  #sidebar { width: 230px; min-width: 180px; border-right: 0.5px solid var(--color-border-tertiary); display: flex; flex-direction: column; overflow: hidden; background: var(--color-background-secondary); }
+  #sidebar-header { padding: 14px 14px 10px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  #sidebar-header h1 { font-size: 13px; font-weight: 500; color: var(--color-text-primary); line-height: 1.3; }
+  #sidebar-header p { font-size: 11px; color: var(--color-text-secondary); margin-top: 3px; }
+  #nav { overflow-y: auto; flex: 1; }
+  .nav-item { display: flex; align-items: center; gap: 8px; padding: 7px 12px; cursor: pointer; font-size: 12px; color: var(--color-text-secondary); border-left: 2px solid transparent; transition: all .15s; }
+  .nav-item:hover { background: var(--color-background-primary); color: var(--color-text-primary); }
+  .nav-item.active { background: var(--color-background-primary); color: var(--color-text-info); border-left-color: var(--color-text-info); font-weight: 500; }
+  .nav-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .nav-actions { padding: 10px 12px; border-top: 0.5px solid var(--color-border-tertiary); display: flex; flex-direction: column; gap: 6px; }
+  .nav-btn { font-size: 11px; padding: 6px 10px; border-radius: var(--border-radius-md); cursor: pointer; border: 0.5px solid var(--color-border-secondary); background: transparent; color: var(--color-text-secondary); text-align: left; transition: all .15s; }
+  .nav-btn:hover { background: var(--color-background-primary); color: var(--color-text-primary); }
+  .nav-btn.primary { color: var(--color-text-info); border-color: #2a4a70; background: var(--color-background-info); }
+
+  /* Main */
+  #main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  #tabs { display: flex; border-bottom: 0.5px solid var(--color-border-tertiary); background: var(--color-background-primary); padding: 0 16px; gap: 4px; }
+  .tab { padding: 10px 14px; font-size: 12px; cursor: pointer; color: var(--color-text-secondary); border-bottom: 2px solid transparent; margin-bottom: -0.5px; transition: all .15s; font-weight: 400; }
+  .tab:hover { color: var(--color-text-primary); }
+  .tab.active { color: var(--color-text-info); border-bottom-color: var(--color-text-info); font-weight: 500; }
+  #content { flex: 1; overflow-y: auto; padding: 16px; background: var(--color-background-primary); }
+
+  /* Phase header */
+  .phase-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .phase-badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; background: var(--color-background-info); color: var(--color-text-info); }
+  .phase-title { font-size: 16px; font-weight: 500; color: var(--color-text-primary); }
+  .phase-meta { font-size: 12px; color: var(--color-text-secondary); margin-left: auto; }
+
+  /* WBS Table */
+  .wbs-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 20px; }
+  .wbs-table th { text-align: left; padding: 7px 10px; font-size: 11px; font-weight: 500; color: var(--color-text-secondary); border-bottom: 0.5px solid var(--color-border-tertiary); background: var(--color-background-secondary); }
+  .wbs-table td { padding: 7px 10px; border-bottom: 0.5px solid var(--color-border-tertiary); color: var(--color-text-primary); vertical-align: top; }
+  .wbs-table tr:hover td { background: var(--color-background-secondary); }
+  .wbs-id { font-family: var(--font-mono); font-size: 10px; color: var(--color-text-secondary); white-space: nowrap; }
+  .responsible-tag { display: inline-block; font-size: 10px; padding: 2px 6px; border-radius: 4px; background: var(--color-background-secondary); color: var(--color-text-secondary); border: 0.5px solid var(--color-border-tertiary); }
+  .action-btn { font-size: 10px; padding: 2px 6px; border-radius: 4px; border: 0.5px solid var(--color-border-secondary); background: transparent; color: var(--color-text-secondary); cursor: pointer; margin-left: 4px; }
+  .action-btn:hover { background: var(--color-background-secondary); color: var(--color-text-primary); }
+  .action-btn.danger:hover { color: #e06060; border-color: #e06060; }
+
+  /* Cadence pills */
+  .cadence-pill { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; padding: 2px 7px; border-radius: 10px; white-space: nowrap; font-weight: 500; }
+  .c-fixed { background: #1a3050; color: #5ba3f5; }
+  .c-stage { background: #1a2e10; color: #7bc44a; }
+  .c-threshold { background: #2e2010; color: #e8a030; }
+  .c-milestone { background: #22204a; color: #9b95e8; }
+  .c-continuous { background: #2e1515; color: #e06060; }
+  .cadence-icon { font-size: 11px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+
+  /* Gantt */
+  #gantt-wrap { overflow-x: auto; }
+  .gantt { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .gantt th { padding: 5px 6px; font-size: 10px; font-weight: 500; color: var(--color-text-secondary); border-bottom: 0.5px solid var(--color-border-tertiary); white-space: nowrap; text-align: center; background: var(--color-background-secondary); }
+  .gantt td { padding: 4px 6px; border-bottom: 0.5px solid var(--color-border-tertiary); vertical-align: middle; }
+  .gantt tr:hover td { background: var(--color-background-secondary); }
+  .g-bar { height: 16px; border-radius: 3px; display: block; min-width: 6px; }
+
+  /* KPI cards */
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 20px; }
+  .kpi-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px 14px; }
+  .kpi-label { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 4px; }
+  .kpi-value { font-size: 22px; font-weight: 500; color: var(--color-text-primary); line-height: 1; }
+  .kpi-sub { font-size: 11px; color: var(--color-text-secondary); margin-top: 3px; }
+
+  /* Daily board */
+  .day-section { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 14px; margin-bottom: 14px; }
+  .day-section h3 { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .task-row { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 0.5px solid var(--color-border-tertiary); font-size: 12px; color: var(--color-text-secondary); }
+  .task-row:last-child { border-bottom: none; }
+  .task-check { width: 14px; height: 14px; border-radius: 3px; border: 0.5px solid var(--color-border-secondary); flex-shrink: 0; cursor: pointer; transition: all .15s; }
+  .task-check.done { background: var(--color-text-success); border-color: var(--color-text-success); }
+  .task-text { flex: 1; }
+  .task-text.done { text-decoration: line-through; opacity: .5; }
+  .section-label { font-size: 11px; font-weight: 500; padding: 2px 7px; border-radius: 3px; text-transform: uppercase; letter-spacing: .5px; }
+
+  /* Overlap matrix */
+  .og-head { font-size: 10px; font-weight: 500; padding: 6px 10px; background: var(--color-background-secondary); color: var(--color-text-secondary); }
+  .og-cell { font-size: 11px; padding: 8px 12px; text-align: center; border: 0.5px solid var(--color-border-tertiary); }
+  .og-low { background: #1a2e10; color: #7bc44a; }
+  .og-mid { background: #2e2010; color: #e8a030; }
+  .og-high { background: #2e2010; color: #e8a030; }
+  .og-crit { background: #2e1515; color: #e06060; }
+
+  /* Buffer table */
+  .buf-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 20px; }
+  .buf-table th { padding: 7px 10px; font-size: 11px; font-weight: 500; color: var(--color-text-secondary); border-bottom: 0.5px solid var(--color-border-tertiary); background: var(--color-background-secondary); text-align: left; }
+  .buf-table td { padding: 7px 10px; border-bottom: 0.5px solid var(--color-border-tertiary); color: var(--color-text-primary); }
+  .buf-bar { height: 8px; border-radius: 4px; display: inline-block; }
+
+  /* Modal */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 100; display: flex; align-items: center; justify-content: center; }
+  .modal { background: #242424; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-lg); padding: 20px; width: 520px; max-width: 95vw; max-height: 85vh; overflow-y: auto; }
+  .modal h2 { font-size: 14px; font-weight: 500; margin-bottom: 16px; }
+  .form-row { margin-bottom: 12px; }
+  .form-row label { display: block; font-size: 11px; color: var(--color-text-secondary); margin-bottom: 4px; }
+  .form-row input, .form-row textarea, .form-row select { width: 100%; background: var(--color-background-primary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); color: var(--color-text-primary); font-size: 12px; padding: 7px 10px; font-family: var(--font-sans); outline: none; }
+  .form-row input:focus, .form-row textarea:focus, .form-row select:focus { border-color: var(--color-text-info); }
+  .form-row textarea { resize: vertical; min-height: 60px; }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+  .btn { font-size: 12px; padding: 7px 16px; border-radius: var(--border-radius-md); cursor: pointer; border: 0.5px solid var(--color-border-secondary); background: transparent; color: var(--color-text-secondary); transition: all .15s; }
+  .btn:hover { background: var(--color-background-secondary); color: var(--color-text-primary); }
+  .btn.primary { background: var(--color-background-info); color: var(--color-text-info); border-color: #2a4a70; }
+  .btn.primary:hover { background: #1e3a5f; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--color-background-primary); }
+  ::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #555; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="sidebar">
+    <div id="sidebar-header">
+      <h1 id="project-title-display">My Project</h1>
+      <p id="project-subtitle-display">0 phases · 0 tasks</p>
+    </div>
+    <div id="nav"></div>
+    <div class="nav-actions">
+      <button class="nav-btn primary" onclick="openModal('phase')">+ Add Phase</button>
+      <button class="nav-btn" onclick="openModal('settings')">⚙ Project Settings</button>
+    </div>
+  </div>
+  <div id="main">
+    <div id="tabs">
+      <div class="tab active" data-tab="tasks" onclick="switchTab('tasks')">WBS Tasks</div>
+      <div class="tab" data-tab="gantt" onclick="switchTab('gantt')">Gantt</div>
+      <div class="tab" data-tab="cadence" onclick="switchTab('cadence')">Cadence</div>
+      <div class="tab" data-tab="daily" onclick="switchTab('daily')">Daily Board</div>
+      <div class="tab" data-tab="kpi" onclick="switchTab('kpi')">Summary</div>
+    </div>
+    <div id="content"></div>
+  </div>
+</div>
+<div id="modal-container"></div>
+
+<script>
+/* ── Default project data ── */
+let PROJECT = {
+  name: "New Project",
+  subtitle: "Define your project phases and tasks",
+  totalWeeks: 12,
+};
+
+const PHASE_COLORS = [
+  {color:"#185FA5",dot:"#378ADD"},
+  {color:"#3B6D11",dot:"#639922"},
+  {color:"#BA7517",dot:"#EF9F27"},
+  {color:"#534AB7",dot:"#7F77DD"},
+  {color:"#0F6E56",dot:"#1D9E75"},
+  {color:"#993C1D",dot:"#D85A30"},
+  {color:"#993556",dot:"#D4537E"},
+  {color:"#3C3489",dot:"#7F77DD"},
+  {color:"#5F5E5A",dot:"#888780"},
+];
+const GANTT_COLOR_CLASSES = ["g-blue","g-green","g-amber","g-purple","g-green","g-red","g-red","g-purple","g-blue"];
+const GANTT_COLOR_HEX = ["#378ADD","#639922","#EF9F27","#7F77DD","#1D9E75","#D85A30","#D4537E","#7F77DD","#888780"];
+
+let PHASES = [];
+let activePhase = null;
+let activeTab = "tasks";
+let editingTask = null;
+let editingPhase = null;
+
+const CADENCE = {
+  fixed:      {label:"Fixed Rhythm",     icon:"🔁", cls:"c-fixed"},
+  stage:      {label:"Stage-Triggered",  icon:"🌱", cls:"c-stage"},
+  threshold:  {label:"Threshold",        icon:"⚡", cls:"c-threshold"},
+  milestone:  {label:"Milestone-Gated",  icon:"📍", cls:"c-milestone"},
+  continuous: {label:"Continuous",       icon:"🔄", cls:"c-continuous"},
+};
+
+/* ── Helpers ── */
+function nextPhaseId() { return PHASES.length ? Math.max(...PHASES.map(p=>p.id)) + 1 : 1; }
+function nextTaskId(phase) {
+  const base = `${phase.id}.`;
+  const used = phase.tasks.map(t=>parseInt(t.id.split(".")[1]||0)).filter(Boolean);
+  const next = used.length ? Math.max(...used)+1 : 1;
+  return `${phase.id}.${next}`;
+}
+function totalTasks() { return PHASES.reduce((a,p)=>a+p.tasks.length,0); }
+function getColorForIndex(i) { return PHASE_COLORS[i % PHASE_COLORS.length]; }
+
+/* ── Nav & render ── */
+function buildNav() {
+  const nav = document.getElementById("nav");
+  nav.innerHTML = "";
+  PHASES.forEach((p,i) => {
+    const d = document.createElement("div");
+    d.className = "nav-item" + (activePhase===p.id?" active":"");
+    d.innerHTML = `<span class="nav-dot" style="background:${p.dot}"></span><span style="flex:1">${p.id}. ${p.name}</span>`;
+    d.onclick = () => { activePhase=p.id; buildNav(); renderContent(); };
+    nav.appendChild(d);
+  });
+  document.getElementById("project-title-display").textContent = PROJECT.name;
+  document.getElementById("project-subtitle-display").textContent = PROJECT.subtitle || `${PHASES.length} phases · ${totalTasks()} tasks`;
+}
+
+function switchTab(t) {
+  activeTab = t;
+  document.querySelectorAll(".tab").forEach(el=>el.classList.toggle("active",el.dataset.tab===t));
+  renderContent();
+}
+
+function renderContent() {
+  const c = document.getElementById("content");
+  if (!PHASES.length) { renderEmpty(c); return; }
+  if (activeTab==="tasks") renderTasks(c);
+  else if (activeTab==="gantt") renderGantt(c);
+  else if (activeTab==="cadence") renderCadence(c);
+  else if (activeTab==="daily") renderDaily(c);
+  else if (activeTab==="kpi") renderKPI(c);
+}
+
+function renderEmpty(c) {
+  c.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:60%;gap:16px;color:var(--color-text-secondary)">
+    <div style="font-size:32px;opacity:0.3">📋</div>
+    <p style="font-size:14px;font-weight:500;color:var(--color-text-primary)">No phases yet</p>
+    <p style="font-size:12px;text-align:center;max-width:300px">Click <strong>+ Add Phase</strong> in the sidebar to create your first project phase, then add tasks to it.</p>
+    <button class="btn primary" onclick="openModal('phase')">+ Add Phase</button>
+  </div>`;
+}
+
+function cadencePill(type) {
+  const cd = CADENCE[type] || CADENCE.milestone;
+  return `<span class="cadence-pill ${cd.cls}"><span class="cadence-icon">${cd.icon}</span>${cd.label}</span>`;
+}
+
+/* ── WBS Tasks tab ── */
+function renderTasks(c) {
+  const p = PHASES.find(x=>x.id===activePhase) || PHASES[0];
+  if (!p) return;
+  activePhase = p.id;
+  c.innerHTML = `
+  <div class="phase-header">
+    <span class="phase-badge">${p.id}.0</span>
+    <span class="phase-title">${p.name}</span>
+    <span class="phase-meta">Weeks ${p.weeks[0]}–${p.weeks[1]} &nbsp;·&nbsp; ${p.tasks.length} tasks</span>
+    <button class="btn" style="margin-left:8px;font-size:11px" onclick="openModal('phase-edit',${p.id})">Edit Phase</button>
+    <button class="btn" style="font-size:11px;color:#e06060;border-color:#4a2525" onclick="confirmDeletePhase(${p.id})">Delete</button>
+  </div>
+  <div class="legend">
+    ${Object.entries(CADENCE).map(([k,v])=>`<span class="cadence-pill ${v.cls}"><span class="cadence-icon">${v.icon}</span>${v.label}</span>`).join("")}
+  </div>
+  <table class="wbs-table">
+    <thead><tr><th>WBS ID</th><th>Task</th><th>Description</th><th>Cadence</th><th>Trigger/Condition</th><th>Duration</th><th>Responsible</th><th></th></tr></thead>
+    <tbody>
+    ${p.tasks.length ? p.tasks.map(t=>`<tr>
+      <td><span class="wbs-id">${t.id}</span></td>
+      <td style="font-weight:500;color:var(--color-text-primary);min-width:150px">${t.name}</td>
+      <td style="min-width:180px;color:var(--color-text-secondary)">${t.desc||"—"}</td>
+      <td>${cadencePill(t.cadence)}</td>
+      <td style="font-size:11px;color:var(--color-text-secondary);min-width:120px">${t.trigger||"—"}</td>
+      <td style="font-size:11px;white-space:nowrap">${t.dur||"—"}</td>
+      <td><span class="responsible-tag">${t.resp||"—"}</span></td>
+      <td style="white-space:nowrap">
+        <button class="action-btn" onclick="openModal('task-edit',${p.id},'${t.id}')">Edit</button>
+        <button class="action-btn danger" onclick="confirmDeleteTask(${p.id},'${t.id}')">✕</button>
+      </td>
+    </tr>`).join("") : `<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--color-text-secondary);font-size:12px">No tasks yet. Add your first task below.</td></tr>`}
+    </tbody>
+  </table>
+  <button class="btn primary" style="font-size:12px" onclick="openModal('task',${p.id})">+ Add Task to ${p.name}</button>`;
+}
+
+/* ── Gantt tab ── */
+function renderGantt(c) {
+  const W = PROJECT.totalWeeks || 12;
+  const labels = Array.from({length:W},(_,i)=>`W${i+1}`);
+  c.innerHTML = `<div id="gantt-wrap">
+  <div style="margin-bottom:12px">
+    <p style="font-size:13px;font-weight:500;margin-bottom:4px">Project Timeline — All Phases (${W} Weeks)</p>
+    <p style="font-size:12px;color:var(--color-text-secondary)">Colored bars indicate active weeks per phase.</p>
+  </div>
+  <table class="gantt">
+    <thead>
+      <tr>
+        <th style="text-align:left;min-width:160px">Phase</th>
+        ${labels.map(w=>`<th>${w}</th>`).join("")}
+      </tr>
+    </thead>
+    <tbody>
+    ${PHASES.map((p,i)=>{
+      const clr = GANTT_COLOR_HEX[i % GANTT_COLOR_HEX.length];
+      const cols = labels.map((_,j)=>{
+        const w=j+1;
+        const active=w>=p.weeks[0]&&w<=p.weeks[1];
+        return `<td style="padding:4px 2px">${active?`<span class="g-bar" style="width:100%;background:${clr};opacity:0.85"></span>`:""}</td>`;
+      }).join("");
+      return `<tr><td style="font-size:11px;font-weight:500;padding:5px 8px"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${p.dot};margin-right:6px"></span>${p.id}. ${p.name}</td>${cols}</tr>`;
+    }).join("")}
+    </tbody>
+  </table>
+  </div>`;
+}
+
+/* ── Cadence tab ── */
+function renderCadence(c) {
+  const types=["fixed","stage","threshold","milestone","continuous"];
+  const labels=["Fixed 🔁","Stage 🌱","Threshold ⚡","Milestone 📍","Continuous 🔄"];
+  const risk=[
+    ["✅ Low","⚠️ Coord.","⚠️⚠️ High","✅ Low","⚠️ Coord."],
+    ["⚠️ Coord.","✅ Low","⚠️⚠️ High","⚠️⚠️ High","⚠️ Coord."],
+    ["⚠️⚠️ High","⚠️⚠️ High","🚫 Avoid","⚠️⚠️ High","⚠️⚠️ High"],
+    ["✅ Low","⚠️⚠️ High","⚠️⚠️ High","✅ Low","⚠️ Coord."],
+    ["⚠️ Coord.","⚠️ Coord.","⚠️⚠️ High","⚠️ Coord.","✅ Low"],
+  ];
+  const riskCls=(v)=>v.includes("Avoid")?"og-crit":v.includes("⚠️⚠️")?"og-high":v.includes("⚠️")?"og-mid":"og-low";
+  const buffers=[
+    {type:"🔁 Fixed Rhythm",buf:"0-10%",place:"End of task block",color:"#378ADD"},
+    {type:"🌱 Stage-Triggered",buf:"15-25%",place:"Before AND after",color:"#639922"},
+    {type:"⚡ Threshold",buf:"10-20%",place:"After trigger activation",color:"#EF9F27"},
+    {type:"📍 Milestone-Gated",buf:"5-15%",place:"At approval gate",color:"#7F77DD"},
+    {type:"🔄 Continuous",buf:"Built-in",place:"Real-time adjustment",color:"#E24B4A"},
+  ];
+  c.innerHTML = `
+  <p style="font-size:14px;font-weight:500;margin-bottom:14px">Cadence Overlap Risk Matrix</p>
+  <p style="font-size:12px;color:var(--color-text-secondary);margin-bottom:14px">Use this matrix to assess risk when task types coincide. Plan scheduling to avoid high-conflict overlaps.</p>
+  <div style="overflow-x:auto;margin-bottom:24px">
+  <table style="border-collapse:collapse;font-size:11px">
+    <thead>
+      <tr>
+        <th class="og-head" style="border:0.5px solid var(--color-border-tertiary)"></th>
+        ${labels.map(l=>`<th class="og-head" style="border:0.5px solid var(--color-border-tertiary)">${l}</th>`).join("")}
+      </tr>
+    </thead>
+    <tbody>
+      ${types.map((t,i)=>`<tr>
+        <td class="og-head" style="border:0.5px solid var(--color-border-tertiary);white-space:nowrap">${labels[i]}</td>
+        ${risk[i].map(v=>`<td class="og-cell ${riskCls(v)}">${v}</td>`).join("")}
+      </tr>`).join("")}
+    </tbody>
+  </table>
+  </div>
+  <p style="font-size:14px;font-weight:500;margin-bottom:14px">Buffer Allocation Strategy</p>
+  <table class="buf-table">
+    <thead><tr><th>Task Type</th><th>Recommended Buffer</th><th>Visual</th><th>Placement</th></tr></thead>
+    <tbody>
+    ${buffers.map(b=>`<tr>
+      <td style="font-weight:500">${b.type}</td>
+      <td>${b.buf}</td>
+      <td><span class="buf-bar" style="background:${b.color};width:${b.buf==="Built-in"?40:parseInt(b.buf)*2}px"></span></td>
+      <td style="color:var(--color-text-secondary);font-size:11px">${b.place}</td>
+    </tr>`).join("")}
+    </tbody>
+  </table>`;
+}
+
+/* ── Daily Board tab ── */
+function renderDaily(c) {
+  const today = new Date().toLocaleDateString("en-ZA",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
+  const allTasks = PHASES.flatMap(p => p.tasks.map(t=>({...t, phaseName:p.name, phaseDot:p.dot})));
+
+  const byType = { fixed:[], stage:[], threshold:[], milestone:[], continuous:[] };
+  allTasks.forEach(t => { if (byType[t.cadence]) byType[t.cadence].push(t); });
+
+  const sections = [
+    {key:"fixed", label:"Fixed Rhythm Tasks", clr:"#378ADD"},
+    {key:"stage", label:"Stage-Triggered Tasks", clr:"#639922"},
+    {key:"threshold", label:"Threshold / Triggered Tasks", clr:"#EF9F27"},
+    {key:"milestone", label:"Milestone-Gated Tasks", clr:"#7F77DD"},
+    {key:"continuous", label:"Continuous Tasks", clr:"#E24B4A"},
+  ].filter(s=>byType[s.key].length>0);
+
+  c.innerHTML = `
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+    <div>
+      <p style="font-size:14px;font-weight:500">Daily Execution Board</p>
+      <p style="font-size:12px;color:var(--color-text-secondary)">${today}</p>
+    </div>
+    <div style="font-size:11px;color:var(--color-text-secondary)">Click checkboxes to track completion</div>
+  </div>
+  ${sections.length ? sections.map(s=>`
+  <div class="day-section">
+    <h3><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${s.clr}"></span><span class="section-label" style="color:${s.clr}">${s.label}</span></h3>
+    ${byType[s.key].map(t=>{
+      const safeId = t.id.replace(/\./g,'-');
+      return `<div class="task-row" id="row-${safeId}">
+        <div class="task-check" id="chk-${safeId}" onclick="toggleCheck('${safeId}')"></div>
+        <span class="wbs-id">${t.id}</span>
+        <span class="task-text" id="txt-${safeId}">${t.name}</span>
+        <span style="font-size:10px;color:var(--color-text-secondary);opacity:0.6">${t.phaseName}</span>
+      </div>`;
+    }).join("")}
+  </div>`).join("") : `<div style="text-align:center;padding:40px;color:var(--color-text-secondary)">Add tasks with cadence types to see them here.</div>`}`;
+}
+
+function toggleCheck(id) {
+  const chk = document.getElementById("chk-"+id);
+  const txt = document.getElementById("txt-"+id);
+  const done = chk.classList.toggle("done");
+  txt.classList.toggle("done", done);
+}
+
+/* ── Summary / KPI tab ── */
+function renderKPI(c) {
+  const total = totalTasks();
+  const byType = {};
+  PHASES.forEach(p=>p.tasks.forEach(t=>{ byType[t.cadence]=(byType[t.cadence]||0)+1; }));
+  const W = PROJECT.totalWeeks || 12;
+  const kpis = [
+    {label:"Total Phases",   value:PHASES.length,    sub:"Active project phases"},
+    {label:"Total Tasks",    value:total,             sub:"Across all phases"},
+    {label:"Project Duration",value:`${W} wk`,       sub:"Total planned weeks"},
+    {label:"Fixed Tasks",    value:byType.fixed||0,  sub:"Recurring scheduled"},
+    {label:"Milestone Tasks",value:byType.milestone||0, sub:"Gate-driven"},
+    {label:"Stage Tasks",    value:byType.stage||0,  sub:"Phase-triggered"},
+    {label:"Threshold Tasks",value:byType.threshold||0, sub:"Condition-triggered"},
+    {label:"Continuous",     value:byType.continuous||0, sub:"Always-on monitoring"},
+  ];
+
+  const allTasks = PHASES.flatMap(p=>p.tasks);
+  const respMap = {};
+  allTasks.forEach(t=>{ if(t.resp) respMap[t.resp]=(respMap[t.resp]||0)+1; });
+  const topResp = Object.entries(respMap).sort((a,b)=>b[1]-a[1]).slice(0,8);
+
+  c.innerHTML = `
+  <p style="font-size:14px;font-weight:500;margin-bottom:14px">Project Summary</p>
+  <div class="kpi-grid">
+    ${kpis.map(k=>`<div class="kpi-card"><div class="kpi-label">${k.label}</div><div class="kpi-value">${k.value}</div><div class="kpi-sub">${k.sub}</div></div>`).join("")}
+  </div>
+  <p style="font-size:14px;font-weight:500;margin-bottom:10px">Phase Overview</p>
+  <table class="wbs-table" style="margin-bottom:20px">
+    <thead><tr><th></th><th>Phase</th><th>Weeks</th><th>Tasks</th><th>Cadence Breakdown</th></tr></thead>
+    <tbody>
+    ${PHASES.map(p=>{
+      const counts = {};
+      p.tasks.forEach(t=>{ counts[t.cadence]=(counts[t.cadence]||0)+1; });
+      const pills = Object.entries(counts).map(([k,v])=>`${cadencePill(k)} <span style="font-size:10px;color:var(--color-text-secondary)">×${v}</span>`).join(" ");
+      return `<tr>
+        <td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${p.dot}"></span></td>
+        <td style="font-weight:500">${p.name}</td>
+        <td><span style="font-size:11px;padding:2px 7px;border-radius:3px;background:var(--color-background-secondary)">W${p.weeks[0]}–W${p.weeks[1]}</span></td>
+        <td>${p.tasks.length}</td>
+        <td style="min-width:200px">${pills||"—"}</td>
+      </tr>`;
+    }).join("")}
+    </tbody>
+  </table>
+  ${topResp.length ? `
+  <p style="font-size:14px;font-weight:500;margin-bottom:10px">Task Owners</p>
+  <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:14px;margin-bottom:20px">
+    ${topResp.map(([r,n])=>`<div style="display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px">
+      <span class="responsible-tag">${r}</span>
+      <div style="flex:1;height:6px;background:var(--color-border-tertiary);border-radius:3px">
+        <div style="height:100%;background:#378ADD;border-radius:3px;width:${Math.round(n/total*100)}%"></div>
+      </div>
+      <span style="font-size:11px;color:var(--color-text-secondary);min-width:50px;text-align:right">${n} task${n>1?"s":""}</span>
+    </div>`).join("")}
+  </div>` : ""}`;
+}
+
+/* ── Modal system ── */
+function openModal(type, phaseId, taskId) {
+  const container = document.getElementById("modal-container");
+
+  if (type === "settings") {
+    container.innerHTML = `<div class="modal-overlay" onclick="closeModalOnOverlay(event)">
+    <div class="modal">
+      <h2>Project Settings</h2>
+      <div class="form-row"><label>Project Name</label><input id="m-proj-name" value="${escHtml(PROJECT.name)}"></div>
+      <div class="form-row"><label>Subtitle / description</label><input id="m-proj-sub" value="${escHtml(PROJECT.subtitle||"")}"></div>
+      <div class="form-row"><label>Total Duration (weeks)</label><input id="m-proj-weeks" type="number" min="1" max="104" value="${PROJECT.totalWeeks||12}"></div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeModal()">Cancel</button>
+        <button class="btn primary" onclick="saveSettings()">Save</button>
+      </div>
+    </div></div>`;
+    return;
+  }
+
+  if (type === "phase") {
+    const clr = getColorForIndex(PHASES.length);
+    container.innerHTML = `<div class="modal-overlay" onclick="closeModalOnOverlay(event)">
+    <div class="modal">
+      <h2>Add Phase</h2>
+      <div class="form-row"><label>Phase Name *</label><input id="m-phase-name" placeholder="e.g. Planning, Development, Testing"></div>
+      <div class="form-grid">
+        <div class="form-row"><label>Start Week</label><input id="m-phase-w0" type="number" min="1" value="1"></div>
+        <div class="form-row"><label>End Week</label><input id="m-phase-w1" type="number" min="1" value="${PROJECT.totalWeeks||12}"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeModal()">Cancel</button>
+        <button class="btn primary" onclick="savePhase(null)">Add Phase</button>
+      </div>
+    </div></div>`;
+    return;
+  }
+
+  if (type === "phase-edit") {
+    const p = PHASES.find(x=>x.id===phaseId);
+    if (!p) return;
+    container.innerHTML = `<div class="modal-overlay" onclick="closeModalOnOverlay(event)">
+    <div class="modal">
+      <h2>Edit Phase</h2>
+      <div class="form-row"><label>Phase Name *</label><input id="m-phase-name" value="${escHtml(p.name)}"></div>
+      <div class="form-grid">
+        <div class="form-row"><label>Start Week</label><input id="m-phase-w0" type="number" min="1" value="${p.weeks[0]}"></div>
+        <div class="form-row"><label>End Week</label><input id="m-phase-w1" type="number" min="1" value="${p.weeks[1]}"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeModal()">Cancel</button>
+        <button class="btn primary" onclick="savePhase(${phaseId})">Save Changes</button>
+      </div>
+    </div></div>`;
+    return;
+  }
+
+  if (type === "task" || type === "task-edit") {
+    const p = PHASES.find(x=>x.id===phaseId);
+    if (!p) return;
+    const t = type==="task-edit" ? p.tasks.find(x=>x.id===taskId) : null;
+    const cadenceOptions = Object.entries(CADENCE).map(([k,v])=>`<option value="${k}" ${t&&t.cadence===k?"selected":""}>${v.icon} ${v.label}</option>`).join("");
+    container.innerHTML = `<div class="modal-overlay" onclick="closeModalOnOverlay(event)">
+    <div class="modal">
+      <h2>${t?"Edit":"Add"} Task — ${p.name}</h2>
+      <div class="form-row"><label>Task Name *</label><input id="m-task-name" value="${t?escHtml(t.name):""}"></div>
+      <div class="form-row"><label>Description</label><textarea id="m-task-desc">${t?escHtml(t.desc||""):""}</textarea></div>
+      <div class="form-grid">
+        <div class="form-row"><label>Cadence Type</label><select id="m-task-cadence">${cadenceOptions}</select></div>
+        <div class="form-row"><label>Duration</label><input id="m-task-dur" placeholder="e.g. 2 hrs/day, 1 week" value="${t?escHtml(t.dur||""):""}"></div>
+      </div>
+      <div class="form-row"><label>Trigger / Condition</label><input id="m-task-trigger" placeholder="e.g. When X occurs, After Y completes" value="${t?escHtml(t.trigger||""):""}"></div>
+      <div class="form-row"><label>Responsible</label><input id="m-task-resp" placeholder="e.g. Project Manager, Dev Team" value="${t?escHtml(t.resp||""):""}"></div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeModal()">Cancel</button>
+        <button class="btn primary" onclick="saveTask(${phaseId},'${t?t.id:""}')">${t?"Save Changes":"Add Task"}</button>
+      </div>
+    </div></div>`;
+    return;
+  }
+}
+
+function closeModal() {
+  document.getElementById("modal-container").innerHTML = "";
+}
+
+function closeModalOnOverlay(e) {
+  if (e.target.classList.contains("modal-overlay")) closeModal();
+}
+
+function saveSettings() {
+  const name = document.getElementById("m-proj-name").value.trim();
+  if (!name) return alert("Project name is required.");
+  PROJECT.name = name;
+  PROJECT.subtitle = document.getElementById("m-proj-sub").value.trim();
+  PROJECT.totalWeeks = parseInt(document.getElementById("m-proj-weeks").value) || 12;
+  closeModal();
+  buildNav();
+  renderContent();
+}
+
+function savePhase(editId) {
+  const name = document.getElementById("m-phase-name").value.trim();
+  if (!name) return alert("Phase name is required.");
+  const w0 = parseInt(document.getElementById("m-phase-w0").value) || 1;
+  const w1 = parseInt(document.getElementById("m-phase-w1").value) || PROJECT.totalWeeks;
+  if (editId) {
+    const p = PHASES.find(x=>x.id===editId);
+    p.name = name; p.weeks = [w0, w1];
+  } else {
+    const id = nextPhaseId();
+    const clr = getColorForIndex(PHASES.length);
+    PHASES.push({ id, name, weeks:[w0,w1], color:clr.color, dot:clr.dot, tasks:[] });
+    activePhase = id;
+  }
+  closeModal();
+  buildNav();
+  renderContent();
+}
+
+function saveTask(phaseId, existingId) {
+  const name = document.getElementById("m-task-name").value.trim();
+  if (!name) return alert("Task name is required.");
+  const p = PHASES.find(x=>x.id===phaseId);
+  const task = {
+    name,
+    desc:    document.getElementById("m-task-desc").value.trim(),
+    cadence: document.getElementById("m-task-cadence").value,
+    dur:     document.getElementById("m-task-dur").value.trim(),
+    trigger: document.getElementById("m-task-trigger").value.trim(),
+    resp:    document.getElementById("m-task-resp").value.trim(),
+  };
+  if (existingId) {
+    const idx = p.tasks.findIndex(x=>x.id===existingId);
+    p.tasks[idx] = {...p.tasks[idx], ...task};
+  } else {
+    task.id = nextTaskId(p);
+    p.tasks.push(task);
+  }
+  closeModal();
+  renderContent();
+}
+
+function confirmDeletePhase(phaseId) {
+  const p = PHASES.find(x=>x.id===phaseId);
+  if (!confirm(`Delete phase "${p.name}" and all ${p.tasks.length} tasks? This cannot be undone.`)) return;
+  PHASES = PHASES.filter(x=>x.id!==phaseId);
+  activePhase = PHASES.length ? PHASES[0].id : null;
+  buildNav();
+  renderContent();
+}
+
+function confirmDeleteTask(phaseId, taskId) {
+  const p = PHASES.find(x=>x.id===phaseId);
+  const t = p.tasks.find(x=>x.id===taskId);
+  if (!confirm(`Delete task "${t.name}"?`)) return;
+  p.tasks = p.tasks.filter(x=>x.id!==taskId);
+  renderContent();
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+/* ── Load sample project on first open ── */
+function loadSampleProject() {
+  PROJECT = { name: "My Project", subtitle: "Click phases to view tasks · Use sidebar to add more", totalWeeks: 12 };
+  PHASES = [
+    {id:1, name:"Planning", color:"#185FA5", dot:"#378ADD", weeks:[1,3], tasks:[
+      {id:"1.1", name:"Define scope & objectives", desc:"Clarify goals, deliverables, and success criteria", cadence:"milestone", trigger:"Project kick-off", dur:"2 days", resp:"Project Manager"},
+      {id:"1.2", name:"Stakeholder mapping", desc:"Identify all stakeholders and communication preferences", cadence:"milestone", trigger:"After scope defined", dur:"1 day", resp:"Project Manager"},
+      {id:"1.3", name:"Risk assessment", desc:"Identify risks, likelihood, impact, and mitigations", cadence:"milestone", trigger:"After stakeholder mapping", dur:"1 day", resp:"Team"},
+      {id:"1.4", name:"Weekly status check", desc:"Progress against plan, blockers, next week priorities", cadence:"fixed", trigger:"Every Monday 09:00", dur:"30 min", resp:"Project Manager"},
+    ]},
+    {id:2, name:"Execution", color:"#3B6D11", dot:"#639922", weeks:[3,10], tasks:[
+      {id:"2.1", name:"Sprint planning", desc:"Break work into 2-week sprints with story points", cadence:"stage", trigger:"Start of each sprint", dur:"2 hrs", resp:"Tech Lead"},
+      {id:"2.2", name:"Daily standup", desc:"What did you do, what will you do, any blockers", cadence:"fixed", trigger:"09:00 daily", dur:"15 min", resp:"Team"},
+      {id:"2.3", name:"Escalation trigger", desc:"Escalate to management if blocker unresolved >48 hrs", cadence:"threshold", trigger:"Blocker >48 hrs old", dur:"As needed", resp:"Project Manager"},
+      {id:"2.4", name:"Code review process", desc:"All PRs reviewed before merge — two approvals required", cadence:"continuous", trigger:"Every pull request", dur:"30-60 min", resp:"Senior Dev"},
+    ]},
+    {id:3, name:"Review & Close", color:"#BA7517", dot:"#EF9F27", weeks:[10,12], tasks:[
+      {id:"3.1", name:"UAT sign-off", desc:"User acceptance testing with key stakeholders", cadence:"milestone", trigger:"Feature freeze complete", dur:"3 days", resp:"QA + Client"},
+      {id:"3.2", name:"Documentation finalization", desc:"All technical and user docs updated and reviewed", cadence:"milestone", trigger:"After UAT sign-off", dur:"2 days", resp:"Tech Writer"},
+      {id:"3.3", name:"Retrospective", desc:"What went well, what to improve, lessons learned", cadence:"milestone", trigger:"Project close", dur:"2 hrs", resp:"Team"},
+    ]},
+  ];
+  activePhase = 1;
+}
+
+loadSampleProject();
+buildNav();
+renderContent();
+</script>
+</body>
+</html>

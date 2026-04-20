@@ -1,0 +1,38 @@
+
+> taskops-app@0.1.0 dev
+> next dev
+
+   Γû▓ Next.js 15.5.14
+   - Local:        http://localhost:3000
+   - Network:      http://10.248.135.175:3000
+
+ Γ£ô Starting...
+ Γ£ô Ready in 3.8s
+ Γùï Compiling /api/auth/login ...
+ Γ£ô Compiled /api/auth/login in 5.5s (310 modules)
+ POST /api/auth/login 200 in 6996ms
+ POST /api/auth/login 200 in 6667ms
+ Γùï Compiling /api/auth/users ...
+ Γ£ô Compiled /api/auth/users in 1412ms (312 modules)
+ GET /api/auth/users 401 in 1556ms
+ GET /api/auth/users 401 in 1589ms
+ POST /api/auth/users 401 in 50ms
+ POST /api/auth/login 500 in 162ms
+ Γ£ô Compiled /api/auth/session in 356ms (314 modules)
+ GET /api/auth/session 500 in 513ms
+ POST /api/auth/login 500 in 127ms
+ POST /api/auth/login 500 in 155ms
+ GET /api/auth/session 500 in 24ms
+ GET /api/auth/users 401 in 44ms
+ POST /api/auth/users 401 in 32ms
+ POST /api/auth/login 500 in 210ms
+ GET /api/auth/users 401 in 40ms
+ Γ£ô Compiled in 53ms
+ Γ£ô Compiled in 340ms (195 modules)
+ Γ£ô Compiled in 140ms (195 modules)
+ Γ£ô Compiled in 203ms (195 modules)
+ Γùï Compiling / ...
+ Γ£ô Compiled / in 10.6s (698 modules)
+ GET / 200 in 11788ms
+ GET / 200 in 141ms
+ Γ£ô Compiled in 759ms (301 modules)

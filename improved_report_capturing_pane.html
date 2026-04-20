@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Report Capturing Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-yellow: #f59e0b;
+            --accent-red: #ef4444;
+            --border-color: #475569;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-primary);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header .subtitle {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-tab:hover {
+            background: var(--bg-tertiary);
+            transform: translateY(-2px);
+        }
+
+        .nav-tab.active {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
+        }
+
+        .btn-success {
+            background: var(--accent-green);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            justify-content: center;
+            border-radius: 6px;
+        }
+
+        /* Rich Text Editor */
+        .rich-editor-container {
+            position: relative;
+        }
+
+        .rich-editor-toolbar {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            padding: 8px;
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-secondary);
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .toolbar-btn:hover {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border-color: var(--border-color);
+        }
+
+        .toolbar-btn.active {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .toolbar-divider {
+            width: 1px;
+            background: var(--border-color);
+            margin: 0 4px;
+        }
+
+        .rich-editor {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 0 0 8px 8px;
+            min-height: 200px;
+            padding: 16px;
+            color: var(--text-primary);
+            font-size: 14px;
+            line-height: 1.6;
+            outline: none;
+        }
+
+        .rich-editor:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .rich-editor ul, .rich-editor ol {
+            margin: 8px 0;
+            padding-left: 24px;
+        }
+
+        .rich-editor li {
+            margin: 4px 0;
+        }
+
+        .rich-editor b, .rich-editor strong {
+            color: var(--accent-blue);
+        }
+
+        .mention {
+            color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* Status Indicators */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-ontrack {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+        }
+
+        .status-warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--accent-yellow);
+            border: 1px solid var(--accent-yellow);
+        }
+
+        .status-critical {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent-red);
+            border: 1px solid var(--accent-red);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Metric Card */
+        .metric-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .metric-title {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .metric-meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 8px 0;
+        }
+
+        .metric-target {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Corrective Actions List */
+        .action-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .action-item {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s;
+        }
+
+        .action-item:hover {
+            border-color: var(--accent-blue);
+            transform: translateX(4px);
+        }
+
+        .action-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .action-checkbox.checked {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+        }
+
+        .action-checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-weight: bold;
+        }
+
+        .action-content {
+            flex: 1;
+        }
+
+        .action-text {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .action-meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+            display: flex;
+            gap: 12px;
+        }
+
+        .assignee {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .action-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-inprogress {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--accent-blue);
+        }
+
+        .status-pending {
+            background: rgba(148, 163, 184, 0.2);
+            color: var(--text-secondary);
+        }
+
+        .status-completed {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--accent-green);
+        }
+
+        .action-delete {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .action-delete:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--accent-red);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            animation: modalSlide 0.3s ease-out;
+        }
+
+        @keyframes modalSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            background: var(--bg-tertiary);
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 24px;
+            overflow-y: auto;
+            max-height: calc(90vh - 140px);
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+
+        .form-input {
+            width: 100%;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px 14px;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-select {
+            width: 100%;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px 14px;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Auto-save indicator */
+        .autosave-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            padding: 8px;
+            border-radius: 6px;
+            background: var(--bg-primary);
+        }
+
+        .autosave-indicator.saving {
+            color: var(--accent-blue);
+        }
+
+        .autosave-indicator.saved {
+            color: var(--accent-green);
+        }
+
+        /* Collapsible Section */
+        .collapsible {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .collapsible::after {
+            content: '▼';
+            margin-left: 8px;
+            font-size: 12px;
+            transition: transform 0.3s;
+        }
+
+        .collapsible.collapsed::after {
+            transform: rotate(-90deg);
+        }
+
+        .collapsible-content {
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .collapsible-content.collapsed {
+            max-height: 0;
+        }
+
+        /* Voice recording indicator */
+        .voice-recording {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--accent-red);
+            border-radius: 6px;
+            color: var(--accent-red);
+            animation: recordingPulse 1.5s infinite;
+        }
+
+        .voice-recording.active {
+            display: flex;
+        }
+
+        @keyframes recordingPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Toast notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent-blue);
+            padding: 16px 24px;
+            border-radius: 6px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            animation: toastSlide 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 300px;
+        }
+
+        .toast.success {
+            border-left-color: var(--accent-green);
+        }
+
+        .toast.error {
+            border-left-color: var(--accent-red);
+        }
+
+        .toast.warning {
+            border-left-color: var(--accent-yellow);
+        }
+
+        @keyframes toastSlide {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .card {
+                padding: 16px;
+            }
+
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .nav-tabs {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+            }
+        }
+
+        /* Loading spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-color);
+            border-top-color: var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Tag input */
+        .tag-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 8px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            min-height: 44px;
+            align-items: center;
+        }
+
+        .tag {
+            background: var(--accent-blue);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tag-remove {
+            cursor: pointer;
+            opacity: 0.7;
+        }
+
+        .tag-remove:hover {
+            opacity: 1;
+        }
+
+        .tag-input-field {
+            border: none;
+            background: transparent;
+            color: var(--text-primary);
+            outline: none;
+            flex: 1;
+            min-width: 100px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                Enhanced Report Capturing Panel
+            </h1>
+            <div class="subtitle">Shift Report #2026-04-20-001 | Site: Main Operations</div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="switchTab('narrative')">📝 Core Narrative</div>
+            <div class="nav-tab" onclick="switchTab('metrics')">📊 Rule-Specific Metrics</div>
+            <div class="nav-tab" onclick="switchTab('actions')">✅ Corrective Actions</div>
+            <div class="nav-tab" onclick="switchTab('review')">👁️ Review & Submit</div>
+        </div>
+
+        <!-- Section 1: Core Narrative -->
+        <div id="narrative" class="section active">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        Executive Summary
+                        <span class="autosave-indicator" id="autosave-summary">
+                            <span>💾</span>
+                            <span>Saved</span>
+                        </span>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-secondary" onclick="generateAISummary()">
+                            <span>✨</span> AI Generate
+                        </button>
+                        <button class="btn btn-primary" onclick="openEditor('summary')">
+                            <span>✏️</span> Edit
+                        </button>
+                    </div>
+                </div>
+                <div class="rich-editor" id="summary-preview" contenteditable="false">
+                    <b>Shift Overview</b><br>
+                    • Production targets met at 94% efficiency<br>
+                    • Equipment downtime reduced by 15% from last shift<br>
+                    • Safety incident: Minor first aid case reported at 14:30<br>
+                    • Team headcount: 24 operators, 3 supervisors<br>
+                    • <span class="mention">@MaintenanceTeam</span> completed scheduled preventive maintenance<br>
+                    • <span class="mention">@SafetyTeam</span> conducted toolbox talk on new PPE requirements
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Variance / Root Cause Analysis</div>
+                    <button class="btn btn-primary" onclick="openEditor('variance')">
+                        <span>✏️</span> Edit
+                    </button>
+                </div>
+                <div class="rich-editor" id="variance-preview" contenteditable="false">
+                    Primary variance in conveyor belt #3 performance due to worn rollers. 
+                    Root cause identified as delayed maintenance from previous week. 
+                    Impact: 2.5 hours downtime, 6% production loss.
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Rule-Specific Metrics -->
+        <div id="metrics" class="section">
+            <div class="card">
+                <div class="card-header collapsible" onclick="toggleCollapse(this)">
+                    <div class="card-title">Team Headcount and Task Allocation</div>
+                    <span class="status-badge status-ontrack">
+                        <span class="status-dot"></span>
+                        On Track
+                    </span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <div>
+                                <div class="metric-title">Current Headcount</div>
+                                <div class="metric-meta">Source: Supervisor roster | Trigger: Headcount gap triggers notification</div>
+                            </div>
+                            <select class="form-select" style="width: auto;" onchange="updateStatus(this, 'headcount-status')">
+                                <option value="ontrack" selected>On Track</option>
+                                <option value="warning">Warning</option>
+                                <option value="critical">Critical</option>
+                            </select>
+                        </div>
+                        <div class="metric-value">24/24</div>
+                        <div class="metric-target">Target: 24 operators | Current: 100%</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Observation</label>
+                        <textarea class="form-input" rows="3" placeholder="Add observation if not on track..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header collapsible" onclick="toggleCollapse(this)">
+                    <div class="card-title">Equipment Availability and Downtime</div>
+                    <span class="status-badge status-warning" id="equipment-status">
+                        <span class="status-dot"></span>
+                        Warning
+                    </span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <div>
+                                <div class="metric-title">Equipment Availability</div>
+                                <div class="metric-meta">Source: Maintenance log | Trigger: Downtime above 2 hours</div>
+                            </div>
+                            <select class="form-select" style="width: auto;" onchange="updateStatus(this, 'equipment-status')">
+                                <option value="ontrack">On Track</option>
+                                <option value="warning" selected>Warning</option>
+                                <option value="critical">Critical</option>
+                            </select>
+                        </div>
+                        <div class="metric-value" style="color: var(--accent-yellow);">87%</div>
+                        <div class="metric-target">Target: 95% | Current: 87% (-8%)</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Observation Required</label>
+                        <textarea class="form-input" rows="3" placeholder="Explain the downtime and corrective measures...">Conveyor belt #3 experienced 2.5 hours downtime due to roller failure. Maintenance team responded within 15 minutes. Replacement parts installed and tested.</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header collapsible" onclick="toggleCollapse(this)">
+                    <div class="card-title">Section Progress Updates</div>
+                    <span class="status-badge status-ontrack">
+                        <span class="status-dot"></span>
+                        On Track
+                    </span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <div>
+                                <div class="metric-title">Planned vs Actual Progress</div>
+                                <div class="metric-meta">Source: Field log | Trigger: Slip against planned block sequence</div>
+                            </div>
+                            <select class="form-select" style="width: auto;">
+                                <option value="ontrack" selected>On Track</option>
+                                <option value="warning">Warning</option>
+                                <option value="critical">Critical</option>
+                            </select>
+                        </div>
+                        <div class="metric-value">94%</div>
+                        <div class="metric-target">Target: 100% | Variance: -6%</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Observation</label>
+                        <textarea class="form-input" rows="3" placeholder="Add observation..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Corrective Actions -->
+        <div id="actions" class="section">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Active Corrective Actions</div>
+                    <div class="card-actions">
+                        <button class="btn btn-secondary" onclick="bulkAssign()">
+                            <span>👥</span> Bulk Assign
+                        </button>
+                        <button class="btn btn-primary" onclick="openAddActionModal()">
+                            <span>+</span> Add Action
+                        </button>
+                    </div>
+                </div>
+                <div class="action-list" id="action-list">
+                    <!-- Actions will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Review & Submit -->
+        <div id="review" class="section">
+            <div class="card">
+                <div class="card-title" style="margin-bottom: 20px;">Report Review Checklist</div>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg-primary); border-radius: 6px; cursor: pointer;">
+                        <input type="checkbox" style="width: 18px; height: 18px; cursor: pointer;">
+                        <span>All mandatory fields completed</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg-primary); border-radius: 6px; cursor: pointer;">
+                        <input type="checkbox" style="width: 18px; height: 18px; cursor: pointer;">
+                        <span>Metrics verified against source systems</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg-primary); border-radius: 6px; cursor: pointer;">
+                        <input type="checkbox" style="width: 18px; height: 18px; cursor: pointer;">
+                        <span>Corrective actions assigned and acknowledged</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg-primary); border-radius: 6px; cursor: pointer;">
+                        <input type="checkbox" style="width: 18px; height: 18px; cursor: pointer;">
+                        <span>Supporting documentation attached</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title" style="margin-bottom: 20px;">Tags & Categories</div>
+                <div class="tag-input" id="tag-input">
+                    <span class="tag">Safety <span class="tag-remove" onclick="removeTag(this)">×</span></span>
+                    <span class="tag">Maintenance <span class="tag-remove" onclick="removeTag(this)">×</span></span>
+                    <input type="text" class="tag-input-field" placeholder="Add tag and press Enter..." onkeypress="addTag(event)">
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <button class="btn btn-secondary" onclick="saveDraft()">
+                    <span>💾</span> Save Draft
+                </button>
+                <button class="btn btn-primary" onclick="submitReport()" style="padding: 12px 32px; font-size: 16px;">
+                    <span>✅</span> Submit Report
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rich Text Editor Modal -->
+    <div class="modal-overlay" id="editor-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="editor-title">Edit Section</div>
+                <button class="modal-close" onclick="closeEditor()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="rich-editor-container">
+                    <div class="rich-editor-toolbar">
+                        <button class="toolbar-btn" onclick="formatDoc('bold')" title="Bold">
+                            <b>B</b>
+                        </button>
+                        <button class="toolbar-btn" onclick="formatDoc('italic')" title="Italic">
+                            <i>I</i>
+                        </button>
+                        <button class="toolbar-btn" onclick="formatDoc('underline')" title="Underline">
+                            <u>U</u>
+                        </button>
+                        <div class="toolbar-divider"></div>
+                        <button class="toolbar-btn" onclick="formatDoc('insertUnorderedList')" title="Bullet List">
+                            •◦
+                        </button>
+                        <button class="toolbar-btn" onclick="formatDoc('insertOrderedList')" title="Numbered List">
+                            1.2
+                        </button>
+                        <div class="toolbar-divider"></div>
+                        <button class="toolbar-btn" onclick="insertMention()" title="Add Mention">
+                            @
+                        </button>
+                        <button class="toolbar-btn" onclick="insertHashtag()" title="Add Hashtag">
+                            #
+                        </button>
+                        <div class="toolbar-divider"></div>
+                        <button class="toolbar-btn" onclick="document.getElementById('image-input').click()" title="Insert Image">
+                            🖼️
+                        </button>
+                        <input type="file" id="image-input" accept="image/*" style="display: none;" onchange="insertImage(event)">
+                        <button class="toolbar-btn" onclick="toggleVoiceRecording()" title="Voice to Text" id="voice-btn">
+                            🎤
+                        </button>
+                    </div>
+                    <div class="voice-recording" id="voice-indicator">
+                        <span class="spinner"></span>
+                        <span>Recording...</span>
+                    </div>
+                    <div class="rich-editor" id="main-editor" contenteditable="true" style="min-height: 300px;">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeEditor()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveEditorContent()">
+                    <span>✓</span> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Action Modal -->
+    <div class="modal-overlay" id="action-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Add Corrective Action</div>
+                <button class="modal-close" onclick="closeActionModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Action Description</label>
+                    <textarea class="form-input" id="action-desc" rows="3" placeholder="Describe the corrective action required..."></textarea>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-group">
+                        <label class="form-label">Assign To</label>
+                        <select class="form-select" id="action-assignee">
+                            <option value="">Select assignee...</option>
+                            <option value="John Smith">John Smith</option>
+                            <option value="Sarah Johnson">Sarah Johnson</option>
+                            <option value="Mike Chen">Mike Chen</option>
+                            <option value="Maintenance Team">Maintenance Team</option>
+                            <option value="Safety Team">Safety Team</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Priority</label>
+                        <select class="form-select" id="action-priority">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                            <option value="critical">Critical</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Due Date</label>
+                    <input type="datetime-local" class="form-input" id="action-due-date">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeActionModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="addAction()">
+                    <span>+</span> Add Action
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script>
+        // Data Store
+        let actions = [
+            { id: 1, text: 'Replace worn rollers on conveyor belt #3', assignee: 'Mike Chen', status: 'inprogress', completed: false },
+            { id: 2, text: 'Update preventive maintenance schedule', assignee: 'Sarah Johnson', status: 'pending', completed: false },
+            { id: 3, text: 'Conduct safety briefing on new PPE', assignee: 'Safety Team', status: 'completed', completed: true },
+            { id: 4, text: 'Review production targets for next shift', assignee: 'John Smith', status: 'inprogress', completed: false },
+        ];
+
+        let currentEditor = null;
+        let isRecording = false;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderActions();
+            setupAutoSave();
+        });
+
+        // Tab Navigation
+        function switchTab(tabName) {
+            // Update tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
+
+            showToast(`Navigated to ${tabName}`, 'info');
+        }
+
+        // Collapsible Sections
+        function toggleCollapse(header) {
+            const content = header.nextElementSibling;
+            header.classList.toggle('collapsed');
+            content.classList.toggle('collapsed');
+            
+            if (content.classList.contains('collapsed')) {
+                content.style.maxHeight = '0';
+            } else {
+                content.style.maxHeight = content.scrollHeight + 'px';
+            }
+        }
+
+        // Rich Text Editor
+        function openEditor(section) {
+            currentEditor = section;
+            const modal = document.getElementById('editor-modal');
+            const editor = document.getElementById('main-editor');
+            const title = document.getElementById('editor-title');
+            
+            // Set title
+            const titles = {
+                'summary': 'Edit Executive Summary',
+                'variance': 'Edit Variance / Root Cause'
+            };
+            title.textContent = titles[section] || 'Edit Section';
+            
+            // Load content
+            const preview = document.getElementById(section + '-preview');
+            editor.innerHTML = preview.innerHTML;
+            
+            modal.classList.add('active');
+        }
+
+        function closeEditor() {
+            document.getElementById('editor-modal').classList.remove('active');
+            currentEditor = null;
+        }
+
+        function formatDoc(cmd, value = null) {
+            document.execCommand(cmd, false, value);
+            document.getElementById('main-editor').focus();
+        }
+
+        function insertMention() {
+            const mention = prompt('Enter username to mention (e.g., MaintenanceTeam):');
+            if (mention) {
+                formatDoc('insertHTML', `<span class="mention">@${mention}</span> `);
+            }
+        }
+
+        function insertHashtag() {
+            const tag = prompt('Enter tag (e.g., Safety, Maintenance):');
+            if (tag) {
+                formatDoc('insertHTML', `<span class="mention">#${tag}</span> `);
+            }
+        }
+
+        function insertImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    formatDoc('insertImage', e.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function toggleVoiceRecording() {
+            isRecording = !isRecording;
+            const indicator = document.getElementById('voice-indicator');
+            const btn = document.getElementById('voice-btn');
+            
+            if (isRecording) {
+                indicator.classList.add('active');
+                btn.classList.add('active');
+                showToast('Voice recording started... Speak now', 'info');
+                
+                // Simulate voice recognition
+                setTimeout(() => {
+                    if (isRecording) {
+                        formatDoc('insertText', '[Transcribed voice text would appear here] ');
+                        toggleVoiceRecording();
+                        showToast('Voice transcription complete', 'success');
+                    }
+                }, 3000);
+            } else {
+                indicator.classList.remove('active');
+                btn.classList.remove('active');
+            }
+        }
+
+        function saveEditorContent() {
+            const editor = document.getElementById('main-editor');
+            const preview = document.getElementById(currentEditor + '-preview');
+            preview.innerHTML = editor.innerHTML;
+            closeEditor();
+            showToast('Changes saved successfully', 'success');
+            triggerAutoSave();
+        }
+
+        // AI Summary Generation
+        function generateAISummary() {
+            showToast('Generating AI summary...', 'info');
+            
+            setTimeout(() => {
+                const summary = document.getElementById('summary-preview');
+                summary.innerHTML = `
+                    <b>Shift Overview - Auto-Generated</b><br>
+                    • Production efficiency: <b>94%</b> of target achieved<br>
+                    • Equipment availability: <b>87%</b> (Warning - below 95% target)<br>
+                    • Downtime: <b>2.5 hours</b> primarily on conveyor belt #3<br>
+                    • Safety: <b>1 minor incident</b> - first aid case at 14:30<br>
+                    • Headcount: <b>24/24</b> operators present<br>
+                    • Key achievement: <b>15% reduction</b> in downtime vs previous shift<br>
+                    • <span class="mention">@MaintenanceTeam</span> completed all scheduled PM tasks<br>
+                    • <span class="mention">@SafetyTeam</span> conducted new PPE briefing<br>
+                    • Action items: <b>4 active</b> corrective actions assigned
+                `;
+                showToast('AI summary generated successfully', 'success');
+                triggerAutoSave();
+            }, 1500);
+        }
+
+        // Corrective Actions
+        function renderActions() {
+            const list = document.getElementById('action-list');
+            list.innerHTML = actions.map(action => `
+                <div class="action-item" style="${action.completed ? 'opacity: 0.6;' : ''}">
+                    <div class="action-checkbox ${action.completed ? 'checked' : ''}" onclick="toggleAction(${action.id})"></div>
+                    <div class="action-content">
+                        <div class="action-text" style="${action.completed ? 'text-decoration: line-through;' : ''}">${action.text}</div>
+                        <div class="action-meta">
+                            <span class="assignee">
+                                <div class="avatar">${action.assignee.split(' ').map(n => n[0]).join('')}</div>
+                                <span>${action.assignee}</span>
+                            </span>
+                            <span class="action-status status-${action.status}">${action.status}</span>
+                        </div>
+                    </div>
+                    <button class="action-delete" onclick="deleteAction(${action.id})" title="Delete">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function openAddActionModal() {
+            document.getElementById('action-modal').classList.add('active');
+        }
+
+        function closeActionModal() {
+            document.getElementById('action-modal').classList.remove('active');
+            // Clear form
+            document.getElementById('action-desc').value = '';
+            document.getElementById('action-assignee').value = '';
+            document.getElementById('action-priority').value = 'medium';
+            document.getElementById('action-due-date').value = '';
+        }
+
+        function addAction() {
+            const desc = document.getElementById('action-desc').value;
+            const assignee = document.getElementById('action-assignee').value;
+            const priority = document.getElementById('action-priority').value;
+            
+            if (!desc || !assignee) {
+                showToast('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            const newAction = {
+                id: Date.now(),
+                text: desc,
+                assignee: assignee,
+                status: 'pending',
+                completed: false,
+                priority: priority
+            };
+            
+            actions.push(newAction);
+            renderActions();
+            closeActionModal();
+            showToast('Corrective action added successfully', 'success');
+        }
+
+        function toggleAction(id) {
+            const action = actions.find(a => a.id === id);
+            if (action) {
+                action.completed = !action.completed;
+                action.status = action.completed ? 'completed' : 'pending';
+                renderActions();
+                showToast(action.completed ? 'Action completed!' : 'Action reopened', 'success');
+            }
+        }
+
+        function deleteAction(id) {
+            if (confirm('Are you sure you want to delete this action?')) {
+                actions = actions.filter(a => a.id !== id);
+                renderActions();
+                showToast('Action deleted', 'success');
+            }
+        }
+
+        function bulkAssign() {
+            showToast('Bulk assign feature: Select multiple actions to assign to a team', 'info');
+        }
+
+        // Status Updates
+        function updateStatus(select, statusId) {
+            const badge = document.getElementById(statusId);
+            const value = select.value;
+            
+            badge.className = 'status-badge status-' + value;
+            
+            const labels = {
+                'ontrack': 'On Track',
+                'warning': 'Warning',
+                'critical': 'Critical'
+            };
+            
+            badge.innerHTML = `
+                <span class="status-dot"></span>
+                ${labels[value]}
+            `;
+            
+            showToast(`Status updated to ${labels[value]}`, 'success');
+            triggerAutoSave();
+        }
+
+        // Tags
+        function addTag(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                const input = event.target;
+                const value = input.value.trim();
+                
+                if (value) {
+                    const tag = document.createElement('span');
+                    tag.className = 'tag';
+                    tag.innerHTML = `${value} <span class="tag-remove" onclick="removeTag(this)">×</span>`;
+                    input.parentNode.insertBefore(tag, input);
+                    input.value = '';
+                    showToast(`Tag "${value}" added`, 'success');
+                }
+            }
+        }
+
+        function removeTag(element) {
+            element.parentElement.remove();
+        }
+
+        // Auto-save
+        function setupAutoSave() {
+            // Auto-save every 30 seconds
+            setInterval(() => {
+                triggerAutoSave();
+            }, 30000);
+        }
+
+        function triggerAutoSave() {
+            const indicator = document.getElementById('autosave-summary');
+            indicator.classList.remove('saved');
+            indicator.classList.add('saving');
+            indicator.querySelector('span:last-child').textContent = 'Saving...';
+            
+            setTimeout(() => {
+                indicator.classList.remove('saving');
+                indicator.classList.add('saved');
+                indicator.querySelector('span:last-child').textContent = 'Saved';
+            }, 1000);
+        }
+
+        // Toast Notifications
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icons = {
+                'info': 'ℹ️',
+                'success': '✅',
+                'error': '❌',
+                'warning': '⚠️'
+            };
+            
+            toast.innerHTML = `
+                <span>${icons[type]}</span>
+                <span>${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'toastSlide 0.3s ease-out reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Save Draft
+        function saveDraft() {
+            showToast('Draft saved successfully', 'success');
+        }
+
+        // Submit Report
+        function submitReport() {
+            const checkboxes = document.querySelectorAll('#review input[type="checkbox"]');
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            
+            if (!allChecked) {
+                showToast('Please complete all checklist items before submitting', 'warning');
+                return;
+            }
+            
+            if (confirm('Are you sure you want to submit this report?')) {
+                showToast('Report submitted successfully!', 'success');
+                setTimeout(() => {
+                    alert('Report #2026-04-20-001 has been submitted to management.');
+                }, 1000);
+            }
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Ctrl/Cmd + S to save
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                triggerAutoSave();
+                showToast('Manual save triggered', 'success');
+            }
+            
+            // Escape to close modals
+            if (e.key === 'Escape') {
+                closeEditor();
+                closeActionModal();
+            }
+        });
+    </script>
+</body>
+</html>

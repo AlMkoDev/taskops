@@ -1,0 +1,68 @@
+[
+  {
+    "id": "notify_1776684095716_0",
+    "createdAt": "2026-04-20T11:21:35.716Z",
+    "reportId": "report_1776684094258",
+    "channel": "in_app",
+    "event": "report_created",
+    "recipientUserId": "user_farm_manager",
+    "recipientName": "Farm / Project Manager",
+    "status": "queued",
+    "message": "Shift Lead created Daily Farm / Project Manager report."
+  },
+  {
+    "id": "notify_1776674186199_0",
+    "createdAt": "2026-04-20T08:36:26.199Z",
+    "reportId": "report_1776674185649",
+    "channel": "in_app",
+    "event": "report_created",
+    "recipientUserId": "user_farm_manager",
+    "recipientName": "Farm / Project Manager",
+    "status": "queued",
+    "message": "Shift Lead created Daily Operations Supervisor report."
+  },
+  {
+    "id": "notify_1776674154776_0",
+    "createdAt": "2026-04-20T08:35:54.776Z",
+    "reportId": "report_1776674153162",
+    "channel": "in_app",
+    "event": "report_created",
+    "recipientUserId": "user_farm_manager",
+    "recipientName": "Farm / Project Manager",
+    "status": "queued",
+    "message": "Shift Lead created Daily Farm / Project Manager report."
+  },
+  {
+    "id": "notify_1776674133611_0",
+    "createdAt": "2026-04-20T08:35:33.611Z",
+    "reportId": "report_1776674132997",
+    "channel": "in_app",
+    "event": "report_created",
+    "recipientUserId": "user_farm_manager",
+    "recipientName": "Farm / Project Manager",
+    "status": "queued",
+    "message": "Shift Lead created Daily Farm / Project Manager report."
+  },
+  {
+    "id": "notify_1776664830031_0",
+    "createdAt": "2026-04-20T06:00:30.031Z",
+    "reportId": "report_1776664829461",
+    "channel": "in_app",
+    "event": "report_created",
+    "recipientUserId": "user_farm_manager",
+    "recipientName": "Farm / Project Manager",
+    "status": "queued",
+    "message": "Shift Lead created Daily Farm / Project Manager report."
+  },
+  {
+    "id": "notify_1776594716363_0",
+    "createdAt": "2026-04-19T10:31:56.363Z",
+    "reportId": "report_1776594716326",
+    "channel": "in_app",
+    "event": "report_created",
+    "recipientUserId": "user_farm_manager",
+    "recipientName": "Farm / Project Manager",
+    "status": "queued",
+    "message": "Shift Lead created Daily Operations Supervisor report."
+  }
+]

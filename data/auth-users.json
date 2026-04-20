@@ -1,0 +1,90 @@
+[
+  {
+    "id": "user_shift_lead",
+    "email": "shift.lead@agrireports.local",
+    "name": "Shift Lead",
+    "role": "author",
+    "team": "Field Operations",
+    "status": "active",
+    "passwordHash": "f9cd2bda9900bed8bc85fc2740c56c9e:2314750ab056e857dcbe00b48c02b997212bb69255fe4c8b51c84130acd51185711c6632e2dd0185e42eae88a2961118150249512d0bf880225ad840c6d9a80c",
+    "createdAt": "2026-04-19T10:24:13.635Z",
+    "updatedAt": "2026-04-19T10:24:13.635Z"
+  },
+  {
+    "id": "user_farm_manager",
+    "email": "farm.manager@agrireports.local",
+    "name": "Farm / Project Manager",
+    "role": "manager",
+    "team": "Management",
+    "status": "active",
+    "passwordHash": "81845ad62e63d174a5725ef94c25537a:71fa9d10268572f66bd9eb9623a3fd819d885046883d0fd38101b46f0414c71f01e70ea34ab9fd40cb304a36afcdab3e984082813f08bb58d3b2a69e60c6e2f1",
+    "createdAt": "2026-04-19T10:24:13.635Z",
+    "updatedAt": "2026-04-19T10:24:13.635Z"
+  },
+  {
+    "id": "user_finance_controller",
+    "email": "finance.controller@agrireports.local",
+    "name": "Finance Controller",
+    "role": "author",
+    "team": "Finance",
+    "status": "active",
+    "passwordHash": "eed93b6306f87a293677fc1498c1e6f0:4024623b62bf21dafb32aaab0df9c0a6455811f1a8524be71a03acabb55a129ca7244f305a805e1bfcd21ba14bcc8dd5de9880628d841f01f16561324f539d50",
+    "createdAt": "2026-04-19T10:24:13.635Z",
+    "updatedAt": "2026-04-19T10:24:13.635Z"
+  },
+  {
+    "id": "user_general_manager",
+    "email": "general.manager@agrireports.local",
+    "name": "General Manager",
+    "role": "manager",
+    "team": "Management",
+    "status": "active",
+    "passwordHash": "6930d189eeeb590f68d18fa352c21122:8ea568179bcca0b5a750c238833410b045d7eb14aa9cc8e1446adac0326eb1786880805241702f57ac8b318be7cd4a61bac38bda4d4e5860079598a08c27642d",
+    "createdAt": "2026-04-19T10:24:13.635Z",
+    "updatedAt": "2026-04-19T10:24:13.635Z"
+  },
+  {
+    "id": "user_qa_lead",
+    "email": "qa.lead@agrireports.local",
+    "name": "QA Lead",
+    "role": "author",
+    "team": "Quality Assurance",
+    "status": "active",
+    "passwordHash": "e73077954bed04be369942369a5d5eaa:89cbe4ac6a405281813bbafdc05a815da59669cca64b06e9f0330636f356e5d159b7e968a3dfe1b79bb9ab66b3ff60071144e119e4fdec7028a778ee93634b38",
+    "createdAt": "2026-04-19T10:24:13.635Z",
+    "updatedAt": "2026-04-19T10:24:13.635Z"
+  },
+  {
+    "id": "user_operations_director",
+    "email": "operations.director@agrireports.local",
+    "name": "Operations Director",
+    "role": "reviewer",
+    "team": "Executive",
+    "status": "active",
+    "passwordHash": "e4e827f431df69751ef6daa00a8fd108:4434e85e8471a28d3464182d135f4be418711082599213a9bf0173a2d828f48b8fc414767f31f581b2292b4412e559a08ef2e459927008f1e7e4de0de53e3462",
+    "createdAt": "2026-04-19T10:24:13.635Z",
+    "updatedAt": "2026-04-19T10:24:13.635Z"
+  },
+  {
+    "id": "user_regional_manager",
+    "email": "regional.manager@agrireports.local",
+    "name": "Regional Manager",
+    "role": "reviewer",
+    "team": "Regional Management",
+    "status": "active",
+    "passwordHash": "64f3df86ad53391da1da88eaba3b91ff:0c43d6d9a2ba3ec50e629e635dc61e465917141190b8d72193c3e30e2b45a74b2227dd217de4d8161f91ac024f6ae890a8b561c6cf0965403a9fd26c5b5da10e",
+    "createdAt": "2026-04-19T10:24:13.635Z",
+    "updatedAt": "2026-04-19T10:24:13.635Z"
+  },
+  {
+    "id": "user_farm_ops_lead",
+    "email": "farm.ops.lead@agrireports.local",
+    "name": "Farm Operations Lead",
+    "role": "author",
+    "team": "Operations",
+    "status": "active",
+    "passwordHash": "e36319797bf0a8bb0cd4a57c5579ed15:f0f2c3f166be374b21345d85ebc4d96cb388244a37e89486ec3a93dffbe17c62fa428d59c0cf317bc1915dc655db93dfb5ea523d1c11dc9cbe51ca567f6d730a",
+    "createdAt": "2026-04-19T10:24:13.635Z",
+    "updatedAt": "2026-04-19T10:24:13.635Z"
+  }
+]

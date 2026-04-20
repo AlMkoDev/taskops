@@ -1,0 +1,99 @@
+ ⨯ Failed to generate static paths for /api/reports/[id]/notifications:
+TypeError: __webpack_require__.C is not a function
+    at <unknown> (C:\taskops\.next\server\app\api\reports\[id]\notifications\route.js:282:21)
+    at Object.<anonymous> (C:\taskops\.next\server\app\api\reports\[id]\notifications\route.js:287:3) {
+  type: 'TypeError'
+}
+ ⨯ SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>) {
+  page: '/'
+}
+ ⨯ SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>) {
+  page: '/api/auth/users'
+}
+ ⨯ SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>) {
+  page: '/api/auth/users'
+}
+ ⨯ SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>) {
+  page: '/api/reports/report_1776594716326/notifications'
+}
+Error: ENOSPC: no space left on device, write
+    at async writeReports (src\lib\reports-persistence.ts:23:3)
+    at async updateReportRecord (src\lib\reports-persistence.ts:69:3)
+    at async PUT (src\app\api\reports\[id]\route.ts:44:19)
+  21 | async function writeReports(reports: ReportRecord[]) {
+  22 |   await ensureReportsFile();
+> 23 |   await fs.writeFile(REPORTS_FILE, JSON.stringify(reports, null, 2), 'utf8');
+     |   ^
+  24 | }
+  25 |
+  26 | export async function readReports(): Promise<ReportRecord[]> { {
+  errno: -4055,
+  code: 'ENOSPC',
+  syscall: 'write'
+}
+ ⨯ [Error: ENOSPC: no space left on device, write] {
+  errno: -4055,
+  code: 'ENOSPC',
+  syscall: 'write'
+}
+ ⨯ [Error: ENOSPC: no space left on device, write] {
+  errno: -4055,
+  code: 'ENOSPC',
+  syscall: 'write'
+}
+[Error: ENOSPC: no space left on device, write] {
+  errno: -4055,
+  code: 'ENOSPC',
+  syscall: 'write'
+}
+[Error: ENOSPC: no space left on device, write] {
+  errno: -4055,
+  code: 'ENOSPC',
+  syscall: 'write'
+}
+[Error: ENOSPC: no space left on device, write] {
+  errno: -4055,
+  code: 'ENOSPC',
+  syscall: 'write'
+}
+[Error: ENOSPC: no space left on device, write] {
+  errno: -4055,
+  code: 'ENOSPC',
+  syscall: 'write'
+}
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\taskops\.next\cache\webpack\client-development-fallback\0.pack.gz_' -> 'C:\taskops\.next\cache\webpack\client-development-fallback\0.pack.gz'
+ ⨯ [Error: ENOSPC: no space left on device, write] {
+  errno: -4055,
+  code: 'ENOSPC',
+  syscall: 'write'
+}
+[Error: ENOSPC: no space left on device, write] {
+  errno: -4055,
+  code: 'ENOSPC',
+  syscall: 'write'
+}
+[Error: ENOSPC: no space left on device, write] {
+  errno: -4055,
+  code: 'ENOSPC',
+  syscall: 'write'
+}
+ ⨯ [Error: ENOSPC: no space left on device, write] {
+  errno: -4055,
+  code: 'ENOSPC',
+  syscall: 'write'
+}
+[Error: ENOSPC: no space left on device, write] {
+  errno: -4055,
+  code: 'ENOSPC',
+  syscall: 'write'
+}
+[Error: ENOSPC: no space left on device, write] {
+  errno: -4055,
+  code: 'ENOSPC',
+  syscall: 'write'
+}
+^C^C

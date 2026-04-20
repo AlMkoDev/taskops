@@ -1,0 +1,687 @@
+[31;1m=3001: [31;1mThe term '=3001' is not recognized as a name of a cmdlet, function, script file, or executable program.[0m
+[31;1m[31;1mCheck the spelling of the name, or if a path was included, verify that the path is correct and try again.[0m
+ ⚠ Port 3000 is in use by process 14708, using available port 3002 instead.
+Error: DATABASE_URL is required for PostgreSQL-backed report storage.
+    at requireDatabaseUrl (src\lib\postgres.ts:16:11)
+    at getPgPool (src\lib\postgres.ts:24:25)
+    at initializeSchema (src\lib\postgres.ts:111:16)
+    at ensurePostgresReady (src\lib\postgres.ts:118:37)
+    at queryPostgres (src\lib\postgres.ts:125:9)
+    at Object.list (src\lib\repositories\report-repository.ts:60:39)
+    at GET (src\app\api\v1\health\route.ts:7:22)
+  14 |   const value = process.env.DATABASE_URL;
+  15 |   if (!value) {
+> 16 |     throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
+     |           ^
+  17 |   }
+  18 |   return value;
+  19 | }
+Error: DATABASE_URL is required for PostgreSQL-backed report storage.
+    at requireDatabaseUrl (src\lib\postgres.ts:16:11)
+    at getPgPool (src\lib\postgres.ts:24:25)
+    at initializeSchema (src\lib\postgres.ts:111:16)
+    at ensurePostgresReady (src\lib\postgres.ts:118:37)
+    at queryPostgres (src\lib\postgres.ts:125:9)
+    at Object.list (src\lib\repositories\report-repository.ts:60:39)
+    at GET (src\app\api\v1\health\route.ts:7:22)
+  14 |   const value = process.env.DATABASE_URL;
+  15 |   if (!value) {
+> 16 |     throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
+     |           ^
+  17 |   }
+  18 |   return value;
+  19 | }
+Error: DATABASE_URL is required for PostgreSQL-backed report storage.
+    at requireDatabaseUrl (src\lib\postgres.ts:16:11)
+    at getPgPool (src\lib\postgres.ts:24:25)
+    at initializeSchema (src\lib\postgres.ts:111:16)
+    at ensurePostgresReady (src\lib\postgres.ts:118:37)
+    at queryPostgres (src\lib\postgres.ts:125:9)
+    at Object.list (src\lib\repositories\report-repository.ts:60:39)
+    at GET (src\app\api\v1\health\route.ts:7:22)
+  14 |   const value = process.env.DATABASE_URL;
+  15 |   if (!value) {
+> 16 |     throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
+     |           ^
+  17 |   }
+  18 |   return value;
+  19 | }
+Error: DATABASE_URL is required for PostgreSQL-backed report storage.
+    at requireDatabaseUrl (src\lib\postgres.ts:16:11)
+    at getPgPool (src\lib\postgres.ts:24:25)
+    at initializeSchema (src\lib\postgres.ts:111:16)
+    at ensurePostgresReady (src\lib\postgres.ts:118:37)
+    at queryPostgres (src\lib\postgres.ts:125:9)
+    at Object.list (src\lib\repositories\report-repository.ts:60:39)
+    at GET (src\app\api\v1\health\route.ts:7:22)
+  14 |   const value = process.env.DATABASE_URL;
+  15 |   if (!value) {
+> 16 |     throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
+     |           ^
+  17 |   }
+  18 |   return value;
+  19 | }
+Error: DATABASE_URL is required for PostgreSQL-backed report storage.
+    at requireDatabaseUrl (src\lib\postgres.ts:16:11)
+    at getPgPool (src\lib\postgres.ts:24:25)
+    at initializeSchema (src\lib\postgres.ts:111:16)
+    at ensurePostgresReady (src\lib\postgres.ts:118:37)
+    at queryPostgres (src\lib\postgres.ts:125:9)
+    at Object.list (src\lib\repositories\report-repository.ts:60:39)
+    at GET (src\app\api\v1\health\route.ts:7:22)
+  14 |   const value = process.env.DATABASE_URL;
+  15 |   if (!value) {
+> 16 |     throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
+     |           ^
+  17 |   }
+  18 |   return value;
+  19 | }
+Error: DATABASE_URL is required for PostgreSQL-backed report storage.
+    at requireDatabaseUrl (src\lib\postgres.ts:16:11)
+    at getPgPool (src\lib\postgres.ts:24:25)
+    at initializeSchema (src\lib\postgres.ts:111:16)
+    at ensurePostgresReady (src\lib\postgres.ts:118:37)
+    at queryPostgres (src\lib\postgres.ts:125:9)
+    at Object.list (src\lib\repositories\report-repository.ts:60:39)
+    at GET (src\app\api\v1\health\route.ts:7:22)
+  14 |   const value = process.env.DATABASE_URL;
+  15 |   if (!value) {
+> 16 |     throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
+     |           ^
+  17 |   }
+  18 |   return value;
+  19 | }
+Error: DATABASE_URL is required for PostgreSQL-backed report storage.
+    at requireDatabaseUrl (src\lib\postgres.ts:16:11)
+    at getPgPool (src\lib\postgres.ts:24:25)
+    at initializeSchema (src\lib\postgres.ts:111:16)
+    at ensurePostgresReady (src\lib\postgres.ts:118:37)
+    at queryPostgres (src\lib\postgres.ts:125:9)
+    at Object.list (src\lib\repositories\report-repository.ts:60:39)
+    at GET (src\app\api\v1\health\route.ts:7:22)
+  14 |   const value = process.env.DATABASE_URL;
+  15 |   if (!value) {
+> 16 |     throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
+     |           ^
+  17 |   }
+  18 |   return value;
+  19 | }
+Error: DATABASE_URL is required for PostgreSQL-backed report storage.
+    at requireDatabaseUrl (src\lib\postgres.ts:16:11)
+    at getPgPool (src\lib\postgres.ts:24:25)
+    at initializeSchema (src\lib\postgres.ts:111:16)
+    at ensurePostgresReady (src\lib\postgres.ts:118:37)
+    at queryPostgres (src\lib\postgres.ts:125:9)
+    at Object.list (src\lib\repositories\report-repository.ts:60:39)
+    at GET (src\app\api\v1\health\route.ts:7:22)
+  14 |   const value = process.env.DATABASE_URL;
+  15 |   if (!value) {
+> 16 |     throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
+     |           ^
+  17 |   }
+  18 |   return value;
+  19 | }
+Error: DATABASE_URL is required for PostgreSQL-backed report storage.
+    at requireDatabaseUrl (src\lib\postgres.ts:16:11)
+    at getPgPool (src\lib\postgres.ts:24:25)
+    at initializeSchema (src\lib\postgres.ts:111:16)
+    at ensurePostgresReady (src\lib\postgres.ts:118:37)
+    at queryPostgres (src\lib\postgres.ts:125:9)
+    at Object.list (src\lib\repositories\report-repository.ts:60:39)
+    at GET (src\app\api\v1\health\route.ts:7:22)
+  14 |   const value = process.env.DATABASE_URL;
+  15 |   if (!value) {
+> 16 |     throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
+     |           ^
+  17 |   }
+  18 |   return value;
+  19 | }
+Error: DATABASE_URL is required for PostgreSQL-backed report storage.
+    at requireDatabaseUrl (src\lib\postgres.ts:16:11)
+    at getPgPool (src\lib\postgres.ts:24:25)
+    at initializeSchema (src\lib\postgres.ts:111:16)
+    at ensurePostgresReady (src\lib\postgres.ts:118:37)
+    at queryPostgres (src\lib\postgres.ts:125:9)
+    at Object.list (src\lib\repositories\report-repository.ts:60:39)
+    at GET (src\app\api\v1\health\route.ts:7:22)
+  14 |   const value = process.env.DATABASE_URL;
+  15 |   if (!value) {
+> 16 |     throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
+     |           ^
+  17 |   }
+  18 |   return value;
+  19 | }
+Error: DATABASE_URL is required for PostgreSQL-backed report storage.
+    at requireDatabaseUrl (src\lib\postgres.ts:16:11)
+    at getPgPool (src\lib\postgres.ts:24:25)
+    at initializeSchema (src\lib\postgres.ts:111:16)
+    at ensurePostgresReady (src\lib\postgres.ts:118:37)
+    at queryPostgres (src\lib\postgres.ts:125:9)
+    at Object.list (src\lib\repositories\report-repository.ts:60:39)
+    at GET (src\app\api\v1\health\route.ts:7:22)
+  14 |   const value = process.env.DATABASE_URL;
+  15 |   if (!value) {
+> 16 |     throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
+     |           ^
+  17 |   }
+  18 |   return value;
+  19 | }
+Error: DATABASE_URL is required for PostgreSQL-backed report storage.
+    at requireDatabaseUrl (src\lib\postgres.ts:16:11)
+    at getPgPool (src\lib\postgres.ts:24:25)
+    at initializeSchema (src\lib\postgres.ts:111:16)
+    at ensurePostgresReady (src\lib\postgres.ts:118:37)
+    at queryPostgres (src\lib\postgres.ts:125:9)
+    at Object.list (src\lib\repositories\report-repository.ts:60:39)
+    at GET (src\app\api\v1\health\route.ts:7:22)
+  14 |   const value = process.env.DATABASE_URL;
+  15 |   if (!value) {
+> 16 |     throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
+     |           ^
+  17 |   }
+  18 |   return value;
+  19 | }
+Error: DATABASE_URL is required for PostgreSQL-backed report storage.
+    at requireDatabaseUrl (src\lib\postgres.ts:16:11)
+    at getPgPool (src\lib\postgres.ts:24:25)
+    at initializeSchema (src\lib\postgres.ts:111:16)
+    at ensurePostgresReady (src\lib\postgres.ts:118:37)
+    at queryPostgres (src\lib\postgres.ts:125:9)
+    at Object.list (src\lib\repositories\report-repository.ts:60:39)
+    at GET (src\app\api\v1\health\route.ts:7:22)
+  14 |   const value = process.env.DATABASE_URL;
+  15 |   if (!value) {
+> 16 |     throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
+     |           ^
+  17 |   }
+  18 |   return value;
+  19 | }
+Error: DATABASE_URL is required for PostgreSQL-backed report storage.
+    at requireDatabaseUrl (src\lib\postgres.ts:16:11)
+    at getPgPool (src\lib\postgres.ts:24:25)
+    at initializeSchema (src\lib\postgres.ts:111:16)
+    at ensurePostgresReady (src\lib\postgres.ts:118:37)
+    at queryPostgres (src\lib\postgres.ts:125:9)
+    at Object.list (src\lib\repositories\report-repository.ts:60:39)
+    at GET (src\app\api\v1\health\route.ts:7:22)
+  14 |   const value = process.env.DATABASE_URL;
+  15 |   if (!value) {
+> 16 |     throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
+     |           ^
+  17 |   }
+  18 |   return value;
+  19 | }
+Error: DATABASE_URL is required for PostgreSQL-backed report storage.
+    at requireDatabaseUrl (src\lib\postgres.ts:16:11)
+    at getPgPool (src\lib\postgres.ts:24:25)
+    at initializeSchema (src\lib\postgres.ts:111:16)
+    at ensurePostgresReady (src\lib\postgres.ts:118:37)
+    at queryPostgres (src\lib\postgres.ts:125:9)
+    at Object.list (src\lib\repositories\report-repository.ts:60:39)
+    at GET (src\app\api\v1\health\route.ts:7:22)
+  14 |   const value = process.env.DATABASE_URL;
+  15 |   if (!value) {
+> 16 |     throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
+     |           ^
+  17 |   }
+  18 |   return value;
+  19 | }
+Error: DATABASE_URL is required for PostgreSQL-backed report storage.
+    at requireDatabaseUrl (src\lib\postgres.ts:16:11)
+    at getPgPool (src\lib\postgres.ts:24:25)
+    at initializeSchema (src\lib\postgres.ts:111:16)
+    at ensurePostgresReady (src\lib\postgres.ts:118:37)
+    at queryPostgres (src\lib\postgres.ts:125:9)
+    at Object.list (src\lib\repositories\report-repository.ts:60:39)
+    at GET (src\app\api\v1\health\route.ts:7:22)
+  14 |   const value = process.env.DATABASE_URL;
+  15 |   if (!value) {
+> 16 |     throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
+     |           ^
+  17 |   }
+  18 |   return value;
+  19 | }
+Error: DATABASE_URL is required for PostgreSQL-backed report storage.
+    at requireDatabaseUrl (src\lib\postgres.ts:16:11)
+    at getPgPool (src\lib\postgres.ts:24:25)
+    at initializeSchema (src\lib\postgres.ts:111:16)
+    at ensurePostgresReady (src\lib\postgres.ts:118:37)
+    at queryPostgres (src\lib\postgres.ts:125:9)
+    at Object.list (src\lib\repositories\report-repository.ts:60:39)
+    at GET (src\app\api\v1\health\route.ts:7:22)
+  14 |   const value = process.env.DATABASE_URL;
+  15 |   if (!value) {
+> 16 |     throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
+     |           ^
+  17 |   }
+  18 |   return value;
+  19 | }
+Error: DATABASE_URL is required for PostgreSQL-backed report storage.
+    at requireDatabaseUrl (src\lib\postgres.ts:16:11)
+    at getPgPool (src\lib\postgres.ts:24:25)
+    at initializeSchema (src\lib\postgres.ts:111:16)
+    at ensurePostgresReady (src\lib\postgres.ts:118:37)
+    at queryPostgres (src\lib\postgres.ts:125:9)
+    at Object.list (src\lib\repositories\report-repository.ts:60:39)
+    at GET (src\app\api\v1\health\route.ts:7:22)
+  14 |   const value = process.env.DATABASE_URL;
+  15 |   if (!value) {
+> 16 |     throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
+     |           ^
+  17 |   }
+  18 |   return value;
+  19 | }
+Error: DATABASE_URL is required for PostgreSQL-backed report storage.
+    at requireDatabaseUrl (src\lib\postgres.ts:16:11)
+    at getPgPool (src\lib\postgres.ts:24:25)
+    at initializeSchema (src\lib\postgres.ts:111:16)
+    at ensurePostgresReady (src\lib\postgres.ts:118:37)
+    at queryPostgres (src\lib\postgres.ts:125:9)
+    at Object.list (src\lib\repositories\report-repository.ts:60:39)
+    at GET (src\app\api\v1\health\route.ts:7:22)
+  14 |   const value = process.env.DATABASE_URL;
+  15 |   if (!value) {
+> 16 |     throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
+     |           ^
+  17 |   }
+  18 |   return value;
+  19 | }
+Error: DATABASE_URL is required for PostgreSQL-backed report storage.
+    at requireDatabaseUrl (src\lib\postgres.ts:16:11)
+    at getPgPool (src\lib\postgres.ts:24:25)
+    at initializeSchema (src\lib\postgres.ts:111:16)
+    at ensurePostgresReady (src\lib\postgres.ts:118:37)
+    at queryPostgres (src\lib\postgres.ts:125:9)
+    at Object.list (src\lib\repositories\report-repository.ts:60:39)
+    at GET (src\app\api\v1\health\route.ts:7:22)
+  14 |   const value = process.env.DATABASE_URL;
+  15 |   if (!value) {
+> 16 |     throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
+     |           ^
+  17 |   }
+  18 |   return value;
+  19 | }
+Error: DATABASE_URL is required for PostgreSQL-backed report storage.
+    at requireDatabaseUrl (src\lib\postgres.ts:16:11)
+    at getPgPool (src\lib\postgres.ts:24:25)
+    at initializeSchema (src\lib\postgres.ts:111:16)
+    at ensurePostgresReady (src\lib\postgres.ts:118:37)
+    at queryPostgres (src\lib\postgres.ts:125:9)
+    at Object.list (src\lib\repositories\report-repository.ts:60:39)
+    at GET (src\app\api\v1\health\route.ts:7:22)
+  14 |   const value = process.env.DATABASE_URL;
+  15 |   if (!value) {
+> 16 |     throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
+     |           ^
+  17 |   }
+  18 |   return value;
+  19 | }
+Error: DATABASE_URL is required for PostgreSQL-backed report storage.
+    at requireDatabaseUrl (src\lib\postgres.ts:16:11)
+    at getPgPool (src\lib\postgres.ts:24:25)
+    at initializeSchema (src\lib\postgres.ts:111:16)
+    at ensurePostgresReady (src\lib\postgres.ts:118:37)
+    at queryPostgres (src\lib\postgres.ts:125:9)
+    at Object.list (src\lib\repositories\report-repository.ts:60:39)
+    at GET (src\app\api\v1\health\route.ts:7:22)
+  14 |   const value = process.env.DATABASE_URL;
+  15 |   if (!value) {
+> 16 |     throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
+     |           ^
+  17 |   }
+  18 |   return value;
+  19 | }
+Error: DATABASE_URL is required for PostgreSQL-backed report storage.
+    at requireDatabaseUrl (src\lib\postgres.ts:16:11)
+    at getPgPool (src\lib\postgres.ts:24:25)
+    at initializeSchema (src\lib\postgres.ts:111:16)
+    at ensurePostgresReady (src\lib\postgres.ts:118:37)
+    at queryPostgres (src\lib\postgres.ts:125:9)
+    at Object.list (src\lib\repositories\report-repository.ts:60:39)
+    at GET (src\app\api\v1\health\route.ts:7:22)
+  14 |   const value = process.env.DATABASE_URL;
+  15 |   if (!value) {
+> 16 |     throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
+     |           ^
+  17 |   }
+  18 |   return value;
+  19 | }
+Error: DATABASE_URL is required for PostgreSQL-backed report storage.
+    at requireDatabaseUrl (src\lib\postgres.ts:16:11)
+    at getPgPool (src\lib\postgres.ts:24:25)
+    at initializeSchema (src\lib\postgres.ts:111:16)
+    at ensurePostgresReady (src\lib\postgres.ts:118:37)
+    at queryPostgres (src\lib\postgres.ts:125:9)
+    at Object.list (src\lib\repositories\report-repository.ts:60:39)
+    at GET (src\app\api\v1\health\route.ts:7:22)
+  14 |   const value = process.env.DATABASE_URL;
+  15 |   if (!value) {
+> 16 |     throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
+     |           ^
+  17 |   }
+  18 |   return value;
+  19 | }
+Error: DATABASE_URL is required for PostgreSQL-backed report storage.
+    at requireDatabaseUrl (src\lib\postgres.ts:16:11)
+    at getPgPool (src\lib\postgres.ts:24:25)
+    at initializeSchema (src\lib\postgres.ts:111:16)
+    at ensurePostgresReady (src\lib\postgres.ts:118:37)
+    at queryPostgres (src\lib\postgres.ts:125:9)
+    at Object.list (src\lib\repositories\report-repository.ts:60:39)
+    at GET (src\app\api\v1\health\route.ts:7:22)
+  14 |   const value = process.env.DATABASE_URL;
+  15 |   if (!value) {
+> 16 |     throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
+     |           ^
+  17 |   }
+  18 |   return value;
+  19 | }
+Error: DATABASE_URL is required for PostgreSQL-backed report storage.
+    at requireDatabaseUrl (src\lib\postgres.ts:16:11)
+    at getPgPool (src\lib\postgres.ts:24:25)
+    at initializeSchema (src\lib\postgres.ts:111:16)
+    at ensurePostgresReady (src\lib\postgres.ts:118:37)
+    at queryPostgres (src\lib\postgres.ts:125:9)
+    at Object.list (src\lib\repositories\report-repository.ts:60:39)
+    at GET (src\app\api\v1\health\route.ts:7:22)
+  14 |   const value = process.env.DATABASE_URL;
+  15 |   if (!value) {
+> 16 |     throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
+     |           ^
+  17 |   }
+  18 |   return value;
+  19 | }
+Error: DATABASE_URL is required for PostgreSQL-backed report storage.
+    at requireDatabaseUrl (src\lib\postgres.ts:16:11)
+    at getPgPool (src\lib\postgres.ts:24:25)
+    at initializeSchema (src\lib\postgres.ts:111:16)
+    at ensurePostgresReady (src\lib\postgres.ts:118:37)
+    at queryPostgres (src\lib\postgres.ts:125:9)
+    at Object.list (src\lib\repositories\report-repository.ts:60:39)
+    at GET (src\app\api\v1\health\route.ts:7:22)
+  14 |   const value = process.env.DATABASE_URL;
+  15 |   if (!value) {
+> 16 |     throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
+     |           ^
+  17 |   }
+  18 |   return value;
+  19 | }
+Error: DATABASE_URL is required for PostgreSQL-backed report storage.
+    at requireDatabaseUrl (src\lib\postgres.ts:16:11)
+    at getPgPool (src\lib\postgres.ts:24:25)
+    at initializeSchema (src\lib\postgres.ts:111:16)
+    at ensurePostgresReady (src\lib\postgres.ts:118:37)
+    at queryPostgres (src\lib\postgres.ts:125:9)
+    at Object.list (src\lib\repositories\report-repository.ts:60:39)
+    at GET (src\app\api\v1\health\route.ts:7:22)
+  14 |   const value = process.env.DATABASE_URL;
+  15 |   if (!value) {
+> 16 |     throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
+     |           ^
+  17 |   }
+  18 |   return value;
+  19 | }
+Error: DATABASE_URL is required for PostgreSQL-backed report storage.
+    at requireDatabaseUrl (src\lib\postgres.ts:16:11)
+    at getPgPool (src\lib\postgres.ts:24:25)
+    at initializeSchema (src\lib\postgres.ts:111:16)
+    at ensurePostgresReady (src\lib\postgres.ts:118:37)
+    at queryPostgres (src\lib\postgres.ts:125:9)
+    at Object.list (src\lib\repositories\report-repository.ts:60:39)
+    at GET (src\app\api\v1\health\route.ts:7:22)
+  14 |   const value = process.env.DATABASE_URL;
+  15 |   if (!value) {
+> 16 |     throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
+     |           ^
+  17 |   }
+  18 |   return value;
+  19 | }
+ ⨯ Failed to generate static paths for /api/reports/[id]/audit:
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\build-manifest.json'] {
+  type: 'Error',
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\build-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json',
+  page: '/api/reports/report_daily_ops_001/notifications'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\page.js',
+  page: '/'
+}
+ ⨯ Failed to generate static paths for /api/reports/[id]/notifications:
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\build-manifest.json'] {
+  type: 'Error',
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\build-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json',
+  page: '/api/reports/report_daily_ops_001/notifications'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\page.js',
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ ⨯ Error: Cannot find module './873.js'
+Require stack:
+- C:\taskops\.next\server\webpack-runtime.js
+- C:\taskops\.next\server\pages\_document.js
+- C:\taskops\node_modules\next\dist\server\require.js
+- C:\taskops\node_modules\next\dist\server\load-components.js
+- C:\taskops\node_modules\next\dist\build\utils.js
+- C:\taskops\node_modules\next\dist\build\swc\options.js
+- C:\taskops\node_modules\next\dist\build\swc\index.js
+- C:\taskops\node_modules\next\dist\build\next-config-ts\transpile-config.js
+- C:\taskops\node_modules\next\dist\server\config.js
+- C:\taskops\node_modules\next\dist\server\next.js
+- C:\taskops\node_modules\next\dist\server\lib\start-server.js
+    at <unknown> (C:\taskops\.next\server\app\page.js:2:201464)
+    at Object.<anonymous> (C:\taskops\.next\server\app\page.js:2:201513) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+Error: Cannot find module './873.js'
+Require stack:
+- C:\taskops\.next\server\webpack-runtime.js
+- C:\taskops\.next\server\pages\_document.js
+- C:\taskops\node_modules\next\dist\server\require.js
+- C:\taskops\node_modules\next\dist\server\load-components.js
+- C:\taskops\node_modules\next\dist\build\utils.js
+- C:\taskops\node_modules\next\dist\build\swc\options.js
+- C:\taskops\node_modules\next\dist\build\swc\index.js
+- C:\taskops\node_modules\next\dist\build\next-config-ts\transpile-config.js
+- C:\taskops\node_modules\next\dist\server\config.js
+- C:\taskops\node_modules\next\dist\server\next.js
+- C:\taskops\node_modules\next\dist\server\lib\start-server.js
+    at <unknown> (C:\taskops\.next\server\app\page.js:2:201464)
+    at Object.<anonymous> (C:\taskops\.next\server\app\page.js:2:201513) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ ⨯ Error: Cannot find module './873.js'
+Require stack:
+- C:\taskops\.next\server\webpack-runtime.js
+- C:\taskops\.next\server\pages\_document.js
+- C:\taskops\node_modules\next\dist\server\require.js
+- C:\taskops\node_modules\next\dist\server\load-components.js
+- C:\taskops\node_modules\next\dist\build\utils.js
+- C:\taskops\node_modules\next\dist\build\swc\options.js
+- C:\taskops\node_modules\next\dist\build\swc\index.js
+- C:\taskops\node_modules\next\dist\build\next-config-ts\transpile-config.js
+- C:\taskops\node_modules\next\dist\server\config.js
+- C:\taskops\node_modules\next\dist\server\next.js
+- C:\taskops\node_modules\next\dist\server\lib\start-server.js
+    at <unknown> (C:\taskops\.next\server\app\page.js:2:201464)
+    at Object.<anonymous> (C:\taskops\.next\server\app\page.js:2:201513) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+Error: Cannot find module './873.js'
+Require stack:
+- C:\taskops\.next\server\webpack-runtime.js
+- C:\taskops\.next\server\pages\_document.js
+- C:\taskops\node_modules\next\dist\server\require.js
+- C:\taskops\node_modules\next\dist\server\load-components.js
+- C:\taskops\node_modules\next\dist\build\utils.js
+- C:\taskops\node_modules\next\dist\build\swc\options.js
+- C:\taskops\node_modules\next\dist\build\swc\index.js
+- C:\taskops\node_modules\next\dist\build\next-config-ts\transpile-config.js
+- C:\taskops\node_modules\next\dist\server\config.js
+- C:\taskops\node_modules\next\dist\server\next.js
+- C:\taskops\node_modules\next\dist\server\lib\start-server.js
+    at <unknown> (C:\taskops\.next\server\app\page.js:2:201464)
+    at Object.<anonymous> (C:\taskops\.next\server\app\page.js:2:201513) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\taskops\.next\cache\webpack\client-development-fallback\0.pack.gz_' -> 'C:\taskops\.next\cache\webpack\client-development-fallback\0.pack.gz'
+ ⨯ Error: Cannot find module './873.js'
+Require stack:
+- C:\taskops\.next\server\webpack-runtime.js
+- C:\taskops\.next\server\pages\_document.js
+- C:\taskops\node_modules\next\dist\server\require.js
+- C:\taskops\node_modules\next\dist\server\load-components.js
+- C:\taskops\node_modules\next\dist\build\utils.js
+- C:\taskops\node_modules\next\dist\build\swc\options.js
+- C:\taskops\node_modules\next\dist\build\swc\index.js
+- C:\taskops\node_modules\next\dist\build\next-config-ts\transpile-config.js
+- C:\taskops\node_modules\next\dist\server\config.js
+- C:\taskops\node_modules\next\dist\server\next.js
+- C:\taskops\node_modules\next\dist\server\lib\start-server.js
+    at <unknown> (C:\taskops\.next\server\app\page.js:2:201464)
+    at Object.<anonymous> (C:\taskops\.next\server\app\page.js:2:201513) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+Error: Cannot find module './873.js'
+Require stack:
+- C:\taskops\.next\server\webpack-runtime.js
+- C:\taskops\.next\server\pages\_document.js
+- C:\taskops\node_modules\next\dist\server\require.js
+- C:\taskops\node_modules\next\dist\server\load-components.js
+- C:\taskops\node_modules\next\dist\build\utils.js
+- C:\taskops\node_modules\next\dist\build\swc\options.js
+- C:\taskops\node_modules\next\dist\build\swc\index.js
+- C:\taskops\node_modules\next\dist\build\next-config-ts\transpile-config.js
+- C:\taskops\node_modules\next\dist\server\config.js
+- C:\taskops\node_modules\next\dist\server\next.js
+- C:\taskops\node_modules\next\dist\server\lib\start-server.js
+    at <unknown> (C:\taskops\.next\server\app\page.js:2:201464)
+    at Object.<anonymous> (C:\taskops\.next\server\app\page.js:2:201513) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}

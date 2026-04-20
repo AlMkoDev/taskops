@@ -1,0 +1,16 @@
+[
+  {
+    "id": "session_1776691963566",
+    "userId": "user_shift_lead",
+    "token": "a6060cd1cfb783a8f775e473e046ba4c5de76692a6a5b1884cf027f0604550ce",
+    "expiresAt": "2026-05-04T13:32:43.566Z",
+    "createdAt": "2026-04-20T13:32:43.566Z"
+  },
+  {
+    "id": "session_1776660229062",
+    "userId": "user_farm_manager",
+    "token": "9af1ec8e9f635b199834debdf599c8fc73db5ec35ab8173101f511b77b92727b",
+    "expiresAt": "2026-05-04T04:43:49.062Z",
+    "createdAt": "2026-04-20T04:43:49.062Z"
+  }
+]

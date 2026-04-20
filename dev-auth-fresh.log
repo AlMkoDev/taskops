@@ -1,0 +1,1774 @@
+
+> taskops-app@0.1.0 dev
+> next dev
+
+   Γû▓ Next.js 15.5.14
+   - Local:        http://localhost:3000
+   - Network:      http://10.248.135.175:3000
+
+ Γ£ô Starting...
+ Γ£ô Ready in 3.3s
+ Γùï Compiling /api/auth/login ...
+ Γ£ô Compiled /api/auth/login in 2s (310 modules)
+ POST /api/auth/login 200 in 3519ms
+ Γùï Compiling /api/auth/session ...
+ Γ£ô Compiled /api/auth/session in 927ms (312 modules)
+ GET /api/auth/session 200 in 1109ms
+ Γùï Compiling /api/reports ...
+ Γ£ô Compiled /api/reports in 528ms (316 modules)
+ GET /api/reports 200 in 717ms
+ POST /api/auth/login 200 in 473ms
+ Γùï Compiling /api/auth/users ...
+ Γ£ô Compiled /api/auth/users in 934ms (318 modules)
+ GET /api/auth/users 401 in 1127ms
+ POST /api/reports 201 in 615ms
+ Γùï Compiling /api/reports/[id]/audit ...
+ Γ£ô Compiled /api/reports/[id]/audit in 647ms (320 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 1887ms
+ Γùï Compiling / ...
+ Γ£ô Compiled / in 3.9s (720 modules)
+ GET / 200 in 4930ms
+ GET /api/auth/session 200 in 211ms
+ Γùï Compiling /api/reports/[id]/notifications ...
+ Γ£ô Compiled /api/reports/[id]/notifications in 1206ms (715 modules)
+ GET /api/auth/session 200 in 1572ms
+ GET /api/reports/report_daily_ops_001/audit 401 in 1565ms
+ GET /api/reports/report_daily_ops_001/audit 401 in 1570ms
+ Γ£ô Compiled in 702ms (301 modules)
+ GET / 200 in 805ms
+ Γ£ô Compiled in 398ms (301 modules)
+ GET /api/reports/report_daily_ops_001/notifications 401 in 3072ms
+ GET /api/reports/report_daily_ops_001/notifications 401 in 3086ms
+ Γ£ô Compiled in 303ms (301 modules)
+ Γ£ô Compiled in 257ms (301 modules)
+ Γ£ô Compiled /api/auth/login in 350ms (409 modules)
+ POST /api/auth/login 200 in 890ms
+ Γùï Compiling /api/auth/users ...
+ Γ£ô Compiled /api/auth/users in 1298ms (712 modules)
+ GET /api/auth/users 200 in 1114ms
+ Γùï Compiling /api/reports ...
+ Γ£ô Compiled /api/reports in 747ms (716 modules)
+ GET /api/reports 200 in 892ms
+ Γ£ô Compiled in 350ms (301 modules)
+ Γ£ô Compiled /api/reports/[id]/notifications in 231ms (417 modules)
+ Γ£ô Compiled (419 modules)
+ GET /api/reports/report_1776594716326/notifications 200 in 1101ms
+ GET /api/reports/report_1776594716326/audit 200 in 1172ms
+ Γ£ô Compiled in 405ms (301 modules)
+ Γ£ô Compiled in 259ms (301 modules)
+ Γùï Compiling /api/reports/[id] ...
+ Γ£ô Compiled /api/reports/[id] in 618ms (708 modules)
+ Γ£ô Compiled in 384ms (301 modules)
+ PUT /api/reports/report_1776594716326 200 in 2031ms
+ Γ£ô Compiled in 312ms (301 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 314ms
+ Γ£ô Compiled in 360ms (301 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 485ms
+ Γ£ô Compiled in 301ms (301 modules)
+ Γ£ô Compiled in 408ms (301 modules)
+ PUT /api/reports/report_1776594716326 200 in 494ms
+ Γ£ô Compiled in 355ms (301 modules)
+ GET /api/reports/report_1776594716326/notifications 200 in 281ms
+ GET /api/reports/report_1776594716326/audit 200 in 421ms
+ Γ£ô Compiled in 414ms (301 modules)
+ PUT /api/reports/report_1776594716326 200 in 414ms
+ Γ£ô Compiled in 376ms (301 modules)
+ Γ£ô Compiled in 322ms (301 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 168ms
+ GET /api/reports/report_1776594716326/audit 200 in 440ms
+ Γ£ô Compiled in 382ms (301 modules)
+ Γ£ô Compiled in 334ms (301 modules)
+ PUT /api/reports/report_1776594716326 200 in 406ms
+ Γ£ô Compiled in 499ms (301 modules)
+ Γ¿» SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>) {
+  page: '/api/reports/report_1776594716326/notifications'
+}
+ Γ¿» Failed to generate static paths for /api/reports/[id]:
+SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>) {
+  type: 'SyntaxError'
+}
+ GET /api/reports/report_1776594716326/audit 200 in 933ms
+ Γùï Compiling /_error ...
+ Γ£ô Compiled /_error in 2.5s (1068 modules)
+ GET /api/reports/report_1776594716326/notifications 500 in 3619ms
+ PUT /api/reports/report_1776594716326 200 in 2213ms
+ Γ£ô Compiled in 405ms (453 modules)
+ Γ£ô Compiled in 533ms (453 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 503ms
+ GET /api/reports/report_1776594716326/audit 200 in 656ms
+ Γ£ô Compiled in 275ms (453 modules)
+ Γ£ô Compiled in 269ms (453 modules)
+ Γ£ô Compiled in 271ms (453 modules)
+ PUT /api/reports/report_1776594716326 200 in 336ms
+ Γ£ô Compiled in 349ms (453 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 215ms
+ GET /api/reports/report_1776594716326/notifications 200 in 247ms
+ Γ£ô Compiled in 458ms (453 modules)
+ PUT /api/reports/report_1776594716326 200 in 418ms
+ Γ£ô Compiled in 462ms (453 modules)
+ Γ£ô Compiled in 405ms (453 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 458ms
+ GET /api/reports/report_1776594716326/notifications 200 in 690ms
+ Γ£ô Compiled in 485ms (453 modules)
+ Γ£ô Compiled in 386ms (453 modules)
+ PUT /api/reports/report_1776594716326 200 in 478ms
+ Γ£ô Compiled in 547ms (453 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 380ms
+ Γ£ô Compiled in 472ms (453 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 544ms
+ Γ£ô Compiled in 420ms (453 modules)
+ PUT /api/reports/report_1776594716326 200 in 423ms
+ Γ£ô Compiled in 451ms (453 modules)
+ Γ¿» SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>) {
+  page: '/api/reports/report_1776594716326/notifications'
+}
+ GET /api/reports/report_1776594716326/audit 200 in 982ms
+ Γ£ô Compiled in 2.1s (1068 modules)
+ GET /api/reports/report_1776594716326/notifications 500 in 2609ms
+ PUT /api/reports/report_1776594716326 200 in 651ms
+ Γ£ô Compiled in 752ms (453 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 650ms
+ Γ£ô Compiled in 802ms (453 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 1021ms
+ Γ£ô Compiled in 512ms (453 modules)
+ PUT /api/reports/report_1776594716326 200 in 503ms
+ Γ£ô Compiled in 589ms (453 modules)
+ Γ£ô Compiled in 595ms (453 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 605ms
+ GET /api/reports/report_1776594716326/notifications 200 in 883ms
+ Γ£ô Compiled in 477ms (453 modules)
+ Γ£ô Compiled in 448ms (453 modules)
+ PUT /api/reports/report_1776594716326 200 in 465ms
+ Γ£ô Compiled in 591ms (453 modules)
+ Γ£ô Compiled in 679ms (453 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 746ms
+ GET /api/reports/report_1776594716326/notifications 200 in 786ms
+ Γ£ô Compiled in 522ms (453 modules)
+ PUT /api/reports/report_1776594716326 200 in 357ms
+ Γ£ô Compiled in 425ms (453 modules)
+ Γ£ô Compiled in 511ms (453 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 523ms
+ GET /api/reports/report_1776594716326/notifications 200 in 718ms
+ Γ£ô Compiled in 397ms (453 modules)
+ Γ£ô Compiled in 381ms (453 modules)
+ PUT /api/reports/report_1776594716326 200 in 374ms
+ Γ£ô Compiled in 423ms (453 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 381ms
+ Γ£ô Compiled in 458ms (453 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 501ms
+ Γ£ô Compiled in 350ms (453 modules)
+ PUT /api/reports/report_1776594716326 200 in 463ms
+ Γ£ô Compiled in 534ms (453 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 498ms
+ Γ£ô Compiled in 593ms (453 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 634ms
+ Γ£ô Compiled in 476ms (453 modules)
+ PUT /api/reports/report_1776594716326 200 in 480ms
+ Γ£ô Compiled in 489ms (453 modules)
+ Γ£ô Compiled in 483ms (453 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 530ms
+ GET /api/reports/report_1776594716326/audit 200 in 763ms
+ Γ£ô Compiled in 472ms (453 modules)
+ Γ£ô Compiled in 465ms (453 modules)
+ PUT /api/reports/report_1776594716326 200 in 424ms
+ Γ£ô Compiled in 502ms (453 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 455ms
+ Γ£ô Compiled in 550ms (453 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 631ms
+ Γ£ô Compiled in 452ms (453 modules)
+ PUT /api/reports/report_1776594716326 200 in 428ms
+ Γ£ô Compiled in 500ms (453 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 419ms
+ Γ£ô Compiled in 517ms (453 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 580ms
+ Γ£ô Compiled in 448ms (453 modules)
+ PUT /api/reports/report_1776594716326 200 in 495ms
+ Γ£ô Compiled in 615ms (453 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 562ms
+ Γ£ô Compiled in 681ms (453 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 706ms
+ Γ£ô Compiled in 505ms (453 modules)
+ PUT /api/reports/report_1776594716326 200 in 399ms
+ Γ£ô Compiled in 430ms (453 modules)
+ Γ£ô Compiled in 344ms (453 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 183ms
+ GET /api/reports/report_1776594716326/audit 200 in 381ms
+ Γ£ô Compiled in 379ms (453 modules)
+ Γ£ô Compiled in 351ms (453 modules)
+ PUT /api/reports/report_1776594716326 200 in 361ms
+ Γ£ô Compiled in 428ms (453 modules)
+ Γ£ô Compiled in 339ms (453 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 158ms
+ GET /api/reports/report_1776594716326/notifications 200 in 172ms
+ Γ£ô Compiled in 251ms (453 modules)
+ PUT /api/reports/report_1776594716326 200 in 319ms
+ Γ£ô Compiled in 351ms (453 modules)
+ Γ£ô Compiled in 326ms (453 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 150ms
+ GET /api/reports/report_1776594716326/audit 200 in 206ms
+ Γ£ô Compiled in 317ms (453 modules)
+ Γ£ô Compiled in 257ms (453 modules)
+ PUT /api/reports/report_1776594716326 200 in 381ms
+ Γ£ô Compiled in 454ms (453 modules)
+ Γ£ô Compiled in 318ms (453 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 188ms
+ GET /api/reports/report_1776594716326/notifications 200 in 196ms
+ Γ£ô Compiled in 361ms (453 modules)
+ PUT /api/reports/report_1776594716326 200 in 541ms
+ Γ£ô Compiled in 621ms (453 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 350ms
+ Γ£ô Compiled in 473ms (453 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 543ms
+ Γ£ô Compiled in 426ms (453 modules)
+ PUT /api/reports/report_1776594716326 200 in 389ms
+ Γ£ô Compiled in 430ms (453 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 416ms
+ Γ£ô Compiled in 517ms (453 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 586ms
+ Γ£ô Compiled in 401ms (453 modules)
+ PUT /api/reports/report_1776594716326 200 in 437ms
+ Γ£ô Compiled in 623ms (453 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 375ms
+ Γ£ô Compiled in 474ms (453 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 522ms
+ Γ£ô Compiled in 379ms (453 modules)
+ PUT /api/reports/report_1776594716326 200 in 400ms
+ Γ£ô Compiled in 512ms (453 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 377ms
+ Γ£ô Compiled in 462ms (453 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 546ms
+ Γ£ô Compiled in 454ms (453 modules)
+ PUT /api/reports/report_1776594716326 200 in 499ms
+ Γ£ô Compiled in 564ms (453 modules)
+ Γ£ô Compiled in 1309ms (453 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 1306ms
+ GET /api/reports/report_1776594716326/notifications 200 in 1641ms
+ Γ£ô Compiled in 595ms (453 modules)
+ Γ£ô Compiled in 447ms (453 modules)
+ Γ£ô Compiled in 773ms (453 modules)
+ PUT /api/reports/report_1776594716326 200 in 895ms
+ Γ£ô Compiled in 483ms (453 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 388ms
+ Γ£ô Compiled in 539ms (453 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 630ms
+ Γ£ô Compiled in 452ms (453 modules)
+ PUT /api/reports/report_1776594716326 200 in 373ms
+ Γ£ô Compiled in 409ms (452 modules)
+ Γ£ô Compiled in 284ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 156ms
+ GET /api/reports/report_1776594716326/notifications 200 in 166ms
+ Γ£ô Compiled in 348ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 381ms
+ Γ£ô Compiled in 412ms (452 modules)
+ Γ£ô Compiled in 387ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 292ms
+ GET /api/reports/report_1776594716326/notifications 200 in 427ms
+ Γ£ô Compiled in 362ms (452 modules)
+ Γ£ô Compiled in 264ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 390ms
+ Γ£ô Compiled in 394ms (452 modules)
+ Γ£ô Compiled in 343ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 166ms
+ GET /api/reports/report_1776594716326/notifications 200 in 333ms
+ Γ£ô Compiled in 317ms (452 modules)
+ Γ£ô Compiled in 341ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 491ms
+ Γ£ô Compiled in 495ms (452 modules)
+ Γ£ô Compiled in 349ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 171ms
+ GET /api/reports/report_1776594716326/notifications 200 in 348ms
+ Γ£ô Compiled in 378ms (452 modules)
+ Γ£ô Compiled in 357ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 404ms
+ Γ£ô Compiled in 433ms (452 modules)
+ Γ£ô Compiled in 340ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 171ms
+ GET /api/reports/report_1776594716326/audit 200 in 407ms
+ Γ£ô Compiled in 323ms (452 modules)
+ Γ£ô Compiled in 295ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 365ms
+ Γ£ô Compiled in 428ms (452 modules)
+ Γ£ô Compiled in 384ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 292ms
+ GET /api/reports/report_1776594716326/notifications 200 in 324ms
+ Γ£ô Compiled in 512ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 665ms
+ Γ£ô Compiled in 714ms (452 modules)
+ Γ£ô Compiled in 603ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 365ms
+ GET /api/reports/report_1776594716326/notifications 200 in 707ms
+ Γ£ô Compiled in 560ms (452 modules)
+ Γ£ô Compiled in 378ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 591ms
+ Γ£ô Compiled in 601ms (452 modules)
+ Γ£ô Compiled in 410ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 227ms
+ GET /api/reports/report_1776594716326/audit 200 in 629ms
+ Γ£ô Compiled in 589ms (452 modules)
+ Γ£ô Compiled in 361ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 358ms
+ Γ£ô Compiled in 409ms (452 modules)
+ Γ£ô Compiled in 389ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 202ms
+ GET /api/reports/report_1776594716326/notifications 200 in 363ms
+ Γ£ô Compiled in 310ms (452 modules)
+ Γ£ô Compiled in 275ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 450ms
+ Γ£ô Compiled in 470ms (452 modules)
+ Γ£ô Compiled in 355ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 194ms
+ GET /api/reports/report_1776594716326/audit 200 in 524ms
+ Γ£ô Compiled in 486ms (452 modules)
+ Γ£ô Compiled in 465ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 445ms
+ Γ£ô Compiled in 466ms (452 modules)
+ Γ£ô Compiled in 343ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 146ms
+ GET /api/reports/report_1776594716326/audit 200 in 351ms
+ Γ£ô Compiled in 375ms (452 modules)
+ Γ£ô Compiled in 350ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 1621ms
+ Γ£ô Compiled in 1592ms (452 modules)
+ Γ£ô Compiled in 890ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 310ms
+ GET /api/reports/report_1776594716326/notifications 200 in 849ms
+ Γ£ô Compiled in 893ms (452 modules)
+ Γ£ô Compiled in 712ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 718ms
+ Γ£ô Compiled in 670ms (452 modules)
+ Γ£ô Compiled in 612ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 198ms
+ GET /api/reports/report_1776594716326/notifications 200 in 665ms
+ Γ£ô Compiled in 575ms (452 modules)
+ Γ£ô Compiled in 562ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 416ms
+ Γ£ô Compiled in 476ms (452 modules)
+ Γ£ô Compiled in 392ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 239ms
+ GET /api/reports/report_1776594716326/notifications 200 in 520ms
+ Γ£ô Compiled in 427ms (452 modules)
+ Γ£ô Compiled in 430ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 476ms
+ Γ£ô Compiled in 512ms (452 modules)
+ Γ£ô Compiled in 447ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 230ms
+ GET /api/reports/report_1776594716326/notifications 200 in 496ms
+ Γ£ô Compiled in 430ms (452 modules)
+ Γ£ô Compiled in 584ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 495ms
+ Γ£ô Compiled in 534ms (452 modules)
+ Γ£ô Compiled in 385ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 243ms
+ GET /api/reports/report_1776594716326/audit 200 in 421ms
+ Γ£ô Compiled in 346ms (452 modules)
+ Γ£ô Compiled in 416ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 414ms
+ Γ£ô Compiled in 467ms (452 modules)
+ Γ£ô Compiled in 462ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 237ms
+ GET /api/reports/report_1776594716326/notifications 200 in 497ms
+ Γ£ô Compiled in 470ms (452 modules)
+ Γ£ô Compiled in 462ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 419ms
+ Γ£ô Compiled in 470ms (452 modules)
+ Γ£ô Compiled in 354ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 210ms
+ GET /api/reports/report_1776594716326/notifications 200 in 559ms
+ Γ£ô Compiled in 449ms (452 modules)
+ Γ£ô Compiled in 407ms (452 modules)
+ Γ£ô Compiled in 513ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 607ms
+ Γ£ô Compiled in 419ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 365ms
+ Γ£ô Compiled in 490ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 631ms
+ Γ£ô Compiled in 486ms (452 modules)
+ Γ£ô Compiled in 444ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 557ms
+ Γ£ô Compiled in 445ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 441ms
+ Γ£ô Compiled in 532ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 639ms
+ Γ£ô Compiled in 543ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 513ms
+ Γ£ô Compiled in 498ms (452 modules)
+ Γ£ô Compiled in 491ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 272ms
+ GET /api/reports/report_1776594716326/notifications 200 in 321ms
+ Γ£ô Compiled in 818ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 456ms
+ Γ£ô Compiled in 484ms (452 modules)
+ Γ£ô Compiled in 467ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 195ms
+ GET /api/reports/report_1776594716326/audit 200 in 441ms
+ Γ£ô Compiled in 442ms (452 modules)
+ Γ£ô Compiled in 504ms (452 modules)
+ Γ£ô Compiled in 1720ms (966 modules)
+ Γ£ô Compiled in 427ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 1939ms
+ Γ£ô Compiled in 474ms (452 modules)
+ Γ£ô Compiled in 623ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 844ms
+ GET /api/reports/report_1776594716326/notifications 200 in 877ms
+ Γ£ô Compiled in 532ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 447ms
+ Γ£ô Compiled in 510ms (452 modules)
+ Γ£ô Compiled in 476ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 206ms
+ GET /api/reports/report_1776594716326/audit 200 in 444ms
+ Γ£ô Compiled in 442ms (452 modules)
+ Γ£ô Compiled in 492ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 411ms
+ Γ£ô Compiled in 481ms (452 modules)
+ Γ£ô Compiled in 360ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 165ms
+ GET /api/reports/report_1776594716326/audit 200 in 384ms
+ Γ£ô Compiled in 333ms (452 modules)
+ Γ£ô Compiled in 336ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 667ms
+ Γ£ô Compiled in 654ms (452 modules)
+ Γ£ô Compiled in 526ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 225ms
+ GET /api/reports/report_1776594716326/audit 200 in 466ms
+ Γ£ô Compiled in 473ms (452 modules)
+ Γ£ô Compiled in 423ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 584ms
+ Γ£ô Compiled in 563ms (452 modules)
+ Γ£ô Compiled in 516ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 268ms
+ GET /api/reports/report_1776594716326/notifications 200 in 611ms
+ Γ£ô Compiled in 479ms (452 modules)
+ Γ£ô Compiled in 549ms (452 modules)
+ Γ£ô Compiled in 932ms (452 modules)
+ Γ£ô Compiled in 564ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 790ms
+ Γ£ô Compiled in 578ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 503ms
+ Γ£ô Compiled in 607ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 765ms
+ Γ£ô Compiled in 475ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 455ms
+ Γ£ô Compiled in 559ms (452 modules)
+ Γ£ô Compiled in 472ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 219ms
+ GET /api/reports/report_1776594716326/audit 200 in 509ms
+ Γ£ô Compiled in 492ms (452 modules)
+ Γ£ô Compiled in 497ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 483ms
+ Γ£ô Compiled in 470ms (452 modules)
+ Γ£ô Compiled in 414ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 202ms
+ GET /api/reports/report_1776594716326/audit 200 in 446ms
+ Γ£ô Compiled in 442ms (452 modules)
+ Γ£ô Compiled in 409ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 554ms
+ Γ£ô Compiled in 548ms (452 modules)
+ Γ£ô Compiled in 551ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 249ms
+ GET /api/reports/report_1776594716326/notifications 200 in 625ms
+ Γ£ô Compiled in 552ms (452 modules)
+ Γ£ô Compiled in 445ms (452 modules)
+ Γ£ô Compiled in 473ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 573ms
+ Γ£ô Compiled in 396ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 341ms
+ Γ£ô Compiled in 409ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 547ms
+ Γ£ô Compiled in 316ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 396ms
+ Γ£ô Compiled in 420ms (452 modules)
+ Γ£ô Compiled in 425ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 198ms
+ GET /api/reports/report_1776594716326/audit 200 in 421ms
+ Γ£ô Compiled in 421ms (452 modules)
+ Γ£ô Compiled in 358ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 449ms
+ Γ£ô Compiled in 576ms (452 modules)
+ Γ£ô Compiled in 379ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 189ms
+ GET /api/reports/report_1776594716326/audit 200 in 445ms
+ Γ£ô Compiled in 483ms (452 modules)
+ Γ£ô Compiled in 354ms (452 modules)
+ Γ£ô Compiled in 551ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 691ms
+ Γ£ô Compiled in 537ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 471ms
+ Γ£ô Compiled in 588ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 754ms
+ Γ£ô Compiled in 564ms (452 modules)
+ Γ£ô Compiled in 696ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 802ms
+ Γ£ô Compiled in 727ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 604ms
+ Γ£ô Compiled in 656ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 851ms
+ Γ£ô Compiled in 552ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 517ms
+ Γ£ô Compiled in 527ms (452 modules)
+ Γ£ô Compiled in 480ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 761ms
+ GET /api/reports/report_1776594716326/audit 200 in 1261ms
+ Γ£ô Compiled in 767ms (452 modules)
+ Γ£ô Compiled in 896ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 1086ms
+ Γ£ô Compiled in 734ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 762ms
+ Γ£ô Compiled in 654ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 200 in 958ms
+ Γ£ô Compiled in 475ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 457ms
+ Γ£ô Compiled in 575ms (452 modules)
+ Γ£ô Compiled in 462ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 260ms
+ GET /api/reports/report_1776594716326/audit 200 in 550ms
+ Γ£ô Compiled in 497ms (452 modules)
+ Γ£ô Compiled in 466ms (452 modules)
+ Γ£ô Compiled in 629ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 735ms
+ Γ£ô Compiled in 569ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 596ms
+ Γ£ô Compiled in 603ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 200 in 813ms
+ Γ£ô Compiled in 523ms (452 modules)
+ Γ£ô Compiled in 546ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 610ms
+ Γ£ô Compiled in 413ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 415ms
+ Γ£ô Compiled in 474ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 613ms
+ Γ£ô Compiled in 388ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 443ms
+ Γ£ô Compiled in 544ms (452 modules)
+ Γ£ô Compiled in 441ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 209ms
+ GET /api/reports/report_1776594716326/audit 200 in 491ms
+ Γ£ô Compiled in 414ms (452 modules)
+ Γ£ô Compiled in 439ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 418ms
+ Γ£ô Compiled in 540ms (452 modules)
+ Γ£ô Compiled in 499ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 528ms
+ GET /api/reports/report_1776594716326/notifications 200 in 563ms
+ Γ£ô Compiled in 498ms (452 modules)
+ Γ£ô Compiled in 426ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 494ms
+ Γ£ô Compiled in 476ms (452 modules)
+ Γ£ô Compiled in 375ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 295ms
+ GET /api/reports/report_1776594716326/notifications 200 in 546ms
+ Γ£ô Compiled in 501ms (452 modules)
+ Γ£ô Compiled in 423ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 759ms
+ Γ£ô Compiled in 837ms (452 modules)
+ Γ£ô Compiled in 558ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 155ms
+ GET /api/reports/report_1776594716326/audit 200 in 523ms
+ Γ£ô Compiled in 686ms (452 modules)
+ Γ£ô Compiled in 574ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 498ms
+ Γ£ô Compiled in 480ms (452 modules)
+ Γ£ô Compiled in 452ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 184ms
+ GET /api/reports/report_1776594716326/audit 200 in 504ms
+ Γ£ô Compiled in 404ms (452 modules)
+ Γ£ô Compiled in 459ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 438ms
+ Γ£ô Compiled in 441ms (452 modules)
+ Γ£ô Compiled in 437ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 161ms
+ GET /api/reports/report_1776594716326/audit 200 in 436ms
+ Γ£ô Compiled in 404ms (452 modules)
+ Γ£ô Compiled in 417ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 393ms
+ Γ£ô Compiled in 439ms (452 modules)
+ Γ£ô Compiled in 380ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 168ms
+ GET /api/reports/report_1776594716326/audit 200 in 464ms
+ Γ£ô Compiled in 386ms (452 modules)
+ Γ£ô Compiled in 376ms (452 modules)
+ Γ£ô Compiled in 514ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 589ms
+ Γ£ô Compiled in 400ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 402ms
+ Γ£ô Compiled in 478ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 628ms
+ Γ£ô Compiled in 417ms (452 modules)
+ Γ£ô Compiled in 442ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 509ms
+ Γ£ô Compiled in 405ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 231ms
+ Γ£ô Compiled in 357ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 497ms
+ Γ£ô Compiled in 299ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 513ms
+ Γ£ô Compiled in 502ms (452 modules)
+ Γ£ô Compiled in 399ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 181ms
+ GET /api/reports/report_1776594716326/audit 200 in 398ms
+ Γ£ô Compiled in 371ms (452 modules)
+ Γ£ô Compiled in 327ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 498ms
+ Γ£ô Compiled in 498ms (452 modules)
+ Γ£ô Compiled in 439ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 223ms
+ GET /api/reports/report_1776594716326/audit 200 in 470ms
+ Γ£ô Compiled in 422ms (452 modules)
+ Γ£ô Compiled in 403ms (452 modules)
+ Γ£ô Compiled in 480ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 568ms
+ Γ£ô Compiled in 382ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 329ms
+ Γ£ô Compiled in 429ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 554ms
+ Γ£ô Compiled in 454ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 463ms
+ Γ£ô Compiled in 466ms (452 modules)
+ Γ£ô Compiled in 394ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 183ms
+ GET /api/reports/report_1776594716326/audit 200 in 423ms
+ Γ£ô Compiled in 328ms (452 modules)
+ Γ£ô Compiled in 307ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 396ms
+ Γ£ô Compiled in 466ms (452 modules)
+ Γ£ô Compiled in 359ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 179ms
+ GET /api/reports/report_1776594716326/notifications 200 in 380ms
+ Γ£ô Compiled in 359ms (452 modules)
+ Γ£ô Compiled in 340ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 402ms
+ Γ£ô Compiled in 497ms (452 modules)
+ Γ£ô Compiled in 373ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 198ms
+ GET /api/reports/report_1776594716326/audit 200 in 407ms
+ Γ£ô Compiled in 361ms (452 modules)
+ Γ£ô Compiled in 404ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 344ms
+ Γ£ô Compiled in 399ms (452 modules)
+ Γ£ô Compiled in 379ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 152ms
+ GET /api/reports/report_1776594716326/audit 200 in 203ms
+ Γ£ô Compiled in 320ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 390ms
+ Γ£ô Compiled in 413ms (452 modules)
+ Γ£ô Compiled in 365ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 185ms
+ GET /api/reports/report_1776594716326/notifications 200 in 333ms
+ Γ£ô Compiled in 305ms (452 modules)
+ Γ£ô Compiled in 285ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 396ms
+ Γ£ô Compiled in 447ms (452 modules)
+ Γ£ô Compiled in 408ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 401 in 208ms
+ GET /api/reports/report_1776594716326/notifications 200 in 476ms
+ Γ£ô Compiled in 399ms (452 modules)
+ Γ£ô Compiled in 323ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 381ms
+ Γ£ô Compiled in 481ms (452 modules)
+ Γ£ô Compiled in 460ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 189ms
+ GET /api/reports/report_1776594716326/audit 200 in 437ms
+ Γ£ô Compiled in 451ms (452 modules)
+ Γ£ô Compiled in 342ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 435ms
+ Γ£ô Compiled in 449ms (452 modules)
+ Γ£ô Compiled in 390ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 183ms
+ GET /api/reports/report_1776594716326/audit 200 in 385ms
+ Γ£ô Compiled in 411ms (452 modules)
+ Γ£ô Compiled in 362ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 486ms
+ Γ£ô Compiled in 479ms (452 modules)
+ Γ£ô Compiled in 364ms (452 modules)
+ Γ£ô Compiled in 459ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 597ms
+ GET /api/reports/report_1776594716326/notifications 200 in 643ms
+ Γ£ô Compiled in 398ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 460ms
+ Γ£ô Compiled in 464ms (452 modules)
+ Γ£ô Compiled in 393ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 169ms
+ GET /api/reports/report_1776594716326/audit 200 in 396ms
+ Γ£ô Compiled in 391ms (452 modules)
+ Γ£ô Compiled in 318ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 383ms
+ Γ£ô Compiled in 447ms (452 modules)
+ Γ£ô Compiled in 444ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 169ms
+ GET /api/reports/report_1776594716326/audit 200 in 376ms
+ Γ£ô Compiled in 361ms (452 modules)
+ Γ£ô Compiled in 289ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 457ms
+ Γ£ô Compiled in 460ms (452 modules)
+ Γ£ô Compiled in 332ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 380ms
+ GET /api/reports/report_1776594716326/notifications 200 in 443ms
+ Γ£ô Compiled in 320ms (452 modules)
+ Γ£ô Compiled in 344ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 475ms
+ Γ£ô Compiled in 463ms (452 modules)
+ Γ£ô Compiled in 350ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 160ms
+ GET /api/reports/report_1776594716326/audit 200 in 337ms
+ Γ£ô Compiled in 329ms (452 modules)
+ Γ£ô Compiled in 283ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 425ms
+ Γ£ô Compiled in 467ms (452 modules)
+ Γ£ô Compiled in 526ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 214ms
+ GET /api/reports/report_1776594716326/audit 200 in 417ms
+ Γ£ô Compiled in 382ms (452 modules)
+ Γ£ô Compiled in 421ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 459ms
+ Γ£ô Compiled in 475ms (452 modules)
+ Γ£ô Compiled in 412ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 411ms
+ GET /api/reports/report_1776594716326/notifications 200 in 478ms
+ Γ£ô Compiled in 417ms (452 modules)
+ Γ£ô Compiled in 319ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 421ms
+ Γ£ô Compiled in 487ms (452 modules)
+ Γ£ô Compiled in 425ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 181ms
+ GET /api/reports/report_1776594716326/audit 200 in 368ms
+ Γ£ô Compiled in 339ms (452 modules)
+ Γ£ô Compiled in 387ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 444ms
+ Γ£ô Compiled in 470ms (452 modules)
+ Γ£ô Compiled in 429ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 154ms
+ GET /api/reports/report_1776594716326/audit 200 in 398ms
+ Γ£ô Compiled in 380ms (452 modules)
+ Γ£ô Compiled in 319ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 527ms
+ Γ£ô Compiled in 568ms (452 modules)
+ Γ£ô Compiled in 370ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 178ms
+ GET /api/reports/report_1776594716326/audit 200 in 437ms
+ Γ£ô Compiled in 367ms (452 modules)
+ Γ£ô Compiled in 400ms (452 modules)
+ Γ£ô Compiled in 427ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 487ms
+ Γ£ô Compiled in 491ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 371ms
+ GET /api/reports/report_1776594716326/audit 200 in 1234ms
+ Γ£ô Compiled in 2.8s (966 modules)
+ Γ£ô Compiled /api/auth/session in 427ms (516 modules)
+ GET /api/auth/session 200 in 1139ms
+ GET /api/reports/report_1776594716326/notifications 200 in 1390ms
+ GET /api/reports/report_1776594716326/audit 200 in 1400ms
+ Γùï Compiling /api/auth/users ...
+ Γ£ô Compiled /api/auth/users in 1447ms (970 modules)
+ GET /api/auth/users 200 in 1312ms
+ Γùï Compiling /api/reports ...
+ Γ£ô Compiled /api/reports in 1060ms (972 modules)
+ GET /api/reports 200 in 2078ms
+ Γ£ô Compiled in 494ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 1922ms
+ Γ£ô Compiled in 490ms (452 modules)
+ Γ£ô Compiled in 608ms (452 modules)
+ GET /api/reports/report_1776594716326/audit 200 in 497ms
+ GET /api/reports/report_1776594716326/notifications 200 in 600ms
+ Γ£ô Compiled in 470ms (452 modules)
+ Γ£ô Compiled in 582ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 569ms
+ Γ£ô Compiled in 622ms (452 modules)
+ Γ£ô Compiled in 738ms (452 modules)
+ GET /api/reports/report_1776594716326/notifications 401 in 237ms
+ GET /api/reports/report_1776594716326/audit 200 in 287ms
+ Γ£ô Compiled in 431ms (452 modules)
+ Γ£ô Compiled in 1464ms (452 modules)
+ PUT /api/reports/report_1776594716326 200 in 1726ms
+ Γùï Compiling /api/auth/login ...
+ Γ£ô Compiled /api/auth/login in 3.6s (974 modules)
+ POST /api/auth/login 500 in 3889ms
+ GET /api/reports/report_1776594716326/notifications 401 in 3317ms
+ GET /api/reports/report_1776594716326/audit 200 in 3457ms
+ POST /api/auth/login 200 in 4187ms
+ Γ£ô Compiled in 738ms (452 modules)
+ PUT /api/reports/report_1776594716326 401 in 598ms
+ Γ¿» SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>) {
+  page: '/api/auth/users'
+}
+ Γùï Compiling /_error ...
+ Γ£ô Compiled /_error in 5s (1070 modules)
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\auth\users\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\auth\\users\\route.js',
+  page: '/api/auth/users'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>) {
+  page: '/api/auth/users'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\auth\users\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\auth\\users\\route.js',
+  page: '/api/auth/users'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ GET /api/auth/users 500 in 8924ms
+ GET /api/auth/users 500 in 286ms
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ GET /api/auth/users 500 in 7888ms
+ GET /api/auth/users 500 in 263ms
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\auth\users\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\auth\\users\\route.js',
+  page: '/api/auth/users'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\auth\users\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\auth\\users\\route.js',
+  page: '/api/auth/users'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ POST /api/auth/users 500 in 321ms
+ POST /api/auth/users 500 in 136ms
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\audit\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\audit\\route.js',
+  page: '/api/reports/report_1776594716326/audit'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\notifications\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\notifications\\route.js',
+  page: '/api/reports/report_1776594716326/notifications'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\audit\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\audit\\route.js',
+  page: '/api/reports/report_1776594716326/audit'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\notifications\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\notifications\\route.js',
+  page: '/api/reports/report_1776594716326/notifications'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ GET /api/reports/report_1776594716326/audit 500 in 522ms
+ GET /api/reports/report_1776594716326/audit 500 in 225ms
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ GET /api/reports/report_1776594716326/notifications 500 in 579ms
+ GET /api/reports/report_1776594716326/notifications 500 in 179ms
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\audit\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\audit\\route.js',
+  page: '/api/reports/report_1776594716326/audit'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\notifications\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\notifications\\route.js',
+  page: '/api/reports/report_1776594716326/notifications'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\audit\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\audit\\route.js',
+  page: '/api/reports/report_1776594716326/audit'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\notifications\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\notifications\\route.js',
+  page: '/api/reports/report_1776594716326/notifications'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ GET /api/reports/report_1776594716326/audit 500 in 445ms
+ GET /api/reports/report_1776594716326/audit 500 in 182ms
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ GET /api/reports/report_1776594716326/notifications 500 in 487ms
+ GET /api/reports/report_1776594716326/notifications 500 in 127ms
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\audit\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\audit\\route.js',
+  page: '/api/reports/report_1776594716326/audit'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\notifications\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\notifications\\route.js',
+  page: '/api/reports/report_1776594716326/notifications'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\audit\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\audit\\route.js',
+  page: '/api/reports/report_1776594716326/audit'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\notifications\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\notifications\\route.js',
+  page: '/api/reports/report_1776594716326/notifications'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ GET /api/reports/report_1776594716326/audit 500 in 420ms
+ GET /api/reports/report_1776594716326/audit 500 in 178ms
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ GET /api/reports/report_1776594716326/notifications 500 in 456ms
+ GET /api/reports/report_1776594716326/notifications 500 in 119ms
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\audit\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\audit\\route.js',
+  page: '/api/reports/report_1776594716326/audit'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\notifications\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\notifications\\route.js',
+  page: '/api/reports/report_1776594716326/notifications'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\audit\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\audit\\route.js',
+  page: '/api/reports/report_1776594716326/audit'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\notifications\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\notifications\\route.js',
+  page: '/api/reports/report_1776594716326/notifications'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ GET /api/reports/report_1776594716326/audit 500 in 507ms
+ GET /api/reports/report_1776594716326/audit 500 in 239ms
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ GET /api/reports/report_1776594716326/notifications 500 in 532ms
+ GET /api/reports/report_1776594716326/notifications 500 in 154ms
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\audit\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\audit\\route.js',
+  page: '/api/reports/report_1776594716326/audit'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\notifications\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\notifications\\route.js',
+  page: '/api/reports/report_1776594716326/notifications'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\audit\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\audit\\route.js',
+  page: '/api/reports/report_1776594716326/audit'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\notifications\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\notifications\\route.js',
+  page: '/api/reports/report_1776594716326/notifications'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ GET /api/reports/report_1776594716326/audit 500 in 416ms
+ GET /api/reports/report_1776594716326/audit 500 in 162ms
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ GET /api/reports/report_1776594716326/notifications 500 in 446ms
+ GET /api/reports/report_1776594716326/notifications 500 in 89ms
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\audit\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\audit\\route.js',
+  page: '/api/reports/report_1776594716326/audit'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\notifications\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\notifications\\route.js',
+  page: '/api/reports/report_1776594716326/notifications'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\audit\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\audit\\route.js',
+  page: '/api/reports/report_1776594716326/audit'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\notifications\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\notifications\\route.js',
+  page: '/api/reports/report_1776594716326/notifications'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ GET /api/reports/report_1776594716326/audit 500 in 448ms
+ GET /api/reports/report_1776594716326/audit 500 in 171ms
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ GET /api/reports/report_1776594716326/notifications 500 in 503ms
+ GET /api/reports/report_1776594716326/notifications 500 in 141ms
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\audit\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\audit\\route.js',
+  page: '/api/reports/report_1776594716326/audit'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\notifications\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\notifications\\route.js',
+  page: '/api/reports/report_1776594716326/notifications'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\audit\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\audit\\route.js',
+  page: '/api/reports/report_1776594716326/audit'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\notifications\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\notifications\\route.js',
+  page: '/api/reports/report_1776594716326/notifications'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ GET /api/reports/report_1776594716326/audit 500 in 514ms
+ GET /api/reports/report_1776594716326/audit 500 in 216ms
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ GET /api/reports/report_1776594716326/notifications 500 in 558ms
+ GET /api/reports/report_1776594716326/notifications 500 in 149ms
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\route.js',
+  page: '/api/reports/report_1776594716326'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\route.js',
+  page: '/api/reports/report_1776594716326'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\route.js',
+  page: '/api/reports/report_1776594716326'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\route.js',
+  page: '/api/reports/report_1776594716326'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ PUT /api/reports/report_1776594716326 500 in 439ms
+ PUT /api/reports/report_1776594716326 500 in 217ms
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ PUT /api/reports/report_1776594716326 500 in 553ms
+ PUT /api/reports/report_1776594716326 500 in 149ms
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\route.js',
+  page: '/api/reports/report_1776594716326'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\route.js',
+  page: '/api/reports/report_1776594716326'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ PUT /api/reports/report_1776594716326 500 in 347ms
+ PUT /api/reports/report_1776594716326 500 in 100ms
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\route.js',
+  page: '/api/reports/report_1776594716326'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\route.js',
+  page: '/api/reports/report_1776594716326'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ PUT /api/reports/report_1776594716326 500 in 269ms
+ PUT /api/reports/report_1776594716326 500 in 104ms
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\route.js',
+  page: '/api/reports/report_1776594716326'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\route.js',
+  page: '/api/reports/report_1776594716326'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ PUT /api/reports/report_1776594716326 500 in 264ms
+ PUT /api/reports/report_1776594716326 500 in 81ms
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\route.js',
+  page: '/api/reports/report_1776594716326'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\route.js',
+  page: '/api/reports/report_1776594716326'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ PUT /api/reports/report_1776594716326 500 in 257ms
+ PUT /api/reports/report_1776594716326 500 in 97ms
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\route.js',
+  page: '/api/reports/report_1776594716326'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\route.js',
+  page: '/api/reports/report_1776594716326'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ PUT /api/reports/report_1776594716326 500 in 342ms
+ PUT /api/reports/report_1776594716326 500 in 126ms
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\route.js',
+  page: '/api/reports/report_1776594716326'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\reports\[id]\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\reports\\[id]\\route.js',
+  page: '/api/reports/report_1776594716326'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ PUT /api/reports/report_1776594716326 500 in 244ms
+ PUT /api/reports/report_1776594716326 500 in 95ms
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\auth\login\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\auth\\login\\route.js',
+  page: '/api/auth/login'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\auth\login\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\auth\\login\\route.js',
+  page: '/api/auth/login'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ POST /api/auth/login 500 in 321ms
+ POST /api/auth/login 500 in 124ms
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\auth\users\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\auth\\users\\route.js',
+  page: '/api/auth/users'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\auth\users\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\auth\\users\\route.js',
+  page: '/api/auth/users'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ GET /api/auth/users 500 in 350ms
+ GET /api/auth/users 500 in 128ms
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\auth\login\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\auth\\login\\route.js',
+  page: '/api/auth/login'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\auth\login\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\auth\\login\\route.js',
+  page: '/api/auth/login'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ POST /api/auth/login 500 in 262ms
+ POST /api/auth/login 500 in 99ms
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\auth\users\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\auth\\users\\route.js',
+  page: '/api/auth/users'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\app\api\auth\users\route.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\app\\api\\auth\\users\\route.js',
+  page: '/api/auth/users'
+}
+ Γ¿» [Error: ENOENT: no such file or directory, open 'C:\taskops\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\taskops\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\taskops\\.next\\routes-manifest.json'
+}
+ POST /api/auth/users 500 in 217ms
+ POST /api/auth/users 500 in 67ms
+[?25h

@@ -1,0 +1,11 @@
+
+> taskops-app@0.1.0 dev
+> next dev
+
+ ΓÜá Port 3000 is in use by process 10436, using available port 3001 instead.
+   Γû▓ Next.js 15.5.14
+   - Local:        http://localhost:3001
+   - Network:      http://10.248.135.175:3001
+
+ Γ£ô Starting...
+ Γ£ô Ready in 3.4s

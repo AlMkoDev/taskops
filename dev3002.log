@@ -1,0 +1,53 @@
+
+> taskops-app@0.1.0 dev
+> next dev
+
+ ΓÜá Port 3000 is in use by process 14708, using available port 3001 instead.
+   Γû▓ Next.js 15.5.14
+   - Local:        http://localhost:3001
+   - Network:      http://10.248.135.175:3001
+
+ Γ£ô Starting...
+ Γ£ô Ready in 9.4s
+ Γùï Compiling /api/reports/[id]/audit ...
+read ECONNRESET
+
+Retrying 1/3...
+read ECONNRESET
+
+Retrying 1/3...
+read ECONNRESET
+
+Retrying 2/3...
+read ECONNRESET
+
+Retrying 2/3...
+read ECONNRESET
+
+Retrying 3/3...
+read ECONNRESET
+
+Retrying 3/3...
+[Error: read ECONNRESET] {
+  errno: -4077,
+  code: 'ECONNRESET',
+  syscall: 'read'
+}
+ Γ¿» Failed to download `DM Sans` from Google Fonts. Using fallback font instead.
+
+Failed to fetch `DM Sans` from Google Fonts.}
+[Error: read ECONNRESET] {
+  errno: -4077,
+  code: 'ECONNRESET',
+  syscall: 'read'
+}
+ Γ¿» Failed to download `DM Mono` from Google Fonts. Using fallback font instead.
+
+Failed to fetch `DM Mono` from Google Fonts.}
+ Γ£ô Compiled /api/reports/[id]/audit in 15.1s (732 modules)
+ GET / 200 in 16711ms
+ GET /api/reports 200 in 16954ms
+ Γ£ô Compiled in 1104ms (301 modules)
+ GET /api/reports/report_daily_ops_001/notifications 200 in 18626ms
+ GET /api/reports/report_daily_ops_001/audit 200 in 18888ms
+ Γ£ô Compiled in 536ms (301 modules)
