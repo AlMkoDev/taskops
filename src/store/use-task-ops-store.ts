@@ -21,7 +21,7 @@ import {
 
 type Section = 'tasks' | 'projects' | 'team' | 'reports' | 'analytics' | 'settings' | 'blocked';
 type TaskView = 'list' | 'board' | 'timeline' | 'calendar';
-type TaskFilter = 'all' | 'my_work' | 'due_today' | 'blocked' | 'recurring' | 'watching';
+type TaskFilter = 'all' | 'my_work' | 'due_today' | 'blocked' | 'overdue' | 'review' | 'recurring' | 'watching';
 
 type TaskOpsStore = {
   tasks: Task[];
@@ -147,9 +147,9 @@ export const useTaskOpsStore = create<TaskOpsStore>()(
       taskTemplates: initialTaskTemplates,
       reportTemplates: initialReportTemplates,
       reports: initialReports,
-      activeSection: 'projects',
+      activeSection: 'tasks',
       activeView: 'list',
-      activeFilter: 'all',
+      activeFilter: 'my_work',
       selectedTaskId: tasks[0]?.id ?? null,
       selectedTaskIds: [],
       selectedProjectId: projects[0]?.id ?? null,
@@ -480,6 +480,9 @@ export const useTaskOpsStore = create<TaskOpsStore>()(
         taskTemplates: state.taskTemplates,
         reportTemplates: state.reportTemplates,
         reports: state.reports,
+        activeSection: state.activeSection,
+        activeView: state.activeView,
+        activeFilter: state.activeFilter,
         selectedReportId: state.selectedReportId
       }),
       onRehydrateStorage: () => (state, error) => {

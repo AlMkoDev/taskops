@@ -10,7 +10,7 @@ import { RichTextEditor } from './rich-text-editor';
 import { ToastContainer, toastManager } from './toast-notification';
 
 type ActorMode = 'author' | 'reviewer';
-type LeftPanelView = 'workspace' | 'admin' | 'security';
+type LeftPanelView = 'author' | 'reviewer' | 'admin' | 'security';
 type EditorSection = 'narrative' | 'metrics' | 'actions' | 'signoff' | 'activity';
 type NarrativeField = 'executive_summary' | 'variance_root_cause' | 'corrective_actions';
 type WorkspaceView = 'create' | 'history';
@@ -238,7 +238,7 @@ export function ReportsModule() {
   } = useTaskOpsStore();
 
   const [actorMode, setActorMode] = useState<ActorMode>('author');
-  const [leftPanelView, setLeftPanelView] = useState<LeftPanelView>('workspace');
+  const [leftPanelView, setLeftPanelView] = useState<LeftPanelView>('author');
   const [activeEditorSection, setActiveEditorSection] = useState<EditorSection>('narrative');
   const [workspaceView, setWorkspaceView] = useState<WorkspaceView>('history');
   const [reportSearch, setReportSearch] = useState('');
@@ -284,7 +284,6 @@ export function ReportsModule() {
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [showMetricInfo, setShowMetricInfo] = useState<Record<string, boolean>>({});
   const [isTagsExpanded, setIsTagsExpanded] = useState(false);
-  const [showExecutiveSummaryPrompt, setShowExecutiveSummaryPrompt] = useState(false);
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: '',
     newPassword: '',
@@ -706,8 +705,14 @@ export function ReportsModule() {
         const currentUser = await loadSession();
         if (currentUser) {
           await loadAuthUsers();
-          await loadSessions();
-          await loadSecurityActivity();
+          if (canManageReportUsers(currentUser)) {
+            await loadSessions();
+            await loadSecurityActivity();
+          } else {
+            setActiveSessions([]);
+            setSecurityAuditEntries([]);
+            setSecurityNotificationEntries([]);
+          }
           await loadReports();
           setAuthError('');
           setLoginEmail(currentUser.email);
@@ -739,6 +744,7 @@ export function ReportsModule() {
   const reviewerOptions = useMemo(() => authUsers.filter((user) => user.status === 'active' && user.id !== sessionUser?.id), [authUsers, sessionUser?.id]);
   const selectedReviewer = useMemo(() => reviewerOptions.find((user) => user.id === reviewerId) ?? reviewerOptions[0] ?? null, [reviewerId, reviewerOptions]);
   const canManageUsers = useMemo(() => canManageReportUsers(sessionUser), [sessionUser]);
+  const hasAdminSecurityAccess = canManageUsers;
   const canInspectIds = useMemo(() => canInspectStableIds(sessionUser), [sessionUser]);
   const canAuthorSelectedReport = useMemo(() => {
     if (!sessionUser || !selectedReport) return false;
@@ -796,6 +802,21 @@ export function ReportsModule() {
   }, [actorMode, canReviewSelectedReport]);
 
   useEffect(() => {
+    if (leftPanelView === 'reviewer') {
+      setActorMode('reviewer');
+    } else if (leftPanelView === 'author') {
+      setActorMode('author');
+    }
+  }, [leftPanelView]);
+
+  useEffect(() => {
+    if (!hasAdminSecurityAccess && (leftPanelView === 'admin' || leftPanelView === 'security')) {
+      toastManager.info('Admin and security tools are available to managers only.');
+      setLeftPanelView('author');
+    }
+  }, [hasAdminSecurityAccess, leftPanelView]);
+
+  useEffect(() => {
     if (!selectedReport?.id || selectedReport.id.startsWith('temp_report_')) {
       setAuditEntries([]);
       setNotificationEntries([]);
@@ -840,6 +861,19 @@ export function ReportsModule() {
       return matchesSearch && matchesStatus && matchesFrequency;
     });
   }, [reportFrequencyFilter, reportSearch, reportStatusFilter, reports]);
+
+  const continueDraftReports = useMemo(
+    () => reportResults.filter((report) => report.status === 'draft' && (!sessionUser || !report.authorId || report.authorId === sessionUser.id)),
+    [reportResults, sessionUser]
+  );
+  const awaitingReviewReports = useMemo(
+    () => reportResults.filter((report) => report.status === 'submitted' && (!sessionUser || !report.reviewerId || report.reviewerId === sessionUser.id || canManageUsers)),
+    [canManageUsers, reportResults, sessionUser]
+  );
+  const historyReports = useMemo(
+    () => reportResults.filter((report) => report.status === 'approved' || report.status === 'rejected' || report.status === 'changes_requested'),
+    [reportResults]
+  );
 
   function validateReport(report: ReportRecord, roleDefinition: ReportRoleDefinition | null) {
     if (!report.data.executive_summary.trim()) return 'Executive summary is required before submission.';
@@ -972,6 +1006,29 @@ export function ReportsModule() {
       setValidationMessage(submitError instanceof Error ? submitError.message : 'Failed to submit report.');
       toastManager.error('Failed to submit report');
     }
+  }
+
+  async function handleSaveDraft() {
+    if (!selectedReport || selectedReport.status !== 'draft') {
+      toastManager.info('Only draft reports can be saved.');
+      return;
+    }
+    const patch = { data: selectedReport.data, lastSavedAt: new Date().toISOString() };
+    if (!isOnline || selectedReport.id.startsWith('temp_report_')) {
+      enqueueReportAction({
+        id: `queue_${Date.now()}`,
+        type: 'update',
+        reportId: selectedReport.id,
+        payload: patch
+      });
+      refreshQueueCount();
+      updateReport(selectedReport.id, patch);
+      setSyncMessage('Draft saved locally and queued for sync.');
+      toastManager.info('Draft saved locally');
+      return;
+    }
+
+    await saveReportPatch(selectedReport.id, patch, 'Draft saved successfully.');
   }
 
   async function handleReview(action: ReportReviewAction) {
@@ -1166,8 +1223,14 @@ export function ReportsModule() {
       if (refreshedUser) {
         setSessionUser(refreshedUser);
       }
-      await loadSessions();
-      await loadSecurityActivity();
+      if (refreshedUser && canManageReportUsers(refreshedUser)) {
+        await loadSessions();
+        await loadSecurityActivity();
+      } else {
+        setActiveSessions([]);
+        setSecurityAuditEntries([]);
+        setSecurityNotificationEntries([]);
+      }
       await loadReports();
       setPasswordForm({
         currentPassword: '',
@@ -1407,29 +1470,36 @@ export function ReportsModule() {
               <span>Focused views</span>
             </div>
             <div className="reports-tabs reports-left-tabs" role="tablist" aria-label="Reports workspace views">
-              <button className={leftPanelView === 'workspace' ? 'is-active' : ''} onClick={() => setLeftPanelView('workspace')}>Authoring</button>
-              {canManageUsers ? <button className={leftPanelView === 'admin' ? 'is-active' : ''} onClick={() => setLeftPanelView('admin')}>Admin</button> : null}
-              <button className={leftPanelView === 'security' ? 'is-active' : ''} onClick={() => setLeftPanelView('security')}>Security</button>
+              <button className={leftPanelView === 'author' ? 'is-active' : ''} onClick={() => setLeftPanelView('author')}>Author</button>
+              <button className={leftPanelView === 'reviewer' ? 'is-active' : ''} onClick={() => setLeftPanelView('reviewer')}>Reviewer</button>
+              {hasAdminSecurityAccess ? <button className={leftPanelView === 'admin' ? 'is-active' : ''} onClick={() => setLeftPanelView('admin')}>Admin</button> : null}
+              {hasAdminSecurityAccess ? <button className={leftPanelView === 'security' ? 'is-active' : ''} onClick={() => setLeftPanelView('security')}>Security</button> : null}
             </div>
             <p className="reports-muted-note">
-              {leftPanelView === 'workspace'
-                ? 'Create reports and switch between existing drafts without admin noise.'
+              {leftPanelView === 'author'
+                ? 'Author mode keeps report creation and draft continuation front and center.'
+                : leftPanelView === 'reviewer'
+                  ? 'Reviewer mode isolates queued submissions so approvals are faster.'
                 : leftPanelView === 'admin'
                   ? 'User management stays available, but separate from report writing.'
                   : 'Account and session controls stay available without crowding the editor.'}
             </p>
           </section>
 
-          {leftPanelView === 'workspace' ? (
+          {leftPanelView === 'author' ? (
             <>
               <section className="reports-card">
                 <div className="reports-card-head">
-                  <h3>Authoring Queue</h3>
-                  <span>One task at a time</span>
+                  <h3>Author Landing</h3>
+                  <span>Continue or create</span>
                 </div>
-                <div className="reports-tabs reports-left-tabs" role="tablist" aria-label="Workspace actions">
-                  <button className={workspaceView === 'history' ? 'is-active' : ''} onClick={() => setWorkspaceView('history')}>History</button>
-                  <button className={workspaceView === 'create' ? 'is-active' : ''} onClick={() => setWorkspaceView('create')}>Create draft</button>
+                <div className="reports-inline-actions">
+                  <button className="primary-button reports-primary-action" onClick={() => setWorkspaceView('history')}>
+                    Continue Draft
+                  </button>
+                  <button className="ghost-button" onClick={() => setWorkspaceView('create')}>
+                    Create Report
+                  </button>
                 </div>
                 {workspaceView === 'create' ? (
                   <>
@@ -1483,8 +1553,12 @@ export function ReportsModule() {
                         <option value="changes_requested">Changes requested</option>
                       </select>
                     </div>
+                    <div className="reports-section-head">
+                      <h4>My Drafts</h4>
+                      <span>{continueDraftReports.length}</span>
+                    </div>
                     <div className="reports-list">
-                      {reportResults.map((report) => (
+                      {continueDraftReports.map((report) => (
                         <button key={report.id} className={selectedReport?.id === report.id ? 'reports-list-item is-active' : 'reports-list-item'} onClick={() => { setSelectedReportId(report.id); setValidationMessage(''); }}>
                           <div>
                             <strong>{report.title}</strong>
@@ -1494,13 +1568,63 @@ export function ReportsModule() {
                         </button>
                       ))}
                     </div>
+                    <div className="reports-section-head">
+                      <h4>Awaiting Review</h4>
+                      <span>{awaitingReviewReports.length}</span>
+                    </div>
+                    <div className="reports-list">
+                      {awaitingReviewReports.slice(0, 4).map((report) => (
+                        <button key={report.id} className={selectedReport?.id === report.id ? 'reports-list-item is-active' : 'reports-list-item'} onClick={() => { setSelectedReportId(report.id); setValidationMessage(''); }}>
+                          <div>
+                            <strong>{report.title}</strong>
+                            <small>{report.roleName} · {report.reportingWindow}</small>
+                          </div>
+                          <span className={`reports-status-chip status-${report.status}`}>{reportStatusLabel(report.status)}</span>
+                        </button>
+                      ))}
+                    </div>
+                    <div className="reports-section-head">
+                      <h4>Approved / History</h4>
+                      <span>{historyReports.length}</span>
+                    </div>
                   </>
                 )}
               </section>
             </>
           ) : null}
 
-          {leftPanelView === 'admin' && canManageUsers ? (
+          {leftPanelView === 'reviewer' ? (
+            <section className="reports-card">
+              <div className="reports-card-head">
+                <h3>Reviewer Queue</h3>
+                <span>{awaitingReviewReports.length} awaiting review</span>
+              </div>
+              <p className="reports-muted-note">
+                Select a submitted report to approve, reject, or request changes.
+              </p>
+              <div className="reports-list">
+                {awaitingReviewReports.length > 0 ? awaitingReviewReports.map((report) => (
+                  <button
+                    key={report.id}
+                    className={selectedReport?.id === report.id ? 'reports-list-item is-active' : 'reports-list-item'}
+                    onClick={() => {
+                      setActorMode('reviewer');
+                      setSelectedReportId(report.id);
+                      setValidationMessage('');
+                    }}
+                  >
+                    <div>
+                      <strong>{report.title}</strong>
+                      <small>{report.authorName} to {report.reviewerName}</small>
+                    </div>
+                    <span className={`reports-status-chip status-${report.status}`}>{reportStatusLabel(report.status)}</span>
+                  </button>
+                )) : <div className="reports-activity-item"><strong>No reports awaiting review</strong><p>Submitted reports routed to you will appear here.</p></div>}
+              </div>
+            </section>
+          ) : null}
+
+          {leftPanelView === 'admin' && hasAdminSecurityAccess ? (
             <section className="reports-card">
               <div className="reports-card-head">
                 <h3>User Directory</h3>
@@ -1561,7 +1685,7 @@ export function ReportsModule() {
             </section>
           ) : null}
 
-          {leftPanelView === 'security' ? (
+          {leftPanelView === 'security' && hasAdminSecurityAccess ? (
             <section className="reports-card">
               <div className="reports-card-head">
                 <h3>Account Security</h3>
@@ -1815,7 +1939,6 @@ export function ReportsModule() {
                           type="button"
                           onClick={() => {
                             setEditingNarrativeField('executive_summary');
-                            setShowExecutiveSummaryPrompt(false);
                           }}
                         >
                           Go to Executive Summary
@@ -2415,7 +2538,9 @@ export function ReportsModule() {
                       Submit for review
                     </button>
                   ) : null}
-                  <button className="ghost-button">Save draft</button>
+                  <button className="ghost-button" onClick={handleSaveDraft} disabled={!isDraftEditable}>
+                    Save draft
+                  </button>
                 </div>
               </section>
 

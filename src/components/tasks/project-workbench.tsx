@@ -1,7 +1,7 @@
 'use client';
 
 import { BarChart3, CalendarDays, FolderTree, Plus, Settings2 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Project, ProjectPhase, Task, TaskPriority, TaskStatus, User, WbsCadence } from '@/types/domain';
 
 type ProjectWorkbenchTab = 'wbs' | 'gantt' | 'cadence' | 'daily' | 'summary';
@@ -43,13 +43,14 @@ const phaseColors = [
   { color: '#4a2222', dotColor: '#f87171' }
 ];
 
-const tabConfig: Array<{ id: ProjectWorkbenchTab; label: string }> = [
-  { id: 'wbs', label: 'WBS Tasks' },
-  { id: 'gantt', label: 'Gantt' },
-  { id: 'cadence', label: 'Cadence' },
-  { id: 'daily', label: 'Daily Board' },
-  { id: 'summary', label: 'Summary' }
+const tabConfig: Array<{ id: ProjectWorkbenchTab; label: string; description: string; tone?: 'primary' | 'secondary' }> = [
+  { id: 'summary', label: 'Summary', description: 'Best starting point for project health.', tone: 'primary' },
+  { id: 'daily', label: 'Daily Board', description: 'Use for execution handoffs and active delivery.', tone: 'primary' },
+  { id: 'wbs', label: 'WBS Tasks', description: 'Plan the detailed work breakdown structure.', tone: 'secondary' },
+  { id: 'gantt', label: 'Gantt', description: 'Use for schedule pressure and deadline planning.', tone: 'secondary' },
+  { id: 'cadence', label: 'Cadence', description: 'Track repeating or stage-based project rhythms.', tone: 'secondary' }
 ];
+const ADVANCED_PROJECT_HINT_STORAGE_KEY = 'taskops:project-advanced-hint-dismissed';
 
 const emptyPhaseDraft: PhaseDraft = {
   name: '',
@@ -122,13 +123,14 @@ export function ProjectWorkbench({
   onAddTask,
   onOpenTask
 }: ProjectWorkbenchProps) {
-  const [activeTab, setActiveTab] = useState<ProjectWorkbenchTab>('wbs');
+  const [activeTab, setActiveTab] = useState<ProjectWorkbenchTab>('summary');
   const [isPhaseModalOpen, setIsPhaseModalOpen] = useState(false);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [phaseDraft, setPhaseDraft] = useState<PhaseDraft>(emptyPhaseDraft);
   const [taskDraft, setTaskDraft] = useState<WbsTaskDraft>(emptyWbsTaskDraft);
   const [settingsDraft, setSettingsDraft] = useState<ProjectSettingsDraft | null>(null);
+  const [isAdvancedHintDismissed, setIsAdvancedHintDismissed] = useState(false);
 
   const orderedPhases = useMemo(
     () => [...phases].sort((left, right) => left.startWeek - right.startWeek || left.endWeek - right.endWeek),
@@ -157,6 +159,33 @@ export function ProjectWorkbench({
       })),
     [tasks]
   );
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !project) return;
+    const savedTab = window.sessionStorage.getItem(`taskops:project-tab:${project.id}`) as ProjectWorkbenchTab | null;
+    if (savedTab && tabConfig.some((tab) => tab.id === savedTab)) {
+      setActiveTab(savedTab);
+    }
+  }, [project]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !project) return;
+    window.sessionStorage.setItem(`taskops:project-tab:${project.id}`, activeTab);
+  }, [activeTab, project]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    setIsAdvancedHintDismissed(window.localStorage.getItem(ADVANCED_PROJECT_HINT_STORAGE_KEY) === 'true');
+  }, []);
+
+  const isAdvancedPlanningTab = activeTab === 'wbs' || activeTab === 'gantt' || activeTab === 'cadence';
+
+  function dismissAdvancedHint() {
+    setIsAdvancedHintDismissed(true);
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(ADVANCED_PROJECT_HINT_STORAGE_KEY, 'true');
+    }
+  }
 
   if (!project) {
     return (
@@ -302,6 +331,10 @@ export function ProjectWorkbench({
             </p>
           </div>
           <div className="project-shell-actions">
+            <button className="ghost-button" onClick={() => { if (tasks[0]) onOpenTask(tasks[0].id); }} disabled={tasks.length === 0}>
+              <BarChart3 size={16} />
+              View in Tasks
+            </button>
             <button className="ghost-button" onClick={() => setIsPhaseModalOpen(true)}>
               <Plus size={16} />
               Add Phase
@@ -332,13 +365,29 @@ export function ProjectWorkbench({
           {tabConfig.map((tab) => (
             <button
               key={tab.id}
-              className={activeTab === tab.id ? 'is-active' : ''}
+              className={`${activeTab === tab.id ? 'is-active' : ''}${tab.tone === 'secondary' ? ' is-secondary' : ''}`}
               onClick={() => setActiveTab(tab.id)}
+              title={tab.description}
             >
-              {tab.label}
+              <span>{tab.label}</span>
+              <small>{tab.description}</small>
             </button>
           ))}
         </div>
+
+        {isAdvancedPlanningTab && !isAdvancedHintDismissed ? (
+          <div className="calm-card">
+            <div className="modal-header" style={{ padding: 0, border: 0 }}>
+              <div>
+                <h3 style={{ margin: 0 }}>Advanced Planning Hint</h3>
+                <p style={{ marginTop: 6 }}>
+                  Use Summary and Daily Board for routine execution. Switch to WBS, Gantt, or Cadence when you are planning structure, dependencies, or schedules.
+                </p>
+              </div>
+              <button className="ghost-button" onClick={dismissAdvancedHint}>Dismiss</button>
+            </div>
+          </div>
+        ) : null}
 
         {activeTab === 'wbs' ? (
           <div className="wbs-section">

@@ -19,6 +19,7 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 import { useTaskOpsStore } from '@/store/use-task-ops-store';
 import { AutomationRule, Project, ProjectPhase, ProjectType, ReportTemplate, Task, TaskPriority, TaskStatus, TaskTemplate, TaskType, User, UserRole } from '@/types/domain';
+import { formatDateTimeLabel, formatDayLabel, formatMonthLabel, getCurrentDate, isOverdue, isSameDay, isToday, startOfDay } from '@/utils/date';
 import { TaskDetailPanel } from './task-detail-panel';
 import { ProjectWorkbench } from './project-workbench';
 import { HrImportWizard } from './hr-import-wizard';
@@ -157,50 +158,6 @@ const emptyTeamMemberDraft: TeamMemberDraft = {
 
 const suggestedProjectTypes = ['project', 'operations', 'workstream', 'client', 'account'];
 
-const DISPLAY_LOCALE = 'en-ZA';
-const DISPLAY_TIME_ZONE = 'UTC';
-const REFERENCE_NOW = new Date('2026-04-07T12:00:00.000Z');
-
-function startOfDay(date: Date) {
-  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
-}
-
-function isSameDay(left: Date, right: Date) {
-  return (
-    left.getUTCFullYear() === right.getUTCFullYear() &&
-    left.getUTCMonth() === right.getUTCMonth() &&
-    left.getUTCDate() === right.getUTCDate()
-  );
-}
-
-function formatDayLabel(date: Date) {
-  return new Intl.DateTimeFormat(DISPLAY_LOCALE, {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-    timeZone: DISPLAY_TIME_ZONE
-  }).format(date);
-}
-
-function formatDateTimeLabel(date: Date) {
-  return new Intl.DateTimeFormat(DISPLAY_LOCALE, {
-    day: '2-digit',
-    month: 'short',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-    timeZone: DISPLAY_TIME_ZONE
-  }).format(date).replace(',', '');
-}
-
-function formatMonthLabel(date: Date) {
-  return new Intl.DateTimeFormat(DISPLAY_LOCALE, {
-    month: 'long',
-    year: 'numeric',
-    timeZone: DISPLAY_TIME_ZONE
-  }).format(date);
-}
-
 function buildEmptyTaskDraft(projectList: Project[], userList: User[]): NewTaskDraft {
   const ownerId = userList[0]?.id ?? '';
   return {
@@ -224,94 +181,55 @@ type OnboardingStep = {
   bullets: string[];
   section: 'tasks' | 'projects' | 'team' | 'reports' | 'analytics' | 'settings' | 'blocked';
   view?: 'list' | 'board' | 'timeline' | 'calendar';
-  filter?: 'all' | 'my_work' | 'due_today' | 'blocked' | 'recurring' | 'watching';
+  filter?: 'all' | 'my_work' | 'due_today' | 'blocked' | 'overdue' | 'review' | 'recurring' | 'watching';
 };
 
 const ONBOARDING_STORAGE_KEY = 'taskops:onboarding-complete';
+const CONTEXT_HINTS_STORAGE_KEY = 'taskops:contextual-module-hints-dismissed';
 const onboardingSteps: OnboardingStep[] = [
   {
-    title: 'Welcome to TaskOps',
-    body: 'TaskOps is the shared operating system for planning, executing, tracking, and escalating work.',
+    title: 'Review Your Work',
+    body: 'Start each day in Tasks with the work that already belongs to you.',
     bullets: [
-      'Tasks are the source of truth for day-to-day work.',
-      'Projects, Team, Reports, Blocked, Analytics, and Settings all support that core task flow.',
-      'This walkthrough will move the app as you go so you can learn by seeing the real screens.'
-    ],
-    section: 'tasks',
-    view: 'list',
-    filter: 'all'
-  },
-  {
-    title: 'Start in Tasks',
-    body: 'This is where operators should begin every day.',
-    bullets: [
-      'Review My Work, Due Today, Blocked, and Overdue pressure.',
-      'Open a task and keep status, subtasks, and work logs current.',
-      'Use the right detail panel as the working surface, not just the list.'
+      'My Work is the default so the workspace starts with the clearest next actions.',
+      'Use Due Today and Blocked when you need to triage pressure quickly.',
+      'The walkthrough moves the live app so the habit maps to the real UI.'
     ],
     section: 'tasks',
     view: 'list',
     filter: 'my_work'
   },
   {
-    title: 'Use Views to Sequence Work',
-    body: 'The task model stays the same while the view changes to fit the job in front of you.',
+    title: 'Open a Task',
+    body: 'The detail panel is the daily execution surface, not just a read-only sidebar.',
     bullets: [
-      'Board is best for flow by status.',
-      'Timeline is best for sequencing due work over the coming days.',
-      'Calendar is best when date pressure matters more than status.'
+      'Update the task state from the contextual primary action near the top.',
+      'Keep the description and planning info available without crowding the working controls.',
+      'Use the checklist and work log to keep shared context current.'
+    ],
+    section: 'tasks',
+    view: 'list',
+    filter: 'my_work'
+  },
+  {
+    title: 'Log Progress',
+    body: 'Save short work logs as you move so the next person can see what changed.',
+    bullets: [
+      'A quick update is usually enough: what changed, any detail, and how much time was spent.',
+      'Logging work can move a task into progress without extra admin steps.',
+      'The list, timeline, and calendar all reflect the same underlying task record.'
     ],
     section: 'tasks',
     view: 'timeline',
-    filter: 'all'
+    filter: 'due_today'
   },
   {
-    title: 'Projects Show Delivery Health',
-    body: 'Projects group related tasks without replacing the task-first operating model.',
+    title: 'Mark a Blocker',
+    body: 'When work is stuck, make the blocker explicit so it enters the escalation flow.',
     bullets: [
-      'Use Projects to review open work, blocked work, progress, and effort by delivery stream.',
-      'Drill back into tasks whenever a project needs attention.',
-      'Projects organize work; they should not become a separate tracking system.'
-    ],
-    section: 'projects'
-  },
-  {
-    title: 'Team Protects Flow',
-    body: 'Team leads use this view to balance ownership and spot pressure early.',
-    bullets: [
-      'Watch utilization, blocked owned work, overdue work, and review load.',
-      'Reassign or rebalance before work clusters into the same people.',
-      'Treat this as an operational load view, not a directory.'
-    ],
-    section: 'team'
-  },
-  {
-    title: 'Reports and Blocked are Intervention Screens',
-    body: 'Recurring deliverables and stuck work need their own focused views.',
-    bullets: [
-      'Reports helps teams stay ahead of recurring deliverables and review routing.',
-      'Blocked is the command center for intervention and escalation.',
-      'When work is stuck, make the blocker explicit instead of letting it silently drift.'
-    ],
-    section: 'reports'
-  },
-  {
-    title: 'Analytics and Settings Improve the System',
-    body: 'Managers and admins use these screens to improve the operating model over time.',
-    bullets: [
-      'Analytics shows completion, overdue work, blocked volume, and load patterns.',
-      'Settings holds templates, automations, and routing rules for repeatable work.',
-      'Tune the system after patterns emerge; do not automate unstable workflows too early.'
-    ],
-    section: 'analytics'
-  },
-  {
-    title: 'Recommended Daily Rhythm',
-    body: 'The simplest good workflow is to capture work quickly, execute from tasks, and escalate friction early.',
-    bullets: [
-      'Operators live in Tasks and keep records current in real time.',
-      'Leads work from Blocked, Team, and Projects to protect delivery flow.',
-      'Managers review Analytics weekly, and admins improve Settings as patterns emerge.'
+      'Capture the blocker reason so the Blocked view becomes trustworthy.',
+      'Blocked work is sorted to help leads intervene where urgency is highest.',
+      'Resolve the blocker from the task once work can move again.'
     ],
     section: 'blocked'
   }
@@ -427,6 +345,7 @@ export function TasksWorkspace() {
     selectedReportId,
     searchQuery,
     addUser,
+    updateTask,
     updateUser,
     deleteUser,
     addTask,
@@ -465,10 +384,13 @@ export function TasksWorkspace() {
   const [reportTemplateDraft, setReportTemplateDraft] = useState<Pick<ReportTemplate, 'name' | 'description' | 'cadence' | 'reviewerLabel'>>({ name: '', description: '', cadence: 'monthly', reviewerLabel: '' });
   const [showImportWizard, setShowImportWizard] = useState(false);
   const [analyticsView, setAnalyticsView] = useState<'task' | 'labor'>('task');
+  const [isTaskAdvancedOpen, setIsTaskAdvancedOpen] = useState(false);
+  const [dismissedModuleHints, setDismissedModuleHints] = useState<Record<string, boolean>>({});
 
   const taskMap = useMemo(() => new Map(tasks.map((task) => [task.id, task])), [tasks]);
   const selectedTask = selectedTaskId ? taskMap.get(selectedTaskId) ?? null : null;
-  const hasProjects = projects.length > 0;
+  const currentUserId = users[0]?.id ?? '';
+  const now = useMemo(() => getCurrentDate(), []);
 
   useEffect(() => {
     setProjectDraft((current) => ({
@@ -485,22 +407,47 @@ export function TasksWorkspace() {
     }));
   }, [projects, users]);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const rawHints = window.localStorage.getItem(CONTEXT_HINTS_STORAGE_KEY);
+    if (!rawHints) return;
+    try {
+      const parsed = JSON.parse(rawHints) as Record<string, boolean>;
+      setDismissedModuleHints(parsed);
+    } catch {
+      setDismissedModuleHints({});
+    }
+  }, []);
+
+  function dismissModuleHint(module: 'reports' | 'analytics' | 'settings') {
+    setDismissedModuleHints((current) => {
+      const next = { ...current, [module]: true };
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem(CONTEXT_HINTS_STORAGE_KEY, JSON.stringify(next));
+      }
+      return next;
+    });
+  }
+
   const filteredTasks = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
     return tasks.filter((task) => {
       const projectName = projects.find((project) => project.id === task.projectId)?.name.toLowerCase() ?? '';
-      const matchesQuery = query.length === 0 || task.title.toLowerCase().includes(query) || task.tags.some((tag) => tag.toLowerCase().includes(query)) || projectName.includes(query);
+      const ownerName = users.find((user) => user.id === task.ownerId)?.name.toLowerCase() ?? '';
+      const matchesQuery = query.length === 0 || task.title.toLowerCase().includes(query) || task.tags.some((tag) => tag.toLowerCase().includes(query)) || projectName.includes(query) || ownerName.includes(query);
       if (!matchesQuery) return false;
       switch (activeFilter) {
-        case 'my_work': return task.ownerId === 'u1';
-        case 'due_today': return task.dueAt?.startsWith('2026-04-07') ?? false;
+        case 'my_work': return currentUserId ? task.ownerId === currentUserId : true;
+        case 'due_today': return isToday(task.dueAt);
         case 'blocked': return task.status === 'blocked';
+        case 'overdue': return task.status !== 'done' && isOverdue(task.dueAt);
+        case 'review': return task.status === 'review';
         case 'recurring': return task.type === 'report' || task.type === 'recurring';
-        case 'watching': return task.watcherIds.includes('u1');
+        case 'watching': return currentUserId ? task.watcherIds.includes(currentUserId) : false;
         default: return true;
       }
     });
-  }, [activeFilter, projects, searchQuery, tasks]);
+  }, [activeFilter, currentUserId, projects, searchQuery, tasks, users]);
 
   const blockedTasks = useMemo(() => tasks.filter((task) => task.status === 'blocked' || task.blocker), [tasks]);
   const projectSummaries = useMemo<ProjectSummary[]>(() => projects.map((project) => {
@@ -524,7 +471,7 @@ export function TasksWorkspace() {
       user,
       openCount: userTasks.filter((task) => !['done', 'archived'].includes(task.status)).length,
       blockedCount: userTasks.filter((task) => task.status === 'blocked' || task.blocker).length,
-      overdueCount: userTasks.filter((task) => Boolean(task.dueAt) && new Date(task.dueAt ?? '').getTime() < new Date('2026-04-07T12:00:00.000Z').getTime() && task.status !== 'done').length,
+      overdueCount: userTasks.filter((task) => Boolean(task.dueAt) && isOverdue(task.dueAt) && task.status !== 'done').length,
       reviewCount: userTasks.filter((task) => task.status === 'review').length,
       loggedHours: Number(userTasks.reduce((sum, task) => sum + task.loggedHours, 0).toFixed(1)),
       utilization: Math.min(200, Math.round((estimatedHours / capacity) * 100)),
@@ -544,7 +491,7 @@ export function TasksWorkspace() {
     const busiestMember = teamSummaries.slice().sort((left, right) => right.utilization - left.utilization)[0];
     return {
       completionRate: tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 0,
-      overdueCount: tasks.filter((task) => Boolean(task.dueAt) && new Date(task.dueAt ?? '').getTime() < new Date('2026-04-07T12:00:00.000Z').getTime() && task.status !== 'done').length,
+      overdueCount: tasks.filter((task) => Boolean(task.dueAt) && isOverdue(task.dueAt) && task.status !== 'done').length,
       blockedCount: blockedTasks.length,
       reportVolume: reports.length,
       avgProgress: tasks.length > 0 ? Math.round(tasks.reduce((sum, task) => sum + task.progress, 0) / tasks.length) : 0,
@@ -580,8 +527,14 @@ export function TasksWorkspace() {
   const selectedProjectSummary = projectSummaries.find((summary) => summary.project.id === selectedProjectId) ?? projectSummaries[0] ?? null;
   const selectedTeamSummary = teamSummaries.find((summary) => summary.user.id === selectedUserId) ?? teamSummaries[0] ?? null;
   const selectedReportRecord = reports.find((report) => report.id === selectedReportId) ?? reports[0] ?? null;
+  const taskKpis = useMemo(() => ({
+    dueToday: tasks.filter((task) => task.status !== 'done' && isToday(task.dueAt)).length,
+    blocked: tasks.filter((task) => task.status === 'blocked' || Boolean(task.blocker)).length,
+    overdue: tasks.filter((task) => task.status !== 'done' && isOverdue(task.dueAt)).length,
+    needsReview: tasks.filter((task) => task.status === 'review').length
+  }), [tasks]);
   const timelineGroups = useMemo(() => {
-    const today = startOfDay(REFERENCE_NOW);
+    const today = startOfDay(now);
     const endOfWeek = new Date(today);
     endOfWeek.setDate(today.getDate() + 6);
 
@@ -618,11 +571,12 @@ export function TasksWorkspace() {
       });
 
     return groups.filter((group) => group.tasks.length > 0);
-  }, [filteredTasks]);
+  }, [filteredTasks, now]);
 
   const calendarDays = useMemo(() => {
     const datedTasks = filteredTasks.filter((task) => task.dueAt);
-    const anchor = datedTasks.length > 0 ? new Date(datedTasks[0].dueAt as string) : REFERENCE_NOW;
+    const today = getCurrentDate();
+    const anchor = datedTasks.length > 0 ? new Date(datedTasks[0].dueAt as string) : today;
     const monthStart = new Date(anchor.getFullYear(), anchor.getMonth(), 1);
     const monthEnd = new Date(anchor.getFullYear(), anchor.getMonth() + 1, 0);
     const gridStart = new Date(monthStart);
@@ -681,9 +635,10 @@ export function TasksWorkspace() {
 
   const handleCreateTask = () => {
     const title = draft.title.trim();
-    if (!title || !hasProjects || !draft.projectId || !draft.ownerId) return;
-    addTask({ id: `t${Date.now()}`, type: draft.type, title, description: draft.description.trim() || undefined, status: draft.status, priority: draft.priority, projectId: draft.projectId || undefined, ownerId: draft.ownerId, reviewerId: draft.reviewerId || undefined, backupOwnerId: draft.backupOwnerId || undefined, watcherIds: draft.reviewerId ? [draft.reviewerId] : [], tags: draft.tags.split(',').map((tag) => tag.trim()).filter(Boolean), startAt: draft.startAt ? new Date(draft.startAt).toISOString() : undefined, dueAt: draft.endAt ? new Date(draft.endAt).toISOString() : undefined, estimateHours: Number(draft.estimateHours) || undefined, loggedHours: 0, progress: 0, recurrence: draft.recurrence || undefined, dependencyIds: [], subtasks: [], blocker: null, sla: { enabled: false }, attachmentIds: [], workLogIds: [], activityIds: [] });
+    if (!title) return;
+    addTask({ id: `t${Date.now()}`, type: draft.type, title, description: draft.description.trim() || undefined, status: draft.status, priority: draft.priority, projectId: draft.projectId || undefined, ownerId: draft.ownerId || currentUserId || 'unassigned', reviewerId: draft.reviewerId || undefined, backupOwnerId: draft.backupOwnerId || undefined, watcherIds: draft.reviewerId ? [draft.reviewerId] : [], tags: draft.tags.split(',').map((tag) => tag.trim()).filter(Boolean), startAt: draft.startAt ? new Date(draft.startAt).toISOString() : undefined, dueAt: draft.endAt ? new Date(draft.endAt).toISOString() : undefined, estimateHours: Number(draft.estimateHours) || undefined, loggedHours: 0, progress: 0, recurrence: draft.recurrence || undefined, dependencyIds: [], subtasks: [], blocker: null, sla: { enabled: false }, attachmentIds: [], workLogIds: [], activityIds: [] });
     setDraft(buildEmptyTaskDraft(projects, users));
+    setIsTaskAdvancedOpen(false);
     setIsCreateOpen(false);
   };
 
@@ -778,16 +733,20 @@ export function TasksWorkspace() {
       <header className="topbar">
         <div className="brand"><div className="brand-dot" /><div><div className="brand-name">Task Manager</div><div className="brand-meta">Start blank, structure projects, and execute work clearly.</div></div></div>
         <div className="topbar-nav">
-          <button className={activeSection === 'tasks' ? 'is-active' : ''} onClick={() => setActiveSection('tasks')}>Tasks</button>
-          <button className={activeSection === 'projects' ? 'is-active' : ''} onClick={() => setActiveSection('projects')}>Projects</button>
-          <button className={activeSection === 'team' ? 'is-active' : ''} onClick={() => setActiveSection('team')}>Team</button>
-          <button className={activeSection === 'reports' ? 'is-active' : ''} onClick={() => setActiveSection('reports')}>Reports</button>
-          <button className={activeSection === 'analytics' ? 'is-active' : ''} onClick={() => setActiveSection('analytics')}>Analytics</button>
-          <button className={activeSection === 'settings' ? 'is-active' : ''} onClick={() => setActiveSection('settings')}>Settings</button>
-          <button className={activeSection === 'blocked' ? 'is-active' : ''} onClick={() => setActiveSection('blocked')}>Blocked</button>
+          <div className="topbar-nav-group">
+            <button className={activeSection === 'tasks' ? 'is-active' : ''} onClick={() => setActiveSection('tasks')}>Tasks</button>
+            <button className={activeSection === 'blocked' ? 'is-active' : ''} onClick={() => setActiveSection('blocked')}>Blocked</button>
+            <button className={activeSection === 'projects' ? 'is-active' : ''} onClick={() => setActiveSection('projects')}>Projects</button>
+            <button className={activeSection === 'reports' ? 'is-active' : ''} onClick={() => setActiveSection('reports')}>Reports</button>
+          </div>
+          <div className="topbar-nav-group is-secondary">
+            <button className={activeSection === 'team' ? 'is-active' : ''} onClick={() => setActiveSection('team')}>Team</button>
+            <button className={activeSection === 'analytics' ? 'is-active' : ''} onClick={() => setActiveSection('analytics')}>Analytics</button>
+            <button className={activeSection === 'settings' ? 'is-active' : ''} onClick={() => setActiveSection('settings')}>Settings</button>
+          </div>
         </div>
         <div className="searchbox"><Search size={15} /><input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search tasks, tags, projects, or owners..." /></div>
-        <div className="topbar-actions"><button className="ghost-button walkthrough-trigger" onClick={openOnboarding}><BookOpen size={16} />Walkthrough</button><button className="ghost-button" onClick={() => setIsCreateProjectOpen(true)}><FolderKanban size={16} />Create Project</button><button className="primary-button" onClick={() => setIsCreateOpen(true)} disabled={!hasProjects}><Plus size={16} />New Task</button></div>
+        <div className="topbar-actions"><button className="ghost-button walkthrough-trigger" onClick={openOnboarding}><BookOpen size={16} />Walkthrough</button><button className="ghost-button" onClick={() => setIsCreateProjectOpen(true)}><FolderKanban size={16} />Create Project</button><button className="primary-button" onClick={() => setIsCreateOpen(true)}><Plus size={16} />New Task</button></div>
       </header>
 
       <div className="page-header">
@@ -798,7 +757,40 @@ export function TasksWorkspace() {
         {activeSection === 'tasks' ? <div className="view-switcher">{[{ id: 'list', label: 'List', icon: <ListTodo size={14} /> }, { id: 'board', label: 'Board', icon: <LayoutGrid size={14} /> }, { id: 'timeline', label: 'Timeline', icon: <TimerReset size={14} /> }, { id: 'calendar', label: 'Calendar', icon: <CalendarDays size={14} /> }].map((view) => <button key={view.id} className={activeView === view.id ? 'is-active' : ''} onClick={() => setActiveView(view.id as typeof activeView)}>{view.icon}{view.label}</button>)}</div> : <div className="blocked-metrics"><div className="metric-box"><strong>{activeSection === 'analytics' ? `${analyticsSummary.completionRate}%` : activeSection === 'settings' ? settingsSummary.activeAutomations : activeSection === 'reports' ? reports.length : activeSection === 'projects' ? projects.length : activeSection === 'team' ? teamSummaries.length : blockedTasks.length}</strong><span>{activeSection === 'analytics' ? 'completion rate' : activeSection === 'settings' ? 'active automations' : activeSection === 'reports' ? 'report records' : activeSection === 'projects' ? 'project shells' : activeSection === 'team' ? 'team members' : 'blocked tasks'}</span></div><div className="metric-box"><strong>{activeSection === 'analytics' ? analyticsSummary.overdueCount : activeSection === 'settings' ? taskTemplates.length + reportTemplates.length : activeSection === 'reports' ? reports.filter((report) => report.status === 'changes_requested' || report.status === 'rejected').length : activeSection === 'projects' ? selectedProjectPhases.length : activeSection === 'team' ? teamSummaries.reduce((sum, member) => sum + member.blockedCount, 0) : blockedTasks.filter((task) => task.priority === 'P1').length}</strong><span>{activeSection === 'analytics' ? 'overdue tasks' : activeSection === 'settings' ? 'templates' : activeSection === 'reports' ? 'needs attention' : activeSection === 'projects' ? 'selected phases' : activeSection === 'team' ? 'blocked owned' : 'P1 blocked'}</span></div></div>}
       </div>
 
-      {activeSection === 'tasks' ? <div className="chip-row">{[['all', 'All'], ['my_work', 'My Work'], ['due_today', 'Due Today'], ['blocked', 'Blocked'], ['recurring', 'Recurring'], ['watching', 'Watching']].map(([id, label]) => <button key={id} className={activeFilter === id ? 'chip is-active' : 'chip'} onClick={() => setActiveFilter(id as typeof activeFilter)}>{label}</button>)}</div> : null}
+      {(activeSection === 'reports' || activeSection === 'analytics' || activeSection === 'settings') &&
+      !dismissedModuleHints[activeSection] ? (
+        <div className="chip-row">
+          <div className="calm-card" style={{ width: '100%' }}>
+            <div className="modal-header" style={{ padding: 0, border: 0 }}>
+              <div>
+                <h3 style={{ margin: 0 }}>
+                  {activeSection === 'reports'
+                    ? 'Reports hint'
+                    : activeSection === 'analytics'
+                      ? 'Analytics hint'
+                      : 'Settings hint'}
+                </h3>
+                <p style={{ marginTop: 6 }}>
+                  {activeSection === 'reports'
+                    ? 'Use Reports for recurring narrative and review workflows. Keep daily execution in Tasks and Blocked.'
+                    : activeSection === 'analytics'
+                      ? 'Start in Operational Health, drill into flagged metrics, and jump back to Tasks for action.'
+                      : 'Use Settings to maintain templates and automations; return to Tasks once configuration changes are saved.'}
+                </p>
+              </div>
+              <button
+                className="ghost-button"
+                onClick={() => dismissModuleHint(activeSection)}
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {activeSection === 'tasks' ? <div className="chip-row">{[['all', 'All'], ['my_work', 'My Work'], ['due_today', 'Due Today'], ['blocked', 'Blocked'], ['overdue', 'Overdue'], ['review', 'Needs Review'], ['recurring', 'Recurring'], ['watching', 'Watching']].map(([id, label]) => <button key={id} className={activeFilter === id ? 'chip is-active' : 'chip'} onClick={() => setActiveFilter(id as typeof activeFilter)}>{label}</button>)}</div> : null}
+      {activeSection === 'tasks' && Object.values(taskKpis).some((count) => count > 0) ? <div className="summary-kpi-grid"><button className="metric-box project-card" onClick={() => setActiveFilter('due_today')}><strong>{taskKpis.dueToday}</strong><span>Due Today</span></button><button className="metric-box project-card" onClick={() => setActiveFilter('blocked')}><strong>{taskKpis.blocked}</strong><span>Blocked</span></button><button className="metric-box project-card" onClick={() => setActiveFilter('overdue')}><strong>{taskKpis.overdue}</strong><span>Overdue</span></button><button className="metric-box project-card" onClick={() => setActiveFilter('review')}><strong>{taskKpis.needsReview}</strong><span>Needs Review</span></button></div> : null}
 
       <div className="workspace">
         <aside className="sidebar">
@@ -806,13 +798,11 @@ export function TasksWorkspace() {
         </aside>
 
         <main className="content">
-          {selectedTaskIds.length > 0 && activeSection === 'tasks' ? <div className="bulk-bar"><span>{selectedTaskIds.length} selected</span><div><button>Reassign</button><button>Export</button><button>Archive</button></div></div> : null}
-          {activeSection === 'tasks' && !hasProjects ? <section className="placeholder-panel"><FolderKanban size={18} /><h2>Create your first project</h2><p>Task Manager starts empty on purpose. Create a project first, then add tasks inside it.</p><button className="primary-button" onClick={() => setIsCreateProjectOpen(true)}><Plus size={16} />Create Project</button></section> : null}
-          {activeSection === 'tasks' && hasProjects && activeView === 'list' ? <section className="panel"><div className="table-head"><span /><span>Task</span><span>Status</span><span>Priority</span><span>Owner</span><span>Due</span><span>Progress</span></div>{filteredTasks.length > 0 ? filteredTasks.map((task) => { const owner = users.find((user) => user.id === task.ownerId); return <button key={task.id} className={selectedTaskId === task.id ? 'table-row is-selected' : 'table-row'} onClick={() => setSelectedTaskId(task.id)}><span className={selectedTaskIds.includes(task.id) ? 'select-box is-selected' : 'select-box'} onClick={(event) => { event.stopPropagation(); toggleTaskSelection(task.id); }} /><span className="task-cell"><strong>{task.title}</strong><small>{task.tags.join(' · ')}</small></span><span><TaskStatusBadge status={task.status} /></span><span><TaskPriorityBadge priority={task.priority} /></span><span>{owner?.name ?? 'Unassigned'}</span><span>{task.dueAt ? formatDateTimeLabel(new Date(task.dueAt)) : 'No due date'}</span><span>{task.progress}%</span></button>; }) : <div className="placeholder-panel inset"><ListTodo size={18} /><h2>No tasks yet</h2><p>Create the first task for this project to start managing real work.</p><button className="primary-button" onClick={() => setIsCreateOpen(true)}><Plus size={16} />Create Task</button></div>}</section> : null}
-          {activeSection === 'tasks' && hasProjects && activeView === 'board' ? <section className="kanban">{boardColumns.map((column) => <div key={column} className="kanban-column"><div className="kanban-header"><span>{statusLabel[column]}</span><span>{filteredTasks.filter((task) => task.status === column).length}</span></div>{filteredTasks.filter((task) => task.status === column).map((task) => <button key={task.id} className="kanban-card" onClick={() => setSelectedTaskId(task.id)}><div className="kanban-card-head"><TaskPriorityBadge priority={task.priority} /><span>{task.progress}%</span></div><strong>{task.title}</strong><small>{projects.find((project) => project.id === task.projectId)?.name}</small></button>)}</div>)}</section> : null}
-          {activeSection === 'tasks' && hasProjects && activeView === 'timeline' ? <section className="timeline-board">{timelineGroups.length > 0 ? timelineGroups.map((group) => <div key={group.id} className="timeline-group"><div className="timeline-group-head"><h3>{group.label}</h3><span>{group.tasks.length}</span></div><div className="timeline-list">{group.tasks.map((task) => <button key={task.id} className={selectedTaskId === task.id ? 'timeline-card is-selected' : 'timeline-card'} onClick={() => setSelectedTaskId(task.id)}><div className="timeline-card-head"><TaskPriorityBadge priority={task.priority} /><TaskStatusBadge status={task.status} /></div><strong>{task.title}</strong><small>{projects.find((project) => project.id === task.projectId)?.name ?? 'No project'} · {users.find((user) => user.id === task.ownerId)?.name ?? 'Unassigned'}</small><div className="timeline-card-meta"><span>{task.dueAt ? formatDayLabel(new Date(task.dueAt)) : 'No due date'}</span><span>{task.progress}%</span></div></button>)}</div></div>) : <section className="placeholder-panel"><Clock3 size={18} /><h2>No scheduled tasks yet</h2><p>No tasks match this view yet. Add a due date or adjust your filters to populate the timeline.</p></section>}</section> : null}
-          {activeSection === 'tasks' && hasProjects && activeView === 'calendar' ? <section className="calendar-board"><div className="calendar-header"><h2>{calendarDays.label}</h2><p>Use the calendar to see due-date pressure across the shared task model.</p></div><div className="calendar-grid calendar-weekdays">{['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map((day) => <span key={day}>{day}</span>)}</div><div className="calendar-grid">{calendarDays.days.map((day) => <div key={day.date.toISOString()} className={day.inMonth ? 'calendar-cell' : 'calendar-cell is-muted'}><div className="calendar-cell-head"><span>{day.date.getDate()}</span>{isSameDay(day.date, REFERENCE_NOW) ? <span className="calendar-today">Today</span> : null}</div><div className="calendar-cell-list">{day.tasks.slice(0, 3).map((task) => <button key={task.id} className={selectedTaskId === task.id ? 'calendar-task is-selected' : 'calendar-task'} onClick={() => setSelectedTaskId(task.id)}>{task.title}</button>)}{day.tasks.length > 3 ? <span className="calendar-overflow">+{day.tasks.length - 3} more</span> : null}</div></div>)}</div></section> : null}
-          {activeSection === 'projects' ? <ProjectWorkbench project={selectedProject} phases={selectedProjectPhases} tasks={selectedProjectPhaseId ? selectedProjectTasks.filter((task) => task.projectPhaseId === selectedProjectPhaseId) : selectedProjectTasks} users={users} selectedPhaseId={selectedProjectPhaseId} onSelectPhase={setSelectedProjectPhaseId} onCreateProject={() => setIsCreateProjectOpen(true)} onAddPhase={addProjectPhase} onUpdateProject={updateProject} onAddTask={addTask} onOpenTask={handleOpenTask} /> : null}
+          {activeSection === 'tasks' && activeView === 'list' ? <section className="panel"><div className="table-head"><span /><span>Task</span><span>Status</span><span>Priority</span><span>Owner</span><span>Due</span><span>Progress</span></div>{filteredTasks.length > 0 ? filteredTasks.map((task) => { const owner = users.find((user) => user.id === task.ownerId); return <button key={task.id} className={selectedTaskId === task.id ? 'table-row is-selected' : 'table-row'} onClick={() => setSelectedTaskId(task.id)}><span className={selectedTaskIds.includes(task.id) ? 'select-box is-selected' : 'select-box'} onClick={(event) => { event.stopPropagation(); toggleTaskSelection(task.id); }} /><span className="task-cell"><strong>{task.title}</strong><small>{task.tags.join(' · ') || (task.projectId ? projects.find((project) => project.id === task.projectId)?.name : 'No project assigned')}</small></span><span><TaskStatusBadge status={task.status} /></span><span><TaskPriorityBadge priority={task.priority} /></span><span>{owner?.name ?? 'Unassigned'}</span><span>{task.dueAt ? formatDateTimeLabel(new Date(task.dueAt)) : 'No due date'}</span><span>{task.progress}%</span></button>; }) : <div className="placeholder-panel inset"><ListTodo size={18} /><h2>{activeFilter === 'my_work' ? 'No work assigned yet' : 'No tasks yet'}</h2><p>{activeFilter === 'my_work' ? 'Create your first task or switch to All to browse shared work.' : 'Create a task to start managing real work in TaskOps.'}</p><div className="modal-actions"><button className="ghost-button" onClick={() => setActiveFilter('all')}>Browse All Tasks</button><button className="primary-button" onClick={() => setIsCreateOpen(true)}><Plus size={16} />Create Task</button></div></div>}</section> : null}
+          {activeSection === 'tasks' && activeView === 'board' ? <section className="kanban">{boardColumns.map((column) => <div key={column} className="kanban-column"><div className="kanban-header"><span>{statusLabel[column]}</span><span>{filteredTasks.filter((task) => task.status === column).length}</span></div>{filteredTasks.filter((task) => task.status === column).map((task) => <button key={task.id} className="kanban-card" onClick={() => setSelectedTaskId(task.id)}><div className="kanban-card-head"><TaskPriorityBadge priority={task.priority} /><span>{task.progress}%</span></div><strong>{task.title}</strong><small>{projects.find((project) => project.id === task.projectId)?.name ?? 'No project'}</small></button>)}</div>)}</section> : null}
+          {activeSection === 'tasks' && activeView === 'timeline' ? <section className="timeline-board">{timelineGroups.length > 0 ? timelineGroups.map((group) => <div key={group.id} className="timeline-group"><div className="timeline-group-head"><h3>{group.label}</h3><span>{group.tasks.length}</span></div><div className="timeline-list">{group.tasks.map((task) => <button key={task.id} className={selectedTaskId === task.id ? 'timeline-card is-selected' : 'timeline-card'} onClick={() => setSelectedTaskId(task.id)}><div className="timeline-card-head"><TaskPriorityBadge priority={task.priority} /><TaskStatusBadge status={task.status} /></div><strong>{task.title}</strong><small>{projects.find((project) => project.id === task.projectId)?.name ?? 'No project'} · {users.find((user) => user.id === task.ownerId)?.name ?? 'Unassigned'}</small><div className="timeline-card-meta"><span>{task.dueAt ? formatDayLabel(new Date(task.dueAt)) : 'No due date'}</span><span>{task.progress}%</span></div></button>)}</div></div>) : <section className="placeholder-panel"><Clock3 size={18} /><h2>No scheduled tasks yet</h2><p>No tasks match this view yet. Add a due date or adjust your filters to populate the timeline.</p></section>}</section> : null}
+          {activeSection === 'tasks' && activeView === 'calendar' ? <section className="calendar-board"><div className="calendar-header"><h2>{calendarDays.label}</h2><p>Use the calendar to see due-date pressure across the shared task model.</p></div><div className="calendar-grid calendar-weekdays">{['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map((day) => <span key={day}>{day}</span>)}</div><div className="calendar-grid">{calendarDays.days.map((day) => <div key={day.date.toISOString()} className={day.inMonth ? 'calendar-cell' : 'calendar-cell is-muted'}><div className="calendar-cell-head"><span>{day.date.getDate()}</span>{isSameDay(day.date, getCurrentDate()) ? <span className="calendar-today">Today</span> : null}</div><div className="calendar-cell-list">{day.tasks.slice(0, 3).map((task) => <button key={task.id} className={selectedTaskId === task.id ? 'calendar-task is-selected' : 'calendar-task'} onClick={() => setSelectedTaskId(task.id)}>{task.title}</button>)}{day.tasks.length > 3 ? <span className="calendar-overflow">+{day.tasks.length - 3} more</span> : null}</div></div>)}</div></section> : null}
+          {activeSection === 'projects' ? <ProjectWorkbench project={selectedProject} phases={selectedProjectPhases} tasks={selectedProjectTasks} users={users} selectedPhaseId={selectedProjectPhaseId} onSelectPhase={setSelectedProjectPhaseId} onCreateProject={() => setIsCreateProjectOpen(true)} onAddPhase={addProjectPhase} onUpdateProject={updateProject} onAddTask={addTask} onOpenTask={handleOpenTask} /> : null}
           {activeSection === 'team' ? <section className="team-grid"><div className="settings-card"><div className="flex items-center justify-between mb-4"><h3>Team Member Database</h3><button className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm" onClick={() => setShowImportWizard(true)}><Upload size={14} />Import Agricultural Roles</button></div><p>Create the owner list here first. Project owners now come from this saved team-member dataset.</p><div className="settings-form-grid"><label className="settings-field"><span>Name</span><input value={teamMemberDraft.name} onChange={(event) => setTeamMemberDraft((current) => ({ ...current, name: event.target.value }))} placeholder="Full name" /></label><label className="settings-field"><span>Role</span><select value={teamMemberDraft.role} onChange={(event) => setTeamMemberDraft((current) => ({ ...current, role: event.target.value as UserRole }))}><option value="member">Member</option><option value="manager">Manager</option><option value="admin">Admin</option><option value="guest">Guest</option></select></label><label className="settings-field"><span>Team</span><input value={teamMemberDraft.team} onChange={(event) => setTeamMemberDraft((current) => ({ ...current, team: event.target.value }))} placeholder="Operations, Delivery, Reporting..." /></label><label className="settings-field"><span>Capacity / Week</span><input type="number" min="1" value={teamMemberDraft.capacityHoursPerWeek} onChange={(event) => setTeamMemberDraft((current) => ({ ...current, capacityHoursPerWeek: event.target.value }))} placeholder="40" /></label></div><div className="settings-actions"><button className="primary-button" onClick={handleAddTeamMember}>Add Team Member</button></div></div>{teamSummaries.length > 0 ? teamSummaries.map((summary) => {
             const agriRole = summary.user.agriculturalRole;
             return (
@@ -866,9 +856,9 @@ export function TasksWorkspace() {
 
           {showImportWizard && <HrImportWizard onClose={() => setShowImportWizard(false)} onComplete={() => setShowImportWizard(false)} />}
           {activeSection === 'reports' ? <ReportsModule /> : null}
-          {activeSection === 'analytics' ? <section className="space-y-4"><div className="flex items-center gap-2 mb-4"><button className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${analyticsView === 'task' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`} onClick={() => setAnalyticsView('task')}>Task Analytics</button><button className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${analyticsView === 'labor' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`} onClick={() => setAnalyticsView('labor')}>Labor Cost Analytics</button></div>{analyticsView === 'task' ? <div className="analytics-grid"><div className="analytics-card analytics-kpis"><div className="project-metrics-grid analytics-compact"><div className="project-metric"><strong>{analyticsSummary.completionRate}%</strong><span>Completion</span></div><div className="project-metric"><strong>{analyticsSummary.overdueCount}</strong><span>Overdue</span></div><div className="project-metric"><strong>{analyticsSummary.blockedCount}</strong><span>Blocked</span></div><div className="project-metric"><strong>{analyticsSummary.reportVolume}</strong><span>Reports</span></div></div></div><div className="analytics-card"><div className="analytics-card-head"><h3>Project Performance</h3><span>{analyticsSummary.activeProjects} active projects</span></div><div className="analytics-list">{projectSummaries.slice(0, 4).map((summary) => <div key={summary.project.id} className="analytics-list-row"><div><strong>{summary.project.name}</strong><small>{summary.openCount} open · {summary.blockedCount} blocked · {summary.avgProgress}% progress</small></div><span>{summary.loggedHours}h</span></div>)}</div></div><div className="analytics-card"><div className="analytics-card-head"><h3>Team Load</h3><span>{analyticsSummary.busiestTeamMember}</span></div><div className="analytics-list">{teamSummaries.slice(0, 4).map((summary) => <div key={summary.user.id} className="analytics-list-row"><div><strong>{summary.user.name}</strong><small>{summary.openCount} open · {summary.blockedCount} blocked · {summary.overdueCount} overdue</small></div><span>{summary.utilization}%</span></div>)}</div></div></div> : <LaborCostAnalytics />}</section> : null}
+          {activeSection === 'analytics' ? <section className="space-y-4"><div className="flex items-center gap-2 mb-4"><button className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${analyticsView === 'task' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`} onClick={() => setAnalyticsView('task')}>Operational Health</button><button className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${analyticsView === 'labor' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`} onClick={() => setAnalyticsView('labor')}>Labor Cost</button></div>{analyticsView === 'task' ? <div className="analytics-grid"><div className="analytics-card analytics-kpis"><div className="project-metrics-grid analytics-compact"><button className="project-metric" onClick={() => { setActiveSection('tasks'); setActiveFilter('review'); }}><strong>{analyticsSummary.completionRate}%</strong><span>Completion</span></button><button className="project-metric" onClick={() => { setActiveSection('tasks'); setActiveFilter('overdue'); }}><strong>{analyticsSummary.overdueCount}</strong><span>Overdue</span></button><button className="project-metric" onClick={() => { setActiveSection('blocked'); }}><strong>{analyticsSummary.blockedCount}</strong><span>Blocked</span></button><button className="project-metric" onClick={() => { setActiveSection('reports'); }}><strong>{analyticsSummary.reportVolume}</strong><span>Reports</span></button></div></div><div className="analytics-card"><div className="analytics-card-head"><h3>Project Performance</h3><span>{analyticsSummary.activeProjects} active projects</span></div><div className="analytics-list">{projectSummaries.slice(0, 4).map((summary) => <div key={summary.project.id} className="analytics-list-row"><div><strong>{summary.project.name}</strong><small>{summary.openCount} open · {summary.blockedCount} blocked · {summary.avgProgress}% progress</small></div><span>{summary.loggedHours}h</span></div>)}</div></div><div className="analytics-card"><div className="analytics-card-head"><h3>Team Load</h3><span>{analyticsSummary.busiestTeamMember}</span></div><div className="analytics-list">{teamSummaries.slice(0, 4).map((summary) => <div key={summary.user.id} className="analytics-list-row"><div><strong>{summary.user.name}</strong><small>{summary.openCount} open · {summary.blockedCount} blocked · {summary.overdueCount} overdue</small></div><span>{summary.utilization}%</span></div>)}</div></div></div> : <LaborCostAnalytics />}</section> : null}
           {activeSection === 'settings' ? <section className="settings-grid"><div className="settings-card settings-kpis"><div className="project-metrics-grid settings-compact"><div className="project-metric"><strong>{settingsSummary.activeAutomations}</strong><span>Active automations</span></div><div className="project-metric"><strong>{settingsSummary.taskTemplateCount}</strong><span>Task templates</span></div><div className="project-metric"><strong>{settingsSummary.reportTemplateCount}</strong><span>Report templates</span></div><div className="project-metric"><strong>{settingsSummary.escalationRules}</strong><span>Escalation rules</span></div></div></div><div className="settings-card"><h3>Automation Rules</h3><div className="settings-form-grid"><label className="settings-field settings-field-full"><span>Name</span><input value={ruleDraft.name} onChange={(event) => setRuleDraft((current) => ({ ...current, name: event.target.value }))} placeholder="New automation rule" /></label><label className="settings-field settings-field-full"><span>Description</span><textarea value={ruleDraft.description} onChange={(event) => setRuleDraft((current) => ({ ...current, description: event.target.value }))} placeholder="What should this automation do?" /></label><label className="settings-field"><span>Trigger</span><select value={ruleDraft.trigger} onChange={(event) => setRuleDraft((current) => ({ ...current, trigger: event.target.value as AutomationRule['trigger'] }))}><option value="task_overdue">Task overdue</option><option value="task_blocked">Task blocked</option><option value="report_due">Report due</option><option value="task_created">Task created</option></select></label><label className="settings-field"><span>Action</span><select value={ruleDraft.action} onChange={(event) => setRuleDraft((current) => ({ ...current, action: event.target.value as AutomationRule['action'] }))}><option value="notify_owner">Notify owner</option><option value="escalate">Escalate</option><option value="create_report_task">Create report task</option><option value="route_review">Route review</option></select></label></div><div className="settings-actions"><button className="primary-button" onClick={handleAddAutomationRule}>Add Rule</button></div><div className="settings-list">{automationRules.map((rule) => <div key={rule.id} className="settings-list-row"><div className="settings-form-grid"><label className="settings-field settings-field-full"><span>Name</span><input value={rule.name} onChange={(event) => updateAutomationRule(rule.id, { name: event.target.value })} /></label><label className="settings-field settings-field-full"><span>Description</span><textarea value={rule.description} onChange={(event) => updateAutomationRule(rule.id, { description: event.target.value })} /></label></div><div className="settings-actions"><button className="ghost-button" onClick={() => toggleAutomationRuleStatus(rule.id)}>Toggle {rule.status}</button><span className={`status-badge ${rule.status === 'active' ? 'status-green' : 'status-slate'}`}>{rule.status}</span></div></div>)}</div></div><div className="settings-card"><h3>Task Templates</h3><div className="settings-form-grid"><label className="settings-field settings-field-full"><span>Name</span><input value={taskTemplateDraft.name} onChange={(event) => setTaskTemplateDraft((current) => ({ ...current, name: event.target.value }))} placeholder="New task template" /></label><label className="settings-field settings-field-full"><span>Description</span><textarea value={taskTemplateDraft.description} onChange={(event) => setTaskTemplateDraft((current) => ({ ...current, description: event.target.value }))} placeholder="When should this template be used?" /></label></div><div className="settings-actions"><button className="primary-button" onClick={handleAddTaskTemplate}>Add Task Template</button></div><div className="settings-list">{taskTemplates.map((template) => <div key={template.id} className="settings-list-row"><div className="settings-form-grid"><label className="settings-field settings-field-full"><span>Name</span><input value={template.name} onChange={(event) => updateTaskTemplate(template.id, { name: event.target.value })} /></label><label className="settings-field settings-field-full"><span>Description</span><textarea value={template.description} onChange={(event) => updateTaskTemplate(template.id, { description: event.target.value })} /></label></div></div>)}</div></div><div className="settings-card"><h3>Report Templates</h3><div className="settings-form-grid"><label className="settings-field settings-field-full"><span>Name</span><input value={reportTemplateDraft.name} onChange={(event) => setReportTemplateDraft((current) => ({ ...current, name: event.target.value }))} placeholder="New report template" /></label><label className="settings-field settings-field-full"><span>Description</span><textarea value={reportTemplateDraft.description} onChange={(event) => setReportTemplateDraft((current) => ({ ...current, description: event.target.value }))} placeholder="What reporting job does this support?" /></label><label className="settings-field"><span>Cadence</span><select value={reportTemplateDraft.cadence} onChange={(event) => setReportTemplateDraft((current) => ({ ...current, cadence: event.target.value as ReportTemplate['cadence'] }))}><option value="weekly">Weekly</option><option value="monthly">Monthly</option><option value="quarterly">Quarterly</option></select></label><label className="settings-field"><span>Reviewer</span><input value={reportTemplateDraft.reviewerLabel} onChange={(event) => setReportTemplateDraft((current) => ({ ...current, reviewerLabel: event.target.value }))} placeholder="Reviewer role or owner" /></label></div><div className="settings-actions"><button className="primary-button" onClick={handleAddReportTemplate}>Add Report Template</button></div><div className="settings-list">{reportTemplates.map((template) => <div key={template.id} className="settings-list-row"><div className="settings-form-grid"><label className="settings-field settings-field-full"><span>Name</span><input value={template.name} onChange={(event) => updateReportTemplate(template.id, { name: event.target.value })} /></label><label className="settings-field settings-field-full"><span>Description</span><textarea value={template.description} onChange={(event) => updateReportTemplate(template.id, { description: event.target.value })} /></label></div></div>)}</div></div></section> : null}
-          {activeSection === 'blocked' ? <section className="blocked-panel">{blockedTasks.length > 0 ? blockedTasks.map((task) => <div key={task.id} className="blocked-card"><div className="blocked-card-head"><div><h3>{task.title}</h3><p>{projects.find((item) => item.id === task.projectId)?.name ?? 'No project'} · {users.find((user) => user.id === task.ownerId)?.name ?? 'Unassigned'}</p></div><div className="blocked-badges"><TaskPriorityBadge priority={task.priority} /><TaskStatusBadge status="blocked" /></div></div><div className="blocked-reason"><AlertTriangle size={15} /><span>{task.blocker?.reason ?? 'Task is marked blocked with no reason yet.'}</span></div><div className="blocked-card-actions"><button className="ghost-button" onClick={() => setSelectedTaskId(task.id)}>Open Task</button><button className="primary-button" onClick={() => resolveBlocker(task.id)}>Resolve Blocker</button></div></div>) : <div className="placeholder-panel"><AlertTriangle size={18} /><h2>No blocked tasks</h2><p>No blocked tasks right now. The escalation queue is clear.</p></div>}</section> : null}
+          {activeSection === 'blocked' ? <section className="blocked-panel">{blockedTasks.length > 0 ? blockedTasks.slice().sort((left, right) => { const leftAge = left.blocker?.blockedAt ? Date.now() - new Date(left.blocker.blockedAt).getTime() : 0; const rightAge = right.blocker?.blockedAt ? Date.now() - new Date(right.blocker.blockedAt).getTime() : 0; const leftUrgency = (left.priority === 'P1' ? 100 : left.priority === 'P2' ? 70 : 40) + (isOverdue(left.dueAt) ? 40 : 0) + leftAge; const rightUrgency = (right.priority === 'P1' ? 100 : right.priority === 'P2' ? 70 : 40) + (isOverdue(right.dueAt) ? 40 : 0) + rightAge; return rightUrgency - leftUrgency; }).map((task) => { const blockedAt = task.blocker?.blockedAt ? new Date(task.blocker.blockedAt) : null; const blockedAgeDays = blockedAt ? Math.max(0, Math.floor((Date.now() - blockedAt.getTime()) / (1000 * 60 * 60 * 24))) : 0; return <div key={task.id} className="blocked-card"><div className="blocked-card-head"><div><h3>{task.title}</h3><p>{projects.find((item) => item.id === task.projectId)?.name ?? 'No project'} · {users.find((user) => user.id === task.ownerId)?.name ?? 'Unassigned'}</p></div><div className="blocked-badges"><TaskPriorityBadge priority={task.priority} /><TaskStatusBadge status="blocked" /></div></div><div className="blocked-reason"><AlertTriangle size={15} /><span>{task.blocker?.reason ?? 'Task is marked blocked with no reason yet.'}</span></div><div className="blocked-meta-row"><span>{blockedAgeDays === 0 ? 'Blocked today' : `Blocked ${blockedAgeDays} day${blockedAgeDays === 1 ? '' : 's'}`}</span><span>{task.blocker?.severity ?? 'medium'} severity</span><span>{isOverdue(task.dueAt) ? 'SLA at risk' : 'SLA stable'}</span></div><div className="blocked-card-actions"><button className="ghost-button" onClick={() => handleOpenTask(task.id)}>Open Task</button><button className="ghost-button" onClick={() => updateTask(task.id, { ownerId: currentUserId || task.ownerId })} disabled={!currentUserId}>Reassign to Me</button><button className="primary-button" onClick={() => resolveBlocker(task.id)}>Resolve Blocker</button></div></div>; }) : <div className="placeholder-panel"><AlertTriangle size={18} /><h2>No blocked tasks</h2><p>No blocked tasks right now. The escalation queue is clear.</p></div>}</section> : null}
         </main>
 
         {activeSection === 'projects' ? <SimpleDetailPanel title={selectedProject?.name ?? 'Task Manager'} body={selectedProject?.subtitle ?? selectedProject?.ownerLabel ?? 'Project detail'}>{selectedProject ? <><section className="detail-section"><div className="section-title">Project Shell</div><div className="project-detail-stack"><div><strong>Owner Label</strong><p>{selectedProject.ownerLabel ?? selectedProjectSummary?.ownerName ?? 'Unassigned'}</p></div><div><strong>Type</strong><p>{selectedProject.type}</p></div><div><strong>Planning Horizon</strong><p>{selectedProject.totalWeeks ? `${selectedProject.totalWeeks} weeks` : 'Not set yet'}</p></div></div></section><section className="detail-section"><div className="section-title">Phase Outline</div><div className="project-task-list">{selectedProjectPhases.length > 0 ? selectedProjectPhases.map((phase) => <div key={phase.id} className="project-task-button"><div><strong>{phase.name}</strong><small>{phase.description ?? 'No phase description yet'}</small></div><span>{`W${phase.startWeek}-${phase.endWeek}`}</span></div>) : <div className="calm-card">Add phases to build the WBS spine for this project.</div>}</div></section></> : <section className="detail-section"><div className="section-title">Project Shell</div><p>Create the first project to start building structure.</p></section>}</SimpleDetailPanel> : activeSection === 'team' ? <SimpleDetailPanel title={selectedTeamSummary?.user.name ?? 'Team'} body={selectedTeamSummary?.user.team ?? 'Team detail'}>{selectedTeamSummary ? <><section className="detail-section"><div className="section-title">Member Profile</div><div className="settings-form-grid"><label className="settings-field settings-field-full"><span>Name</span><input value={selectedTeamSummary.user.name} onChange={(event) => updateUser(selectedTeamSummary.user.id, { name: event.target.value })} /></label><label className="settings-field"><span>Role</span><select value={selectedTeamSummary.user.role} onChange={(event) => updateUser(selectedTeamSummary.user.id, { role: event.target.value as UserRole })}><option value="member">Member</option><option value="manager">Manager</option><option value="admin">Admin</option><option value="guest">Guest</option></select></label><label className="settings-field"><span>Team</span><input value={selectedTeamSummary.user.team} onChange={(event) => updateUser(selectedTeamSummary.user.id, { team: event.target.value })} /></label><label className="settings-field"><span>Capacity / Week</span><input type="number" min="1" value={selectedTeamSummary.user.capacityHoursPerWeek ?? ''} onChange={(event) => updateUser(selectedTeamSummary.user.id, { capacityHoursPerWeek: Number(event.target.value) || undefined })} /></label></div><div className="settings-actions"><button className="ghost-button" onClick={() => handleDeleteTeamMember(selectedTeamSummary.user.id)}>Delete Member</button></div></section><section className="detail-section"><div className="section-title">Assigned Tasks</div><div className="project-task-list">{selectedTeamSummary.tasks.slice(0, 4).map((task) => <button key={task.id} className="project-task-button" onClick={() => handleOpenTask(task.id)}><div><strong>{task.title}</strong><small>{statusLabel[task.status]}</small></div><span>{task.progress}%</span></button>)}</div></section></> : <section className="detail-section"><div className="section-title">Member Profile</div><p>Add team members to build the owner database for new projects.</p></section>}</SimpleDetailPanel> : activeSection === 'reports' ? <SimpleDetailPanel title={selectedReportRecord?.title ?? 'Reports'} body={selectedReportRecord?.roleName ?? 'AgriReports workflow'}>{selectedReportRecord ? <><section className="detail-section"><div className="section-title">Routing</div><div className="project-detail-stack"><div><strong>Author</strong><p>{selectedReportRecord.authorName}</p></div><div><strong>Reviewer</strong><p>{selectedReportRecord.reviewerName}</p></div><div><strong>Window</strong><p>{selectedReportRecord.reportingWindow}</p></div></div></section><section className="detail-section"><div className="section-title">Workflow</div><div className="project-detail-stack"><div><strong>Status</strong><p>{selectedReportRecord.status.replace('_', ' ')}</p></div><div><strong>Updated</strong><p>{formatDateTimeLabel(new Date(selectedReportRecord.updatedAt))}</p></div><div><strong>Saved</strong><p>{selectedReportRecord.lastSavedAt ? formatDateTimeLabel(new Date(selectedReportRecord.lastSavedAt)) : 'Pending autosave'}</p></div></div></section></> : <section className="detail-section"><div className="section-title">Routing</div><p>Create a report to begin.</p></section>}</SimpleDetailPanel> : activeSection === 'analytics' ? <AnalyticsDetailPanel summary={analyticsSummary} projectSummaries={projectSummaries} teamSummaries={teamSummaries} /> : activeSection === 'settings' ? <SettingsDetailPanel summary={settingsSummary} automationRules={automationRules} taskTemplates={taskTemplates} reportTemplates={reportTemplates} onToggleRule={toggleAutomationRuleStatus} /> : <TaskDetailPanel task={selectedTask} users={users} projects={projects} workLogs={workLogs} />}
@@ -878,21 +868,10 @@ export function TasksWorkspace() {
 
       {isCreateProjectOpen ? <div className="modal-backdrop" onClick={() => setIsCreateProjectOpen(false)}><div className="modal-card" onClick={(event) => event.stopPropagation()}><div className="modal-header"><div><h2>Create Project</h2><p>Start from a clean blank project shell, then add phases, WBS tasks, and cadence rules as the plan grows.</p></div><button className="icon-button" onClick={() => setIsCreateProjectOpen(false)} aria-label="Close project modal"><X size={16} /></button></div><div className="modal-grid"><label className="field field-full"><span>Name</span><input value={projectDraft.name} onChange={(event) => setProjectDraft((current) => ({ ...current, name: event.target.value }))} placeholder="Project name" /></label><label className="field field-full"><span>Subtitle</span><input value={projectDraft.subtitle} onChange={(event) => setProjectDraft((current) => ({ ...current, subtitle: event.target.value }))} placeholder="Short descriptor for this project shell" /></label><label className="field field-full"><span>Description</span><textarea value={projectDraft.description} onChange={(event) => setProjectDraft((current) => ({ ...current, description: event.target.value }))} placeholder="What is this project for?" /></label><label className="field"><span>Type</span><input list="project-type-options" value={projectDraft.type} onChange={(event) => setProjectDraft((current) => ({ ...current, type: event.target.value }))} placeholder="Project, operations, campaign..." /></label><label className="field"><span>Owner Label</span><input list="project-owner-options" value={projectDraft.ownerName} onChange={(event) => setProjectDraft((current) => ({ ...current, ownerName: event.target.value }))} placeholder="Optional person, role, or owner label" /></label><label className="field"><span>Total Weeks</span><input type="number" min="1" value={projectDraft.totalWeeks} onChange={(event) => setProjectDraft((current) => ({ ...current, totalWeeks: event.target.value }))} placeholder="12" /></label><label className="field field-full"><span>Owner Details</span><input value={findUserByName(users, projectDraft.ownerName) ? `${findUserByName(users, projectDraft.ownerName)?.role} · ${findUserByName(users, projectDraft.ownerName)?.team}${findUserByName(users, projectDraft.ownerName)?.capacityHoursPerWeek ? ` · ${findUserByName(users, projectDraft.ownerName)?.capacityHoursPerWeek}h/week` : ''}` : projectDraft.ownerName.trim() ? 'Freeform owner label. This project can be created without a saved team member.' : 'Optional. You can keep this blank and update it later in Project Settings.'} readOnly /></label></div><datalist id="project-type-options">{suggestedProjectTypes.map((projectType) => <option key={projectType} value={projectType}>{projectType}</option>)}</datalist><datalist id="project-owner-options">{users.map((user) => <option key={user.id} value={user.name}>{`${user.role} · ${user.team}`}</option>)}</datalist><div className="modal-actions"><button className="ghost-button" onClick={() => setIsCreateProjectOpen(false)}>Cancel</button><button className="primary-button" onClick={handleCreateProject} disabled={!projectDraft.name.trim()}>Create Project</button></div></div></div> : null}
 
-      {isCreateOpen ? <div className="modal-backdrop" onClick={() => setIsCreateOpen(false)}><div className="modal-card" onClick={(event) => event.stopPropagation()}><div className="modal-header"><div><h2>Create Task</h2><p>Capture work clearly so ownership, due dates, and execution stay visible.</p></div><button className="icon-button" onClick={() => setIsCreateOpen(false)} aria-label="Close task modal"><X size={16} /></button></div>{hasProjects ? <><div className="modal-grid"><label className="field field-full"><span>Title</span><input value={draft.title} onChange={(event) => handleDraftChange('title', event.target.value)} placeholder="What needs to be done?" /></label><label className="field field-full"><span>Description</span><textarea value={draft.description} onChange={(event) => handleDraftChange('description', event.target.value)} placeholder="Context, scope, and expected outcome..." /></label><label className="field"><span>Type</span><select value={draft.type} onChange={(event) => handleDraftChange('type', event.target.value as TaskType)}><option value="standard">Standard</option><option value="recurring">Recurring</option><option value="report">Report</option><option value="approval">Approval</option><option value="incident">Incident</option></select></label><label className="field"><span>Status</span><select value={draft.status} onChange={(event) => handleDraftChange('status', event.target.value as TaskStatus)}><option value="backlog">Backlog</option><option value="ready">Ready</option><option value="in_progress">In Progress</option><option value="review">Review</option><option value="blocked">Blocked</option><option value="done">Completed</option></select></label><label className="field"><span>Priority</span><select value={draft.priority} onChange={(event) => handleDraftChange('priority', event.target.value as TaskPriority)}><option value="P1">P1</option><option value="P2">P2</option><option value="P3">P3</option><option value="P4">P4</option></select></label><label className="field"><span>Project</span><select value={draft.projectId} onChange={(event) => handleDraftChange('projectId', event.target.value)}>{projects.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}</select></label><label className="field"><span>Owner</span><select value={draft.ownerId} onChange={(event) => handleDraftChange('ownerId', event.target.value)}>{users.map((user) => <option key={user.id} value={user.id}>{user.name}</option>)}</select></label><label className="field"><span>Reviewer</span><select value={draft.reviewerId} onChange={(event) => handleDraftChange('reviewerId', event.target.value)}>{users.map((user) => <option key={user.id} value={user.id}>{user.name}</option>)}</select></label><label className="field"><span>Start Date</span><input type="date" value={draft.startAt} onChange={(event) => handleDraftChange('startAt', event.target.value)} /></label><label className="field"><span>End Date</span><input type="date" value={draft.endAt} onChange={(event) => handleDraftChange('endAt', event.target.value)} /></label><label className="field field-full"><span>Tags</span><input value={draft.tags} onChange={(event) => handleDraftChange('tags', event.target.value)} placeholder="finance, monthly, client" /></label></div><div className="modal-actions"><button className="ghost-button" onClick={() => setIsCreateOpen(false)}>Cancel</button><button className="primary-button" onClick={handleCreateTask}>Create Task</button></div></> : <div className="placeholder-panel inset"><FolderKanban size={18} /><h2>Create a project first</h2><p>Tasks belong inside projects. Create the first project, then come back to add work.</p><div className="modal-actions"><button className="ghost-button" onClick={() => setIsCreateOpen(false)}>Close</button><button className="primary-button" onClick={() => { setIsCreateOpen(false); setIsCreateProjectOpen(true); }}><Plus size={16} />Create Project</button></div></div>}</div></div> : null}
+      {isCreateOpen ? <div className="modal-backdrop" onClick={() => setIsCreateOpen(false)}><div className="modal-card" onClick={(event) => event.stopPropagation()}><div className="modal-header"><div><h2>Create Task</h2><p>Capture the essential details first, then add planning metadata only when it helps.</p></div><button className="icon-button" onClick={() => setIsCreateOpen(false)} aria-label="Close task modal"><X size={16} /></button></div><div className="modal-grid"><label className="field field-full"><span>Title</span><input value={draft.title} onChange={(event) => handleDraftChange('title', event.target.value)} placeholder="What needs to be done?" /></label><label className="field"><span>Project</span><select value={draft.projectId} onChange={(event) => handleDraftChange('projectId', event.target.value)}><option value="">No project yet</option>{projects.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}</select><small className="field-hint">Recommended when the task belongs to a delivery stream.</small></label><label className="field"><span>Owner</span><select value={draft.ownerId} onChange={(event) => handleDraftChange('ownerId', event.target.value)}><option value="">Unassigned</option>{users.map((user) => <option key={user.id} value={user.id}>{user.name}</option>)}</select><small className="field-hint">Defaults from current team context when available.</small></label><label className="field"><span>Due Date</span><input type="date" value={draft.endAt} onChange={(event) => handleDraftChange('endAt', event.target.value)} /><small className="field-hint">Recommended for work that needs a clear handoff date.</small></label></div><div className="settings-actions"><button className="ghost-button" onClick={() => setIsTaskAdvancedOpen((current) => !current)}>{isTaskAdvancedOpen ? 'Hide Advanced' : 'Show Advanced'}</button></div>{isTaskAdvancedOpen ? <div className="modal-grid"><label className="field field-full"><span>Description</span><textarea value={draft.description} onChange={(event) => handleDraftChange('description', event.target.value)} placeholder="Context, scope, and expected outcome..." /></label><label className="field"><span>Type</span><select value={draft.type} onChange={(event) => handleDraftChange('type', event.target.value as TaskType)}><option value="standard">Standard</option><option value="recurring">Recurring</option><option value="report">Report</option><option value="approval">Approval</option><option value="incident">Incident</option></select></label><label className="field"><span>Status</span><select value={draft.status} onChange={(event) => handleDraftChange('status', event.target.value as TaskStatus)}><option value="backlog">Backlog</option><option value="ready">Ready</option><option value="in_progress">In Progress</option><option value="review">Review</option><option value="blocked">Blocked</option><option value="done">Completed</option></select></label><label className="field"><span>Priority</span><select value={draft.priority} onChange={(event) => handleDraftChange('priority', event.target.value as TaskPriority)}><option value="P1">P1</option><option value="P2">P2</option><option value="P3">P3</option><option value="P4">P4</option></select></label><label className="field"><span>Reviewer</span><select value={draft.reviewerId} onChange={(event) => handleDraftChange('reviewerId', event.target.value)}><option value="">No reviewer</option>{users.map((user) => <option key={user.id} value={user.id}>{user.name}</option>)}</select></label><label className="field"><span>Backup Owner</span><select value={draft.backupOwnerId} onChange={(event) => handleDraftChange('backupOwnerId', event.target.value)}><option value="">No backup owner</option>{users.map((user) => <option key={user.id} value={user.id}>{user.name}</option>)}</select></label><label className="field"><span>Start Date</span><input type="date" value={draft.startAt} onChange={(event) => handleDraftChange('startAt', event.target.value)} /></label><label className="field"><span>Estimate Hours</span><input type="number" min="0" value={draft.estimateHours} onChange={(event) => handleDraftChange('estimateHours', event.target.value)} /></label><label className="field"><span>Recurrence</span><select value={draft.recurrence} onChange={(event) => handleDraftChange('recurrence', event.target.value as NewTaskDraft['recurrence'])}><option value="">One-time</option><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option><option value="quarterly">Quarterly</option></select></label><label className="field field-full"><span>Tags</span><input value={draft.tags} onChange={(event) => handleDraftChange('tags', event.target.value)} placeholder="finance, monthly, client" /></label></div> : null}<div className="modal-actions"><button className="ghost-button" onClick={() => setIsCreateOpen(false)}>Cancel</button><button className="primary-button" onClick={handleCreateTask} disabled={!draft.title.trim()}>Create Task</button></div></div></div> : null}
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 

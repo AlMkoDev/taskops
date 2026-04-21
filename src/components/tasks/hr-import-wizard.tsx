@@ -1,6 +1,6 @@
 'use client';
 
-import { Check, ChevronLeft, ChevronRight, Users, X } from 'lucide-react';
+import { Check, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useState } from 'react';
 import { useTaskOpsStore } from '@/store/use-task-ops-store';
 import { agriculturalRoleTemplates, categoryIcons, categoryLabels } from '@/data/agricultural-roles';

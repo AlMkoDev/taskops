@@ -804,6 +804,12 @@ textarea {
   resize: vertical;
 }
 
+.field-hint {
+  color: var(--text-2);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 .field-full {
   grid-column: 1 / -1;
 }
@@ -940,11 +946,25 @@ textarea {
 
 .topbar-nav {
   display: flex;
-  gap: 6px;
+  gap: 10px;
   border: 1px solid var(--border);
   border-radius: 12px;
   background: var(--bg-2);
   padding: 4px;
+}
+
+.topbar-nav-group {
+  display: flex;
+  gap: 6px;
+}
+
+.topbar-nav-group.is-secondary {
+  border-left: 1px solid var(--border);
+  padding-left: 10px;
+}
+
+.topbar-nav-group.is-secondary button {
+  opacity: 0.78;
 }
 
 .topbar-nav button {
@@ -1113,6 +1133,13 @@ textarea {
   padding: 12px;
 }
 
+button.project-metric {
+  width: 100%;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
 .project-metric strong {
   display: block;
   font-size: 20px;
@@ -1253,12 +1280,26 @@ textarea {
 }
 
 .project-shell-tabs button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
   border: 1px solid var(--border);
   border-radius: 12px;
   background: var(--bg-2);
   color: var(--text-2);
   padding: 10px 14px;
   cursor: pointer;
+}
+
+.project-shell-tabs button small {
+  color: var(--text-2);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.project-shell-tabs .is-secondary {
+  opacity: 0.82;
 }
 
 .project-shell-tabs .is-active {
