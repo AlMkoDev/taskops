@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { useTour } from './TourProvider';
-import { TourStep } from './tour-types';
+import { TooltipPosition, TourStep } from './tour-types';
 import { globalTour, tasksTour, projectsTour, teamTour, reportsTour, analyticsTour, settingsTour } from './tours';
 import { useDialogAccessibility } from './use-dialog-accessibility';
 

@@ -141,7 +141,7 @@ export const agrireportsApi = {
    * List reports with pagination and filters
    */
   async listReports(query: ListReportsQuery = {}): Promise<ApiResponse<PaginatedResponse<Report>>> {
-    const queryString = buildQueryString(query);
+    const queryString = buildQueryString(query as Record<string, string | number | boolean | undefined | null>);
     return request(`/reports${queryString}`);
   },
 
