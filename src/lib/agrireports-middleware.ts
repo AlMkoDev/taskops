@@ -31,7 +31,7 @@ export async function authenticateApiRequest(
 
     const payload = await verifyJwtToken(token);
     return payload;
-  } catch (_error) {
+  } catch {
     // Token verification failed
     return null;
   }

@@ -90,7 +90,10 @@ export interface NotificationJobData {
   template?: { // For WhatsApp
     name: string;
     language: { code: string };
-    components: Array<Record<string, unknown>>;
+    components: Array<{
+      type: 'body';
+      parameters: Array<{ type: 'text'; text: string }>;
+    }>;
   };
   metadata?: Record<string, unknown>;
 }
