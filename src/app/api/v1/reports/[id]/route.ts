@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withAuth } from '@/lib/agrireports-middleware';
 import { reportRepository } from '@/lib/repositories/report-repository';
-import { CreateReportRequest, UpdateReportRequest } from '@/types/agrireports-api';
+import { UpdateReportRequest } from '@/types/agrireports-api';
 import { Report } from '@/types/agrireports';
 
 /**
@@ -10,7 +10,7 @@ import { Report } from '@/types/agrireports';
  * Get a single report by ID
  * Requires authentication
  */
-export const GET = withAuth(async (request: NextRequest, user) => {
+export const GET = withAuth(async (request: NextRequest, _user) => {
   try {
     // Extract ID from URL path
     const urlParts = request.url.split('/');

@@ -61,7 +61,7 @@ export function extractRoutePattern(pathname: string): string {
   const segments = pathname.split('/');
   
   return segments
-    .map((segment, index) => {
+    .map((segment, _index) => {
       // Skip empty segments
       if (!segment) return segment;
       

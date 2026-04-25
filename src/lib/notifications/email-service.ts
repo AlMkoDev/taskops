@@ -3,7 +3,6 @@
 
 import nodemailer from 'nodemailer';
 import type { Transporter } from 'nodemailer';
-import type { Report } from '@/types/agrireports';
 
 // Email transporter singleton
 let transporter: Transporter | null = null;
@@ -18,7 +17,7 @@ function getTransporter(): Transporter {
   const smtpPort = parseInt(process.env.SMTP_PORT || '587');
   const smtpUser = process.env.SMTP_USER;
   const smtpPass = process.env.SMTP_PASS;
-  const emailFrom = process.env.EMAIL_FROM || 'AgriReports <noreply@agrireports.com>';
+  const _emailFrom = process.env.EMAIL_FROM || 'AgriReports <noreply@agrireports.com>';
 
   if (!smtpHost || !smtpUser || !smtpPass) {
     console.warn('⚠️  SMTP not configured - emails will not be sent');

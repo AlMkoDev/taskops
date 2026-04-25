@@ -18,7 +18,7 @@ import { ReportStatus, ReportFrequency } from '@/types/agrireports';
  *   page?: number (default: 1)
  *   pageSize?: number (default: 20)
  */
-export const GET = withAuth(async (request: NextRequest, user) => {
+export const GET = withAuth(async (request: NextRequest, _user) => {
   try {
     const { searchParams } = new URL(request.url);
     

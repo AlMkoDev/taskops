@@ -168,7 +168,7 @@ export function TourCompletionModal({ onComplete }: TourCompletionModalProps) {
 
 // ─── Module Progress Grid ────────────────────────────────────────────────────
 
-function ModuleProgressGrid({ progress }: { progress: Record<TourModule, TourProgress> }) {
+function ModuleProgressGrid({ progress }: { progress: Record<TourModule, TourProgress | null> }) {
   const modules: TourModule[] = ['tasks', 'projects', 'team', 'reports', 'analytics', 'settings'];
 
   return (
