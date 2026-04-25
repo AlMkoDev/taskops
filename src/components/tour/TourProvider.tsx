@@ -4,7 +4,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useR
 import { getTourStorageKey, TourContextType, TourModule, TourProgress, TourState, TourStep, TourWorkspaceController } from './tour-types';
 import { globalTour, tasksTour, projectsTour, teamTour, reportsTour, analyticsTour, settingsTour } from './tours';
 
-const tourDefinitions: Record<TourModule, any> = {
+const tourDefinitions: Record<TourModule, { steps: TourStep[] }> = {
   global: globalTour,
   tasks: tasksTour,
   projects: projectsTour,

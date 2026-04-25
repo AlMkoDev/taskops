@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withAuth } from '@/lib/agrireports-middleware';
 import { reportRepository } from '@/lib/repositories/report-repository';
+import { ReportStatus, ReportFrequency } from '@/types/agrireports';
 
 /**
  * GET /api/v1/reports
@@ -22,8 +23,8 @@ export const GET = withAuth(async (request: NextRequest, user) => {
     const { searchParams } = new URL(request.url);
     
     const query = {
-      status: searchParams.get('status') as any,
-      frequency: searchParams.get('frequency') as any,
+      status: searchParams.get('status') as ReportStatus | undefined,
+      frequency: searchParams.get('frequency') as ReportFrequency | undefined,
       authorId: searchParams.get('authorId') || undefined,
       page: parseInt(searchParams.get('page') || '1'),
       pageSize: parseInt(searchParams.get('pageSize') || '20'),

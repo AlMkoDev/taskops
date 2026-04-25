@@ -2,11 +2,9 @@
 // Provides convenient hooks for interacting with the reports API
 
 import { useState, useEffect, useCallback } from 'react';
-import { agrireportsApi, setToken, clearToken } from '@/lib/agrireports-api-client';
+import { agrireportsApi, setToken, clearToken as _clearToken } from '@/lib/agrireports-api-client';
 import {
-  ApiResponse,
   ApiError,
-  PaginatedResponse,
   CreateReportRequest,
   UpdateReportRequest,
   SubmitReportRequest,
@@ -20,7 +18,7 @@ import { Report } from '@/types/agrireports';
 // ============================================================
 
 export interface AuthState {
-  user: any | null;
+  user: { name: string; email?: string } | null;
   token: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
@@ -30,7 +28,7 @@ export interface AuthState {
 }
 
 export function useAgriAuth(): AuthState {
-  const [user, setUser] = useState<any | null>(null);
+  const [user, setUser] = useState<{ name: string; email?: string } | null>(null);
   const [token, setTokenState] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

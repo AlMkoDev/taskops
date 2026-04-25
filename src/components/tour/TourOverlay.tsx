@@ -2,11 +2,11 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { useTour } from './TourProvider';
-import { TooltipPosition, TourStep } from './tour-types';
+import { TourModule, TourStep } from './tour-types';
 import { globalTour, tasksTour, projectsTour, teamTour, reportsTour, analyticsTour, settingsTour } from './tours';
 import { useDialogAccessibility } from './use-dialog-accessibility';
 
-const tourDefinitions: Record<string, any> = {
+const tourDefinitions: Record<string, { steps: TourStep[] }> = {
   global: globalTour,
   tasks: tasksTour,
   projects: projectsTour,

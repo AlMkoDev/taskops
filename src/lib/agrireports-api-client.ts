@@ -102,7 +102,7 @@ async function request<T>(
 /**
  * Build query string from object
  */
-function buildQueryString(params: Record<string, any>): string {
+function buildQueryString(params: Record<string, string | number | boolean | undefined | null>): string {
   const searchParams = new URLSearchParams();
   
   Object.entries(params).forEach(([key, value]) => {
@@ -123,7 +123,7 @@ export const agrireportsApi = {
   /**
    * Authenticate and get JWT token
    */
-  async login(email: string, password: string): Promise<ApiResponse<{ token: string; expiresIn: string; user: any }>> {
+  async login(email: string, password: string): Promise<ApiResponse<{ token: string; expiresIn: string; user: { id: string; name: string; email: string } }>> {
     return request('/auth/token', {
       method: 'POST',
       body: JSON.stringify({ email, password }),

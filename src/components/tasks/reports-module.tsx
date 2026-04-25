@@ -972,7 +972,7 @@ export function ReportsModule() {
       if (!response.ok || !result.data) {
         throw new Error(result.error || 'Failed to create report.');
       }
-      let createdDraft = result.data;
+      const createdDraft = result.data;
       upsertReport(createdDraft);
       setValidationMessage('');
       setSyncMessage('Draft created on the server.');

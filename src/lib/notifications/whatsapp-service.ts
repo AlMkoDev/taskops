@@ -32,7 +32,7 @@ export async function sendWhatsApp(opts: {
 
   const url = `${META_API_BASE}/${phoneNumberId}/messages`;
 
-  let payload: any;
+  let payload: Record<string, unknown>;
 
   if (opts.template) {
     // Use template message

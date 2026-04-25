@@ -2,7 +2,7 @@
 
 import React, { useRef } from 'react';
 import { useTour } from './TourProvider';
-import { MODULE_METADATA, TourModule } from './tour-types';
+import { MODULE_METADATA, TourModule, TourProgress } from './tour-types';
 import { useDialogAccessibility } from './use-dialog-accessibility';
 
 interface TourCompletionModalProps {
@@ -168,7 +168,7 @@ export function TourCompletionModal({ onComplete }: TourCompletionModalProps) {
 
 // ─── Module Progress Grid ────────────────────────────────────────────────────
 
-function ModuleProgressGrid({ progress }: { progress: Record<TourModule, any> }) {
+function ModuleProgressGrid({ progress }: { progress: Record<TourModule, TourProgress> }) {
   const modules: TourModule[] = ['tasks', 'projects', 'team', 'reports', 'analytics', 'settings'];
 
   return (

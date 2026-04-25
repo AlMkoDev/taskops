@@ -1,6 +1,6 @@
 import 'server-only';
 import Redis from 'ioredis';
-import { Queue, Worker, Job } from 'bullmq';
+import { Queue, Job } from 'bullmq';
 
 // Redis connection
 const redisConnection = new Redis(process.env.REDIS_URL || 'redis://localhost:6379', {
@@ -90,9 +90,9 @@ export interface NotificationJobData {
   template?: { // For WhatsApp
     name: string;
     language: { code: string };
-    components: any[];
+    components: Array<Record<string, unknown>>;
   };
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 // Export types

@@ -116,12 +116,20 @@ function verifyHmacSignature(rawBody: string, signature: string | null): boolean
 /**
  * Process message status update
  */
-async function processStatusUpdate(update: any): Promise<void> {
+interface StatusUpdate {
+  id: string;
+  status: string;
+  recipient_id?: string;
+  timestamp?: number;
+  errors?: Array<{ code: number; title: string; message: string }>;
+}
+
+async function processStatusUpdate(update: StatusUpdate): Promise<void> {
   const {
     id, // WhatsApp message ID
     status: deliveryStatus, // sent, delivered, read, failed
-    recipient_id,
-    timestamp,
+    recipient_id: _recipient_id,
+    timestamp: _timestamp,
   } = update;
   
   console.log(`📱 WhatsApp status update: ${id} - ${deliveryStatus}`);
@@ -140,12 +148,20 @@ async function processStatusUpdate(update: any): Promise<void> {
 /**
  * Process incoming message (for future two-way communication)
  */
-async function processIncomingMessage(message: any): Promise<void> {
+interface IncomingMessage {
+  from: string;
+  id: string;
+  timestamp?: number;
+  type?: string;
+  text?: { body: string };
+}
+
+async function processIncomingMessage(message: IncomingMessage): Promise<void> {
   const {
     from,
-    id,
-    timestamp,
-    type,
+    id: _id,
+    timestamp: _timestamp,
+    type: _type,
     text,
   } = message;
   
