@@ -189,7 +189,7 @@ export function ProjectWorkbench({
 
   if (!project) {
     return (
-      <section className="task-manager-empty">
+      <section className="task-manager-empty" data-tour="projects.empty-state">
         <div className="task-manager-badge">Task Manager</div>
         <h2>Start with a blank project shell</h2>
         <p>
@@ -211,7 +211,7 @@ export function ProjectWorkbench({
           </div>
         </div>
         <div className="task-manager-actions">
-          <button className="primary-button" onClick={onCreateProject}>
+          <button className="primary-button" data-tour="projects.create-project" onClick={onCreateProject}>
             <Plus size={16} />
             Create Project
           </button>
@@ -320,8 +320,8 @@ export function ProjectWorkbench({
 
   return (
     <>
-      <section className="project-workbench">
-        <div className="project-shell-header">
+      <section className="project-workbench" data-tour="projects.workbench">
+        <div className="project-shell-header" data-tour="projects.header">
           <div>
             <div className="task-manager-badge">Task Manager</div>
             <h2>{project.name}</h2>
@@ -330,12 +330,12 @@ export function ProjectWorkbench({
               {project.subtitle ? ` · ${project.subtitle}` : ''}
             </p>
           </div>
-          <div className="project-shell-actions">
+          <div className="project-shell-actions" data-tour="projects.actions">
             <button className="ghost-button" onClick={() => { if (tasks[0]) onOpenTask(tasks[0].id); }} disabled={tasks.length === 0}>
               <BarChart3 size={16} />
               View in Tasks
             </button>
-            <button className="ghost-button" onClick={() => setIsPhaseModalOpen(true)}>
+            <button className="ghost-button" data-tour="projects.add-phase" onClick={() => setIsPhaseModalOpen(true)}>
               <Plus size={16} />
               Add Phase
             </button>
@@ -346,7 +346,7 @@ export function ProjectWorkbench({
           </div>
         </div>
 
-        <div className="project-shell-tabs">
+        <div className="project-shell-tabs" data-tour="projects.phase-tabs">
           <button className={activePhaseId === null ? 'is-active' : ''} onClick={() => onSelectPhase(null)}>
             All Phases
           </button>
@@ -361,10 +361,11 @@ export function ProjectWorkbench({
           ))}
         </div>
 
-        <div className="project-shell-tabs">
+        <div className="project-shell-tabs" data-tour="projects.workbench-tabs">
           {tabConfig.map((tab) => (
             <button
               key={tab.id}
+              data-tour={`projects.tab.${tab.id}`}
               className={`${activeTab === tab.id ? 'is-active' : ''}${tab.tone === 'secondary' ? ' is-secondary' : ''}`}
               onClick={() => setActiveTab(tab.id)}
               title={tab.description}
@@ -390,7 +391,7 @@ export function ProjectWorkbench({
         ) : null}
 
         {activeTab === 'wbs' ? (
-          <div className="wbs-section">
+          <div className="wbs-section" data-tour="projects.wbs">
             <div className="wbs-toolbar">
               <div>
                 <strong>WBS Tasks</strong>
@@ -435,7 +436,7 @@ export function ProjectWorkbench({
         ) : null}
 
         {activeTab === 'gantt' ? (
-          <div className="gantt-wrap">
+          <div className="gantt-wrap" data-tour="projects.gantt">
             <div className="gantt-grid" style={{ gridTemplateColumns: `240px repeat(${totalWeeks}, minmax(48px, 1fr))` }}>
               <div className="gantt-corner">Task</div>
               {Array.from({ length: totalWeeks }, (_, index) => (
@@ -472,7 +473,7 @@ export function ProjectWorkbench({
         ) : null}
 
         {activeTab === 'cadence' ? (
-          <div className="cadence-grid">
+          <div className="cadence-grid" data-tour="projects.cadence">
             {cadenceGroups.map((group) => (
               <section key={group.cadence} className="cadence-card">
                 <div className="cadence-card-head">
@@ -500,7 +501,7 @@ export function ProjectWorkbench({
         ) : null}
 
         {activeTab === 'daily' ? (
-          <div className="day-board">
+          <div className="day-board" data-tour="projects.daily">
             {dailyGroups.map((group) => (
               <section key={group.id} className="day-section">
                 <div className="day-section-head">
@@ -528,7 +529,7 @@ export function ProjectWorkbench({
         ) : null}
 
         {activeTab === 'summary' ? (
-          <div className="summary-grid">
+          <div className="summary-grid" data-tour="projects.summary">
             <section className="summary-kpi-grid">
               <div className="project-metric">
                 <strong>{orderedPhases.length}</strong>
@@ -655,7 +656,14 @@ export function ProjectWorkbench({
               </label>
               <label className="field">
                 <span>Responsible</span>
-                <input value={taskDraft.responsibleLabel} onChange={(event) => setTaskDraft((current) => ({ ...current, responsibleLabel: event.target.value }))} placeholder="Role or owner name" />
+                <select value={taskDraft.responsibleLabel} onChange={(event) => setTaskDraft((current) => ({ ...current, responsibleLabel: event.target.value }))}>
+                  <option value="">Unassigned</option>
+                  {users.map((user) => (
+                    <option key={user.id} value={user.name}>
+                      {user.name}{user.position ? ` - ${user.position}` : ''}{user.team ? ` (${user.team})` : ''}
+                    </option>
+                  ))}
+                </select>
               </label>
               <label className="field">
                 <span>Duration</span>

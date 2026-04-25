@@ -3,6 +3,7 @@
 import { FileCheck2, FilePenLine, PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen, Search } from 'lucide-react';
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { getDefaultReportData, reportPeriods } from '@/data/report-framework';
+import { agrireportsApi, setToken as setApiToken } from '@/lib/agrireports-api-client';
 import { clearQueuedReportActions, enqueueReportAction, QueuedReportAction, readQueuedReportActions, replaceQueuedReportActions } from '@/lib/report-offline-queue';
 import { useTaskOpsStore } from '@/store/use-task-ops-store';
 import { AuthSessionView, AuthUser, ReportAuditEntry, ReportFrequency, ReportItemStatus, ReportNotificationEntry, ReportRecord, ReportReviewAction, ReportRoleDefinition } from '@/types/domain';
@@ -851,11 +852,15 @@ export function ReportsModule() {
   const reportResults = useMemo(() => {
     const normalizedQuery = reportSearch.trim().toLowerCase();
     return reports.filter((report) => {
+      const title = report.title || '';
+      const roleName = report.roleName || '';
+      const reportingWindow = report.reportingWindow || '';
+      
       const matchesSearch =
         normalizedQuery.length === 0 ||
-        report.title.toLowerCase().includes(normalizedQuery) ||
-        report.roleName.toLowerCase().includes(normalizedQuery) ||
-        report.reportingWindow.toLowerCase().includes(normalizedQuery);
+        title.toLowerCase().includes(normalizedQuery) ||
+        roleName.toLowerCase().includes(normalizedQuery) ||
+        reportingWindow.toLowerCase().includes(normalizedQuery);
       const matchesStatus = reportStatusFilter === 'all' || report.status === reportStatusFilter;
       const matchesFrequency = reportFrequencyFilter === 'all' || report.period === reportFrequencyFilter;
       return matchesSearch && matchesStatus && matchesFrequency;
@@ -874,6 +879,23 @@ export function ReportsModule() {
     () => reportResults.filter((report) => report.status === 'approved' || report.status === 'rejected' || report.status === 'changes_requested'),
     [reportResults]
   );
+
+  function handleOpenContinueDraft() {
+    if (continueDraftReports.length === 0) {
+      setWorkspaceView('create');
+      setValidationMessage('No draft is available yet. Create a new draft to begin.');
+      return;
+    }
+
+    setWorkspaceView('history');
+    setSelectedReportId(continueDraftReports[0].id);
+    setValidationMessage('');
+  }
+
+  function handleOpenCreateReport() {
+    setWorkspaceView('create');
+    setValidationMessage('');
+  }
 
   function validateReport(report: ReportRecord, roleDefinition: ReportRoleDefinition | null) {
     if (!report.data.executive_summary.trim()) return 'Executive summary is required before submission.';
@@ -933,6 +955,8 @@ export function ReportsModule() {
         payload: createPayload
       });
       refreshQueueCount();
+      setSelectedReportId(tempReport.id);
+      setWorkspaceView('history');
       setValidationMessage('');
       setSyncMessage('Draft created locally and queued for sync.');
       return;
@@ -948,9 +972,13 @@ export function ReportsModule() {
       if (!response.ok || !result.data) {
         throw new Error(result.error || 'Failed to create report.');
       }
-      upsertReport(result.data);
+      let createdDraft = result.data;
+      upsertReport(createdDraft);
       setValidationMessage('');
       setSyncMessage('Draft created on the server.');
+
+      setSelectedReportId(createdDraft.id);
+      setWorkspaceView('history');
     } catch (error) {
       setValidationMessage(error instanceof Error ? error.message : 'Failed to create report.');
     }
@@ -1080,9 +1108,11 @@ export function ReportsModule() {
       upsertReport(payload.data);
       setReviewComments('');
       setValidationMessage('');
-      setSyncMessage(`Report ${action.replace('_', ' ')}.`);
+      setSyncMessage(`Review submitted: ${action.replace('_', ' ')}.`);
+      toastManager.success(`Report ${action.replace('_', ' ')} successfully`);
     } catch (reviewError) {
       setValidationMessage(reviewError instanceof Error ? reviewError.message : 'Failed to review report.');
+      toastManager.error('Failed to review report');
     }
   }
 
@@ -1102,6 +1132,18 @@ export function ReportsModule() {
       const authenticatedUser = payload.data;
       setSessionUser(authenticatedUser);
       setValidationMessage('');
+      
+      // Also get JWT token for v1 API access
+      try {
+        const jwtResponse = await agrireportsApi.login(loginEmail, loginPassword);
+        if (jwtResponse.success && jwtResponse.data) {
+          setApiToken(jwtResponse.data.token);
+        }
+      } catch (jwtError) {
+        // Non-critical: v1 API token acquisition failed, but session auth succeeded
+        console.warn('Failed to get JWT token for v1 API:', jwtError);
+      }
+      
       await loadAuthUsers();
       await loadSessions();
       await loadSecurityActivity();
@@ -1413,13 +1455,13 @@ export function ReportsModule() {
   }
 
   return (
-    <section className="reports-module-shell">
-      <header className="reports-module-header">
+    <section className="reports-module-shell" data-tour="reports.root">
+      <header className="reports-module-header" data-tour="reports.header">
         <div>
           <h2>AgriReports Module</h2>
           <p>Role-aware reporting, review routing, and framework guidance inside the Reports workspace.</p>
         </div>
-        <div className="reports-toolbar">
+        <div className="reports-toolbar" data-tour="reports.toolbar">
           <div className="reports-online-indicator">
             {sessionUser.name} · {sessionUser.role}
           </div>
@@ -1454,7 +1496,7 @@ export function ReportsModule() {
       </header>
 
       <div className={`reports-module-grid${isLeftRailCollapsed ? ' is-left-collapsed' : ''}${isRightRailCollapsed ? ' is-right-collapsed' : ''}`}>
-        <aside className={`reports-column reports-column-left${isLeftRailCollapsed ? ' reports-column-collapsed' : ''}`}>
+        <aside className={`reports-column reports-column-left${isLeftRailCollapsed ? ' reports-column-collapsed' : ''}`} data-tour="reports.workspace">
           {isLeftRailCollapsed ? (
             <div className="reports-collapsed-rail">
               <button className="ghost-button reports-rail-toggle" type="button" onClick={toggleLeftRail} aria-label="Expand workspace panel">
@@ -1464,7 +1506,7 @@ export function ReportsModule() {
             </div>
           ) : (
             <>
-          <section className="reports-card">
+          <section className="reports-card" data-tour="reports.workspace-switcher">
             <div className="reports-card-head">
               <h3>Reports Workspace</h3>
               <span>Focused views</span>
@@ -1488,16 +1530,16 @@ export function ReportsModule() {
 
           {leftPanelView === 'author' ? (
             <>
-              <section className="reports-card">
+              <section className="reports-card" data-tour="reports.drafts">
                 <div className="reports-card-head">
                   <h3>Author Landing</h3>
                   <span>Continue or create</span>
                 </div>
                 <div className="reports-inline-actions">
-                  <button className="primary-button reports-primary-action" onClick={() => setWorkspaceView('history')}>
+                  <button className="primary-button reports-primary-action" onClick={handleOpenContinueDraft}>
                     Continue Draft
                   </button>
-                  <button className="ghost-button" onClick={() => setWorkspaceView('create')}>
+                  <button className="ghost-button" onClick={handleOpenCreateReport}>
                     Create Report
                   </button>
                 </div>
@@ -1535,11 +1577,11 @@ export function ReportsModule() {
                   </>
                 ) : (
                   <>
-                    <div className="reports-search-row">
+                    <div className="reports-search-row" data-tour="reports.search">
                       <Search size={14} />
                       <input value={reportSearch} onChange={(event) => setReportSearch(event.target.value)} placeholder="Search reports" aria-label="Search reports" />
                     </div>
-                    <div className="reports-filter-row">
+                    <div className="reports-filter-row" data-tour="reports.filters">
                       <select value={reportFrequencyFilter} onChange={(event) => setReportFrequencyFilter(event.target.value as 'all' | ReportFrequency)}>
                         <option value="all">All frequencies</option>
                         {reportPeriods.map((period) => <option key={period.id} value={period.id}>{period.label}</option>)}
@@ -1557,7 +1599,7 @@ export function ReportsModule() {
                       <h4>My Drafts</h4>
                       <span>{continueDraftReports.length}</span>
                     </div>
-                    <div className="reports-list">
+                    <div className="reports-list" data-tour="reports.history-list">
                       {continueDraftReports.map((report) => (
                         <button key={report.id} className={selectedReport?.id === report.id ? 'reports-list-item is-active' : 'reports-list-item'} onClick={() => { setSelectedReportId(report.id); setValidationMessage(''); }}>
                           <div>
@@ -1594,7 +1636,7 @@ export function ReportsModule() {
           ) : null}
 
           {leftPanelView === 'reviewer' ? (
-            <section className="reports-card">
+            <section className="reports-card" data-tour="reports.reviewer-queue">
               <div className="reports-card-head">
                 <h3>Reviewer Queue</h3>
                 <span>{awaitingReviewReports.length} awaiting review</span>
@@ -1770,7 +1812,7 @@ export function ReportsModule() {
         <main className="reports-column reports-column-center">
           {selectedReport && selectedRoleDefinition ? (
             <div className="reports-split-pane">
-              <section className="reports-card reports-editor-card reports-workspace-card reports-editor-pane">
+              <section className="reports-card reports-editor-card reports-workspace-card reports-editor-pane" data-tour="reports.editor">
               <div className="reports-editor-header">
                 <div>
                   <div className="reports-kicker">{selectedPeriodDefinition?.label} report · {selectedReport.reportingWindow}</div>
@@ -1838,12 +1880,48 @@ export function ReportsModule() {
               {!canAuthorSelectedReport && selectedReport?.status === 'draft' ? <div className="reports-alert warning">This draft is assigned to {selectedReport.authorName}. You can view it, but you cannot edit or submit it.</div> : null}
               {!canReviewSelectedReport && selectedReport?.status === 'submitted' ? <div className="reports-alert warning">This report is routed to {selectedReport.reviewerName}. Reviewer actions are hidden for your account.</div> : null}
 
-              <div className="reports-capture-tabs" role="tablist" aria-label="Report capture sections">
-                <button className={activeEditorSection === 'narrative' ? 'is-active' : ''} onClick={() => setActiveEditorSection('narrative')}>Core narrative</button>
-                <button className={activeEditorSection === 'metrics' ? 'is-active' : ''} onClick={() => setActiveEditorSection('metrics')}>Rule-specific metrics</button>
-                <button className={activeEditorSection === 'actions' ? 'is-active' : ''} onClick={() => setActiveEditorSection('actions')}>Corrective actions</button>
-                <button className={activeEditorSection === 'signoff' ? 'is-active' : ''} onClick={() => setActiveEditorSection('signoff')}>Review & submit</button>
-                <button className={activeEditorSection === 'activity' ? 'is-active' : ''} onClick={() => setActiveEditorSection('activity')}>Audit trail</button>
+              {/* S6-04: Enhanced status badge visibility */}
+              {selectedReport && (
+                <div className={`reports-status-badge-large status-${selectedReport.status}`}>
+                  <span className="reports-status-dot" />
+                  <span>{reportStatusLabel(selectedReport.status)}</span>
+                </div>
+              )}
+
+              {/* S6-03: Guided step rail with progress indicators */}
+              {isDraftEditable && (
+                <div className="reports-step-rail" role="tablist" aria-label="Report editing steps">
+                  {[
+                    { id: 'narrative' as EditorSection, label: 'Core Narrative', number: 1, complete: narrativeComplete },
+                    { id: 'metrics' as EditorSection, label: 'Rule Metrics', number: 2, complete: completedRequiredMetrics >= totalRequiredMetrics },
+                    { id: 'actions' as EditorSection, label: 'Corrective Actions', number: 3, complete: correctiveActionItems.length > 0 },
+                    { id: 'signoff' as EditorSection, label: 'Review & Submit', number: 4, complete: false }
+                  ].map((step) => (
+                    <button
+                      key={step.id}
+                      className={`reports-step-item ${activeEditorSection === step.id ? 'is-active' : ''} ${step.complete ? 'is-complete' : ''}`}
+                      onClick={() => setActiveEditorSection(step.id)}
+                      role="tab"
+                      aria-selected={activeEditorSection === step.id}
+                    >
+                      <span className="reports-step-number">{step.complete ? '✓' : step.number}</span>
+                      <div className="reports-step-info">
+                        <span className="reports-step-label">{step.label}</span>
+                        <span className="reports-step-status">
+                          {step.complete ? 'Complete' : step.id === 'signoff' ? 'Final step' : 'In progress'}
+                        </span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              <div className="reports-capture-tabs" role="tablist" aria-label="Report capture sections" data-tour="reports.editor-tabs">
+                <button data-tour="reports.tab.narrative" className={activeEditorSection === 'narrative' ? 'is-active' : ''} onClick={() => setActiveEditorSection('narrative')}>Core narrative</button>
+                <button data-tour="reports.tab.metrics" className={activeEditorSection === 'metrics' ? 'is-active' : ''} onClick={() => setActiveEditorSection('metrics')}>Rule-specific metrics</button>
+                <button data-tour="reports.tab.actions" className={activeEditorSection === 'actions' ? 'is-active' : ''} onClick={() => setActiveEditorSection('actions')}>Corrective actions</button>
+                <button data-tour="reports.tab.signoff" className={activeEditorSection === 'signoff' ? 'is-active' : ''} onClick={() => setActiveEditorSection('signoff')}>Review & submit</button>
+                <button data-tour="reports.tab.activity" className={activeEditorSection === 'activity' ? 'is-active' : ''} onClick={() => setActiveEditorSection('activity')}>Audit trail</button>
               </div>
 
               {activeEditorSection === 'narrative' && isDraftEditable ? (
@@ -2133,7 +2211,7 @@ export function ReportsModule() {
 
               {activeEditorSection === 'actions' ? (
                 <div className="reports-capture-stack">
-                  <section className="reports-capture-card">
+                  <section className="reports-capture-card" data-tour="reports.signoff">
                     <div className="reports-capture-card-head">
                       <div>
                         <h4>Corrective action tracker</h4>
@@ -2280,7 +2358,7 @@ export function ReportsModule() {
                     </div>
                   </section>
 
-                  <section className="reports-capture-card">
+                  <section className="reports-capture-card" data-tour="reports.activity">
                     <div className="reports-capture-card-head">
                       <div>
                         <h4>Submission & approval</h4>
@@ -2405,7 +2483,7 @@ export function ReportsModule() {
               </section>
 
               {/* Live Preview Pane */}
-              <aside className="reports-preview-pane">
+              <aside className="reports-preview-pane" data-tour="reports.preview">
                 <div className="reports-preview-header">
                   <h4>Live Preview</h4>
                   <span>Real-time preview</span>
@@ -2493,7 +2571,7 @@ export function ReportsModule() {
           )}
         </main>
 
-        <aside className={`reports-column reports-column-right${isRightRailCollapsed ? ' reports-column-collapsed' : ''}`}>
+        <aside className={`reports-column reports-column-right${isRightRailCollapsed ? ' reports-column-collapsed' : ''}`} data-tour="reports.routing-column">
           {isRightRailCollapsed ? (
             <div className="reports-collapsed-rail">
               <button className="ghost-button reports-rail-toggle" type="button" onClick={toggleRightRail} aria-label="Expand routing panel">
@@ -2503,7 +2581,7 @@ export function ReportsModule() {
             </div>
           ) : selectedReport && selectedRoleDefinition ? (
             <>
-              <section className="reports-card reports-side-panel">
+              <section className="reports-card reports-side-panel" data-tour="reports.routing">
                 <div className="reports-card-head">
                   <h3>Routing</h3>
                 </div>
@@ -2544,7 +2622,7 @@ export function ReportsModule() {
                 </div>
               </section>
 
-              <section className="reports-card reports-side-panel">
+              <section className="reports-card reports-side-panel" data-tour="reports.side-list">
                 <div className="reports-card-head">
                   <h3>Reports</h3>
                   <span>{reportResults.length} total</span>

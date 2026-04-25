@@ -25,13 +25,15 @@ type StoredAuthUser = AuthUser & {
 
 type StoredAuthSession = AuthSession;
 
-type UserRow = {
+type AgriUserRow = {
   id: string;
   email: string;
   name: string;
-  role: AuthUser['role'];
-  team: string;
-  status: AuthUser['status'];
+  phone?: string | null;
+  agri_role: 'field_staff' | 'supervisor' | 'manager' | 'reviewer' | 'admin';
+  farm_role: string;
+  category: string;
+  status: 'active' | 'inactive' | 'suspended';
   must_change_password?: boolean;
   password_hash: string;
   created_at: string;
@@ -50,18 +52,72 @@ const USERS_FILE = path.join(process.cwd(), 'data', 'auth-users.json');
 const SESSIONS_FILE = path.join(process.cwd(), 'data', 'auth-sessions.json');
 const SESSION_TTL_DAYS = 14;
 
+export type ReportUserContact = {
+  id: string;
+  email: string;
+  name: string;
+  phone?: string;
+};
+
 function shouldFallbackToFileAuth(error: unknown) {
   return error instanceof Error && /(does not exist|relation .* does not exist|column .* does not exist)/i.test(error.message);
 }
 
-function mapUserRow(row: UserRow): StoredAuthUser {
+function mapAgriRoleToAuthRole(role: AgriUserRow['agri_role']): AuthUser['role'] {
+  switch (role) {
+    case 'admin':
+      return 'admin';
+    case 'manager':
+      return 'manager';
+    case 'reviewer':
+      return 'reviewer';
+    case 'field_staff':
+    case 'supervisor':
+    default:
+      return 'author';
+  }
+}
+
+function mapAuthRoleToAgriRole(role: AuthUser['role']): AgriUserRow['agri_role'] {
+  switch (role) {
+    case 'admin':
+      return 'admin';
+    case 'manager':
+      return 'manager';
+    case 'reviewer':
+      return 'reviewer';
+    case 'author':
+    default:
+      return 'field_staff';
+  }
+}
+
+function mapAuthStatusToAgriStatus(status: AuthUser['status']): AgriUserRow['status'] {
+  return status === 'active' ? 'active' : 'inactive';
+}
+
+function mapAgriStatusToAuthStatus(status: AgriUserRow['status']): AuthUser['status'] {
+  return status === 'active' ? 'active' : 'disabled';
+}
+
+function mapTeamToCategory(team: string) {
+  const normalized = team.trim().toLowerCase();
+  if (normalized.includes('management') || normalized.includes('executive')) return 'Management';
+  if (normalized.includes('quality')) return 'Compliance';
+  if (normalized.includes('finance')) return 'Admin';
+  if (normalized.includes('regional') || normalized.includes('logistics')) return 'Logistics';
+  if (normalized.includes('technical')) return 'Technical';
+  return 'Field Ops';
+}
+
+function mapAgriUserRow(row: AgriUserRow): StoredAuthUser {
   return {
     id: row.id,
     email: row.email,
     name: row.name,
-    role: row.role,
-    team: row.team,
-    status: row.status,
+    role: mapAgriRoleToAuthRole(row.agri_role),
+    team: row.farm_role,
+    status: mapAgriStatusToAuthStatus(row.status),
     mustChangePassword: row.must_change_password ?? false,
     passwordHash: row.password_hash,
     createdAt: row.created_at,
@@ -162,16 +218,36 @@ async function writeFallbackSessions(sessions: StoredAuthSession[]) {
 }
 
 async function ensureDatabaseUsersSeeded() {
-  const result = await queryPostgres<{ count: string }>('SELECT COUNT(*)::text AS count FROM auth_users');
+  const result = await queryPostgres<{ count: string }>('SELECT COUNT(*)::text AS count FROM agri_users');
   if (Number(result.rows[0]?.count ?? '0') > 0) return;
 
   const now = new Date().toISOString();
   for (const user of reportAuthSeedUsers) {
+    const passwordHash = hashPassword(user.password);
     await queryPostgres(
-      `INSERT INTO auth_users (id, email, name, role, team, status, must_change_password, password_hash, created_at, updated_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+      `INSERT INTO agri_users (
+        id, email, name, phone, password_hash, role, farm_role, category, wa_opt_in,
+        email_notifications, whatsapp_notifications, status, must_change_password, created_at, updated_at
+      )
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
        ON CONFLICT (id) DO NOTHING`,
-      [user.id, user.email, user.name, user.role, user.team, 'active', user.mustChangePassword ?? false, hashPassword(user.password), now, now]
+      [
+        user.id,
+        user.email,
+        user.name,
+        null,
+        passwordHash,
+        mapAuthRoleToAgriRole(user.role),
+        user.team,
+        mapTeamToCategory(user.team),
+        false,
+        true,
+        false,
+        'active',
+        user.mustChangePassword ?? false,
+        now,
+        now
+      ]
     );
   }
 }
@@ -179,8 +255,23 @@ async function ensureDatabaseUsersSeeded() {
 async function listDatabaseUsers() {
   try {
     await ensureDatabaseUsersSeeded();
-    const result = await queryPostgres<UserRow>('SELECT * FROM auth_users ORDER BY name ASC');
-    return result.rows.map(mapUserRow);
+    const result = await queryPostgres<AgriUserRow>(
+      `SELECT
+        id,
+        email,
+        name,
+        role AS agri_role,
+        farm_role,
+        category,
+        status,
+        must_change_password,
+        password_hash,
+        created_at,
+        updated_at
+      FROM agri_users
+      ORDER BY name ASC`
+    );
+    return result.rows.map(mapAgriUserRow);
   } catch (error) {
     if (shouldFallbackToFileAuth(error)) {
       return listFallbackUsers();
@@ -197,8 +288,25 @@ async function findStoredUserByEmail(email: string) {
 
   await ensureDatabaseUsersSeeded();
   try {
-    const result = await queryPostgres<UserRow>('SELECT * FROM auth_users WHERE lower(email) = lower($1) LIMIT 1', [email]);
-    return result.rows[0] ? mapUserRow(result.rows[0]) : null;
+    const result = await queryPostgres<AgriUserRow>(
+      `SELECT
+        id,
+        email,
+        name,
+        role AS agri_role,
+        farm_role,
+        category,
+        status,
+        must_change_password,
+        password_hash,
+        created_at,
+        updated_at
+      FROM agri_users
+      WHERE lower(email) = lower($1)
+      LIMIT 1`,
+      [email]
+    );
+    return result.rows[0] ? mapAgriUserRow(result.rows[0]) : null;
   } catch (error) {
     if (shouldFallbackToFileAuth(error)) {
       const users = await listFallbackUsers();
@@ -216,8 +324,25 @@ async function findStoredUserById(id: string) {
 
   await ensureDatabaseUsersSeeded();
   try {
-    const result = await queryPostgres<UserRow>('SELECT * FROM auth_users WHERE id = $1 LIMIT 1', [id]);
-    return result.rows[0] ? mapUserRow(result.rows[0]) : null;
+    const result = await queryPostgres<AgriUserRow>(
+      `SELECT
+        id,
+        email,
+        name,
+        role AS agri_role,
+        farm_role,
+        category,
+        status,
+        must_change_password,
+        password_hash,
+        created_at,
+        updated_at
+      FROM agri_users
+      WHERE id = $1
+      LIMIT 1`,
+      [id]
+    );
+    return result.rows[0] ? mapAgriUserRow(result.rows[0]) : null;
   } catch (error) {
     if (shouldFallbackToFileAuth(error)) {
       const users = await listFallbackUsers();
@@ -235,8 +360,25 @@ async function findStoredUserByName(name: string) {
 
   await ensureDatabaseUsersSeeded();
   try {
-    const result = await queryPostgres<UserRow>('SELECT * FROM auth_users WHERE lower(name) = lower($1) LIMIT 1', [name]);
-    return result.rows[0] ? mapUserRow(result.rows[0]) : null;
+    const result = await queryPostgres<AgriUserRow>(
+      `SELECT
+        id,
+        email,
+        name,
+        role AS agri_role,
+        farm_role,
+        category,
+        status,
+        must_change_password,
+        password_hash,
+        created_at,
+        updated_at
+      FROM agri_users
+      WHERE lower(name) = lower($1)
+      LIMIT 1`,
+      [name]
+    );
+    return result.rows[0] ? mapAgriUserRow(result.rows[0]) : null;
   } catch (error) {
     if (shouldFallbackToFileAuth(error)) {
       const users = await listFallbackUsers();
@@ -272,7 +414,7 @@ async function createStoredSession(userId: string) {
 
   try {
     await queryPostgres(
-      `INSERT INTO auth_sessions (id, user_id, token, expires_at, created_at)
+      `INSERT INTO agri_sessions (id, user_id, token, expires_at, created_at)
        VALUES ($1,$2,$3,$4,$5)`,
       [session.id, session.userId, session.token, session.expiresAt, session.createdAt]
     );
@@ -294,7 +436,7 @@ async function findStoredSessionByToken(token: string) {
   }
 
   try {
-    const result = await queryPostgres<SessionRow>('SELECT * FROM auth_sessions WHERE token = $1 LIMIT 1', [token]);
+    const result = await queryPostgres<SessionRow>('SELECT * FROM agri_sessions WHERE token = $1 LIMIT 1', [token]);
     return result.rows[0] ? mapSessionRow(result.rows[0]) : null;
   } catch (error) {
     if (shouldFallbackToFileAuth(error)) {
@@ -313,7 +455,7 @@ async function deleteStoredSession(token: string) {
   }
 
   try {
-    await queryPostgres('DELETE FROM auth_sessions WHERE token = $1', [token]);
+    await queryPostgres('DELETE FROM agri_sessions WHERE token = $1', [token]);
   } catch (error) {
     if (shouldFallbackToFileAuth(error)) {
       const sessions = await listFallbackSessions();
@@ -333,7 +475,7 @@ async function pruneExpiredSessions() {
   }
 
   try {
-    await queryPostgres('DELETE FROM auth_sessions WHERE expires_at <= NOW()');
+    await queryPostgres('DELETE FROM agri_sessions WHERE expires_at <= NOW()');
   } catch (error) {
     if (shouldFallbackToFileAuth(error)) {
       const sessions = await listFallbackSessions();
@@ -364,7 +506,7 @@ export async function listReportSessions(userId: string, currentToken?: string |
   }
 
   try {
-    const result = await queryPostgres<SessionRow>('SELECT * FROM auth_sessions WHERE user_id = $1 ORDER BY created_at DESC', [userId]);
+    const result = await queryPostgres<SessionRow>('SELECT * FROM agri_sessions WHERE user_id = $1 ORDER BY created_at DESC', [userId]);
     return result.rows.map((row) => {
       const session = mapSessionRow(row);
       return {
@@ -400,6 +542,72 @@ export async function resolveReportUser(params: { userId?: string | null; name?:
   }
 
   return null;
+}
+
+export async function resolveReportUserContact(params: { userId?: string | null; name?: string | null }): Promise<ReportUserContact | null> {
+  if (!getDatabaseUrl()) {
+    const user = await resolveReportUser(params);
+    return user
+      ? {
+          id: user.id,
+          email: user.email,
+          name: user.name
+        }
+      : null;
+  }
+
+  const lookupById = async (id: string) =>
+    queryPostgres<Pick<AgriUserRow, 'id' | 'email' | 'name' | 'phone'>>(
+      'SELECT id, email, name, phone FROM agri_users WHERE id = $1 LIMIT 1',
+      [id]
+    );
+
+  const lookupByName = async (name: string) =>
+    queryPostgres<Pick<AgriUserRow, 'id' | 'email' | 'name' | 'phone'>>(
+      'SELECT id, email, name, phone FROM agri_users WHERE lower(name) = lower($1) LIMIT 1',
+      [name]
+    );
+
+  try {
+    if (params.userId) {
+      const byId = await lookupById(params.userId);
+      if (byId.rows[0]) {
+        return {
+          id: byId.rows[0].id,
+          email: byId.rows[0].email,
+          name: byId.rows[0].name,
+          phone: byId.rows[0].phone ?? undefined
+        };
+      }
+    }
+
+    const normalizedName = params.name?.trim();
+    if (normalizedName) {
+      const byName = await lookupByName(normalizedName);
+      if (byName.rows[0]) {
+        return {
+          id: byName.rows[0].id,
+          email: byName.rows[0].email,
+          name: byName.rows[0].name,
+          phone: byName.rows[0].phone ?? undefined
+        };
+      }
+    }
+
+    return null;
+  } catch (error) {
+    if (shouldFallbackToFileAuth(error)) {
+      const user = await resolveReportUser(params);
+      return user
+        ? {
+            id: user.id,
+            email: user.email,
+            name: user.name
+          }
+        : null;
+    }
+    throw error;
+  }
 }
 
 export async function authenticateReportUser(email: string, password: string) {
@@ -501,7 +709,13 @@ export async function saveReportUser(input: SaveReportUserInput) {
   try {
     await ensureDatabaseUsersSeeded();
     const existing = input.id ? await findStoredUserById(input.id) : null;
-    const duplicate = await queryPostgres<UserRow>('SELECT * FROM auth_users WHERE lower(email) = lower($1) AND id <> COALESCE($2, \'\') LIMIT 1', [email, input.id ?? null]);
+    const duplicate = await queryPostgres<AgriUserRow>(
+      `SELECT id
+      FROM agri_users
+      WHERE lower(email) = lower($1) AND id <> COALESCE($2, '')
+      LIMIT 1`,
+      [email, input.id ?? null]
+    );
     if (duplicate.rows[0]) {
       throw new Error('A user with that email already exists.');
     }
@@ -511,19 +725,41 @@ export async function saveReportUser(input: SaveReportUserInput) {
     const createdAt = existing?.createdAt ?? now;
     const passwordHash = password ? hashPassword(password) : existing?.passwordHash ?? hashPassword('demo123');
 
+    const mustChangePassword = password ? true : existing?.mustChangePassword ?? true;
+
     await queryPostgres(
-      `INSERT INTO auth_users (id, email, name, role, team, status, must_change_password, password_hash, created_at, updated_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+      `INSERT INTO agri_users (
+        id, email, name, phone, password_hash, role, farm_role, category, wa_opt_in,
+        email_notifications, whatsapp_notifications, status, must_change_password, created_at, updated_at
+      )
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
        ON CONFLICT (id) DO UPDATE SET
          email = EXCLUDED.email,
          name = EXCLUDED.name,
+         password_hash = EXCLUDED.password_hash,
          role = EXCLUDED.role,
-         team = EXCLUDED.team,
+         farm_role = EXCLUDED.farm_role,
+         category = EXCLUDED.category,
          status = EXCLUDED.status,
          must_change_password = EXCLUDED.must_change_password,
-         password_hash = EXCLUDED.password_hash,
          updated_at = EXCLUDED.updated_at`,
-      [id, email, name, input.role, team, input.status, password ? true : existing?.mustChangePassword ?? true, passwordHash, createdAt, now]
+      [
+        id,
+        email,
+        name,
+        null,
+        passwordHash,
+        mapAuthRoleToAgriRole(input.role),
+        team,
+        mapTeamToCategory(team),
+        false,
+        true,
+        false,
+        mapAuthStatusToAgriStatus(input.status),
+        mustChangePassword,
+        createdAt,
+        now
+      ]
     );
 
     const saved = await findStoredUserById(id);
@@ -608,7 +844,7 @@ export async function changeReportUserPassword(userId: string, currentPassword: 
   }
 
   try {
-    await queryPostgres('UPDATE auth_users SET password_hash = $2, must_change_password = FALSE, updated_at = $3 WHERE id = $1', [userId, nextHash, now]);
+    await queryPostgres('UPDATE agri_users SET password_hash = $2, must_change_password = FALSE, updated_at = $3 WHERE id = $1', [userId, nextHash, now]);
     return true;
   } catch (error) {
     if (shouldFallbackToFileAuth(error)) {
@@ -633,7 +869,7 @@ export async function revokeReportSessionById(userId: string, sessionId: string)
   }
 
   try {
-    await queryPostgres('DELETE FROM auth_sessions WHERE id = $1 AND user_id = $2', [sessionId, userId]);
+    await queryPostgres('DELETE FROM agri_sessions WHERE id = $1 AND user_id = $2', [sessionId, userId]);
     return true;
   } catch (error) {
     if (shouldFallbackToFileAuth(error)) {

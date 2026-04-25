@@ -52,6 +52,7 @@ export interface User {
   name: string;
   role: UserRole;
   team: string;
+  position?: string;
   capacityHoursPerWeek?: number;
   agriculturalRole?: AgriculturalRole;
 }

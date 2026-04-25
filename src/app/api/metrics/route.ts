@@ -1,58 +1,86 @@
-import { reportEventRepository } from '@/lib/repositories/report-event-repository';
-import { reportRepository } from '@/lib/repositories/report-repository';
+import { NextRequest, NextResponse } from 'next/server';
+import { register, dbConnectionsGauge, activeSessionsGauge, queueDepthGauge } from '@/lib/monitoring/metrics';
+import { getPgPool, queryPostgres } from '@/lib/postgres';
 
-function metricLine(name: string, value: number, labels?: Record<string, string>) {
-  if (!labels || Object.keys(labels).length === 0) {
-    return `${name} ${value}`;
+/**
+ * Prometheus Metrics Endpoint
+ * GET /api/metrics - Returns metrics in Prometheus format
+ * 
+ * This endpoint is scraped by Prometheus server
+ */
+
+export async function GET(_request: NextRequest) {
+  try {
+    // Update dynamic metrics
+    await updateDynamicMetrics();
+
+    // Get all metrics in Prometheus format
+    const metricsText = await register.metrics();
+
+    // Return with correct content type
+    return new NextResponse(metricsText, {
+      status: 200,
+      headers: {
+        'Content-Type': register.contentType,
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+      },
+    });
+  } catch (error) {
+    console.error('Failed to generate metrics:', error);
+    return NextResponse.json(
+      { error: 'Failed to generate metrics' },
+      { status: 500 }
+    );
   }
-
-  const labelText = Object.entries(labels)
-    .map(([key, labelValue]) => `${key}="${labelValue}"`)
-    .join(',');
-
-  return `${name}{${labelText}} ${value}`;
 }
 
-export async function GET() {
-  const [reports, auditEntries, notifications] = await Promise.all([
-    reportRepository.list(),
-    reportEventRepository.listAudit(),
-    reportEventRepository.listNotifications()
-  ]);
+/**
+ * Update dynamic metrics that require database queries
+ */
+async function updateDynamicMetrics() {
+  try {
+    const pool = getPgPool();
 
-  const reportStatusCounts = reports.reduce<Record<string, number>>((acc, report) => {
-    acc[report.status] = (acc[report.status] ?? 0) + 1;
-    return acc;
-  }, {});
+    // Update database connections gauge
+    const totalConnections = pool.totalCount;
+    const idleConnections = pool.idleCount;
+    const activeConnections = totalConnections - idleConnections;
 
-  const notificationStatusCounts = notifications.reduce<Record<string, number>>((acc, notification) => {
-    acc[notification.status] = (acc[notification.status] ?? 0) + 1;
-    return acc;
-  }, {});
+    dbConnectionsGauge.set(activeConnections);
 
-  const lines = [
-    '# HELP reports_total Total number of reports',
-    '# TYPE reports_total gauge',
-    metricLine('reports_total', reports.length),
-    '# HELP report_audit_entries_total Total number of report audit entries',
-    '# TYPE report_audit_entries_total counter',
-    metricLine('report_audit_entries_total', auditEntries.length),
-    '# HELP report_notifications_total Total number of report notification records',
-    '# TYPE report_notifications_total counter',
-    metricLine('report_notifications_total', notifications.length)
-  ];
-
-  Object.entries(reportStatusCounts).forEach(([status, count]) => {
-    lines.push(metricLine('reports_by_status_total', count, { status }));
-  });
-
-  Object.entries(notificationStatusCounts).forEach(([status, count]) => {
-    lines.push(metricLine('report_notifications_by_status_total', count, { status }));
-  });
-
-  return new Response(lines.join('\n'), {
-    headers: {
-      'Content-Type': 'text/plain; version=0.0.4; charset=utf-8'
+    // Update active sessions gauge
+    try {
+      const sessionsResult = await queryPostgres<{ count: string }>(
+        "SELECT COUNT(*)::text AS count FROM agri_sessions WHERE expires_at > NOW()"
+      );
+      activeSessionsGauge.set(parseInt(sessionsResult.rows[0].count));
+    } catch {
+      // Table might not exist, ignore
     }
-  });
+
+    // Update queue depth gauges
+    try {
+      const { checkRedisHealth } = await import('@/lib/queue/queue-config');
+      const redisHealthy = await checkRedisHealth();
+
+      if (redisHealthy) {
+        const { notificationQueue, emailQueue, whatsappQueue } = await import('@/lib/queue/queue-config');
+
+        const [notifWaiting, emailWaiting, whatsappWaiting] = await Promise.all([
+          notificationQueue.getWaitingCount(),
+          emailQueue.getWaitingCount(),
+          whatsappQueue.getWaitingCount(),
+        ]);
+
+        queueDepthGauge.labels('notifications').set(notifWaiting);
+        queueDepthGauge.labels('email-notifications').set(emailWaiting);
+        queueDepthGauge.labels('whatsapp-notifications').set(whatsappWaiting);
+      }
+    } catch {
+      // Redis might not be available, ignore
+    }
+  } catch (error) {
+    console.warn('Failed to update dynamic metrics:', error);
+    // Don't throw - we still want to return whatever metrics we have
+  }
 }

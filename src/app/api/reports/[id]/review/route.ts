@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireReportUser } from '@/lib/report-auth';
 import { reportEventRepository } from '@/lib/repositories/report-event-repository';
 import { reportRepository } from '@/lib/repositories/report-repository';
-import { AuthUser, ReportRecord, ReportReviewAction } from '@/types/domain';
+import { toReportRecord } from '@/lib/reports-adapter';
+import { AuthUser, ReportReviewAction } from '@/types/domain';
 
-function canReviewReport(user: AuthUser, report: ReportRecord) {
+function canReviewReport(user: AuthUser, report: { reviewerId?: string }) {
   return user.role === 'admin' || user.role === 'manager' || !report.reviewerId || user.id === report.reviewerId;
 }
 
@@ -42,11 +43,12 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
   if (!updated) {
     return NextResponse.json({ error: 'Report not found.' }, { status: 404 });
   }
+  const updatedRecord = toReportRecord(updated);
 
   const auditAction = body.action === 'approve' ? 'approved' : body.action === 'reject' ? 'rejected' : 'changes_requested';
 
   await reportEventRepository.addAudit({
-    reportId: updated.id,
+    reportId: updatedRecord.id,
     action: auditAction,
     actorId: currentUser.id,
     actorName: currentUser.name,
@@ -60,24 +62,24 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
 
   await reportEventRepository.addNotifications([
     {
-      reportId: updated.id,
+      reportId: updatedRecord.id,
       channel: 'email',
       event: 'report_reviewed',
-      recipientUserId: updated.authorId,
-      recipientName: updated.authorName,
+      recipientUserId: updatedRecord.authorId,
+      recipientName: updatedRecord.authorName,
       status: 'queued',
-      message: `${updated.title} was ${body.action.replace('_', ' ')} by ${updated.reviewerName}.`
+      message: `${updatedRecord.title} was ${body.action.replace('_', ' ')} by ${updatedRecord.reviewerName}.`
     },
     {
-      reportId: updated.id,
+      reportId: updatedRecord.id,
       channel: 'in_app',
       event: 'report_reviewed',
-      recipientUserId: updated.authorId,
-      recipientName: updated.authorName,
+      recipientUserId: updatedRecord.authorId,
+      recipientName: updatedRecord.authorName,
       status: 'queued',
-      message: `${updated.title} review outcome: ${body.action.replace('_', ' ')}.`
+      message: `${updatedRecord.title} review outcome: ${body.action.replace('_', ' ')}.`
     }
   ]);
 
-  return NextResponse.json({ data: updated });
+  return NextResponse.json({ data: updatedRecord });
 }

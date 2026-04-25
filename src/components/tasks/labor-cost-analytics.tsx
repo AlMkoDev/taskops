@@ -97,8 +97,8 @@ export function LaborCostAnalytics() {
   }
 
   return (
-    <div className="space-y-6">
-      <section className="rounded-2xl border border-slate-700/80 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6 shadow-xl">
+    <div className="space-y-6" data-tour="analytics.labor-root">
+      <section className="rounded-2xl border border-slate-700/80 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6 shadow-xl" data-tour="analytics.labor-overview">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
           <div className="space-y-2">
             <div className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">Labor Cost Command View</div>
@@ -107,14 +107,16 @@ export function LaborCostAnalytics() {
               Switch between a high-level overview and the detailed roster. The screen now shows one decision context at a time instead of every module at once.
             </p>
           </div>
-          <div className="flex flex-wrap gap-2 rounded-2xl border border-slate-700 bg-slate-950/70 p-1.5">
+          <div className="flex flex-wrap gap-2 rounded-2xl border border-slate-700 bg-slate-950/70 p-1.5" data-tour="analytics.labor-tabs">
             <button
+              data-tour="analytics.labor-tab.overview"
               onClick={() => setActiveView('overview')}
               className={`rounded-xl px-4 py-2 text-sm font-semibold transition-all ${activeView === 'overview' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}
             >
               Overview
             </button>
             <button
+              data-tour="analytics.labor-tab.roster"
               onClick={() => setActiveView('roster')}
               className={`rounded-xl px-4 py-2 text-sm font-semibold transition-all ${activeView === 'roster' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}
             >
@@ -150,7 +152,7 @@ export function LaborCostAnalytics() {
               </div>
             </section>
 
-            <section className="rounded-2xl border border-slate-700 bg-gradient-to-b from-slate-900 to-slate-950 p-6 shadow-lg">
+            <section className="rounded-2xl border border-slate-700 bg-gradient-to-b from-slate-900 to-slate-950 p-6 shadow-lg" data-tour="analytics.category-breakdown">
               <div className="text-sm font-semibold text-white">Three quick reads</div>
               <div className="mt-4 space-y-3">
                 <div className="rounded-2xl border border-blue-700/30 bg-blue-950/25 p-4">
@@ -226,7 +228,7 @@ export function LaborCostAnalytics() {
           </div>
         </>
       ) : (
-        <section className="space-y-6 rounded-2xl border border-slate-700 bg-gradient-to-b from-slate-900 to-slate-950 p-6 shadow-lg">
+        <section className="space-y-6 rounded-2xl border border-slate-700 bg-gradient-to-b from-slate-900 to-slate-950 p-6 shadow-lg" data-tour="analytics.workforce-roster">
           <div className="grid gap-3 lg:grid-cols-[minmax(0,1.1fr)_repeat(3,minmax(0,0.65fr))]">
             <label className="flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-sm text-slate-300">
               <Search size={16} className="text-slate-500" />

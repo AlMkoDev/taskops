@@ -26,6 +26,7 @@ type TaskFilter = 'all' | 'my_work' | 'due_today' | 'blocked' | 'overdue' | 'rev
 type TaskOpsStore = {
   tasks: Task[];
   users: User[];
+  teams: string[];
   projects: Project[];
   projectPhases: ProjectPhase[];
   attachments: Attachment[];
@@ -45,6 +46,8 @@ type TaskOpsStore = {
   selectedReportId: string | null;
   searchQuery: string;
   addUser: (user: User) => void;
+  addTeam: (teamName: string) => void;
+  deleteTeam: (teamName: string) => void;
   updateUser: (userId: string, updates: Partial<User>) => void;
   deleteUser: (userId: string) => void;
   addTask: (task: Task) => void;
@@ -133,11 +136,16 @@ function calculateProgress(task: Task) {
   return Math.round((task.subtasks.filter((subtask) => subtask.completed).length / task.subtasks.length) * 100);
 }
 
+function dedupeTeams(teamNames: string[]) {
+  return Array.from(new Set(teamNames.map((team) => team.trim()).filter(Boolean))).sort((left, right) => left.localeCompare(right));
+}
+
 export const useTaskOpsStore = create<TaskOpsStore>()(
   persist(
     (set) => ({
       tasks,
       users,
+      teams: dedupeTeams(users.map((user) => user.team)),
       projects,
       projectPhases,
       attachments,
@@ -159,12 +167,40 @@ export const useTaskOpsStore = create<TaskOpsStore>()(
       addUser: (user) =>
         set((state) => ({
           users: [user, ...state.users],
+          teams: dedupeTeams([...state.teams, user.team]),
           selectedUserId: user.id,
           activeSection: 'team'
         })),
+      addTeam: (teamName) =>
+        set((state) => ({
+          teams: dedupeTeams([...state.teams, teamName])
+        })),
+      deleteTeam: (teamName) =>
+        set((state) => {
+          const normalizedTeamName = teamName.trim();
+          if (!normalizedTeamName) {
+            return {};
+          }
+
+          const fallbackTeam = 'Unassigned';
+          const hasMembers = state.users.some((user) => user.team === normalizedTeamName);
+          const nextTeams = dedupeTeams(
+            state.teams
+              .filter((team) => team !== normalizedTeamName)
+              .concat(hasMembers ? [fallbackTeam] : [])
+          );
+
+          return {
+            teams: nextTeams,
+            users: state.users.map((user) =>
+              user.team === normalizedTeamName ? { ...user, team: fallbackTeam } : user
+            )
+          };
+        }),
       updateUser: (userId, updates) =>
         set((state) => ({
-          users: state.users.map((user) => (user.id === userId ? { ...user, ...updates } : user))
+          users: state.users.map((user) => (user.id === userId ? { ...user, ...updates } : user)),
+          teams: updates.team ? dedupeTeams([...state.teams, updates.team]) : state.teams
         })),
       deleteUser: (userId) =>
         set((state) => {
@@ -173,6 +209,7 @@ export const useTaskOpsStore = create<TaskOpsStore>()(
 
           return {
             users: nextUsers,
+            teams: dedupeTeams(nextUsers.map((user) => user.team).concat(state.teams)),
             projects: state.projects.map((project) => ({
               ...project,
               ownerId: project.ownerId === userId ? undefined : project.ownerId,
@@ -443,12 +480,14 @@ export const useTaskOpsStore = create<TaskOpsStore>()(
           
           return {
             users: [...newUsers, ...state.users],
+            teams: dedupeTeams([...state.teams, ...newUsers.map((user) => user.team)]),
             activeSection: 'team'
           };
         }),
       bulkAddUsers: (newUsers) =>
         set((state) => ({
-          users: [...newUsers, ...state.users]
+          users: [...newUsers, ...state.users],
+          teams: dedupeTeams([...state.teams, ...newUsers.map((user) => user.team)])
         })),
       setActiveSection: (section) => set({ activeSection: section }),
       setActiveView: (view) => set({ activeView: view }),
@@ -471,6 +510,7 @@ export const useTaskOpsStore = create<TaskOpsStore>()(
       partialize: (state) => ({
         tasks: state.tasks,
         users: state.users,
+        teams: state.teams,
         projects: state.projects,
         projectPhases: state.projectPhases,
         attachments: state.attachments,

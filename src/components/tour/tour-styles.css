@@ -1,0 +1,227 @@
+/* ─── Tour Animations & Styles ─────────────────────────────────────────────── */
+
+/* Spotlight pulse animation */
+@keyframes tour-pulse-ring {
+  0%, 100% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(1.02);
+  }
+}
+
+.tour-spotlight::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 16px;
+  border: 2.5px solid var(--green-mid, #27ae60);
+  animation: tour-pulse-ring 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Modal fade-in animation */
+@keyframes tour-modal-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tour-modal.visible {
+  animation: tour-modal-fade-in 0.28s ease-out;
+}
+
+/* Skip confirmation toast slide-up */
+@keyframes toast-slide-up {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.tour-skip-confirm.visible {
+  animation: toast-slide-up 0.2s ease-out;
+}
+
+/* Completion modal scale-in */
+@keyframes completion-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.tour-completion-modal.active {
+  animation: completion-scale-in 0.3s ease-out;
+}
+
+/* ─── Mobile Responsiveness ────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .tour-modal {
+    max-width: calc(100vw - 32px) !important;
+    padding: 20px 18px 18px !important;
+  }
+
+  .tour-modal h2 {
+    font-size: 18px !important;
+  }
+
+  .tour-modal p {
+    font-size: 13px !important;
+  }
+
+  .tour-spotlight::after {
+    border-width: 2px;
+  }
+
+  /* Adjust tooltip positioning for mobile */
+  .tour-modal {
+    left: 16px !important;
+    right: 16px !important;
+    width: auto !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .tour-modal {
+    padding: 16px 14px 14px !important;
+  }
+
+  .tour-modal h2 {
+    font-size: 16px !important;
+  }
+
+  .tour-modal p {
+    font-size: 12px !important;
+  }
+
+  .tour-nav button {
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+  }
+}
+
+/* ─── Reduced Motion ───────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .tour-spotlight::after {
+    animation: none;
+  }
+
+  .tour-modal.visible {
+    animation: none;
+  }
+
+  .tour-skip-confirm.visible {
+    animation: none;
+  }
+
+  .tour-completion-modal.active {
+    animation: none;
+  }
+
+  .tour-spotlight,
+  .tour-modal {
+    transition: none;
+  }
+}
+
+/* ─── Welcome Screen Responsive ────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .tour-welcome-modal {
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+    padding: 24px 20px 20px !important;
+  }
+  
+  .tour-welcome-modal h2 {
+    font-size: 22px !important;
+  }
+  
+  .tour-welcome-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .tour-welcome-modal {
+    max-height: 85vh !important;
+    padding: 20px 16px 16px !important;
+  }
+  
+  .tour-welcome-modal h2 {
+    font-size: 20px !important;
+  }
+  
+  .tour-welcome-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+  
+  .tour-welcome-modal .module-card {
+    padding: 12px !important;
+  }
+  
+  .tour-welcome-modal .module-icon {
+    font-size: 20px !important;
+  }
+  
+  .tour-welcome-modal .tour-path {
+    font-size: 12px !important;
+    padding: 10px 12px !important;
+  }
+}
+
+/* ─── Accessibility ────────────────────────────────────────────────────────── */
+
+/* Focus styles for keyboard navigation */
+.tour-modal button:focus-visible {
+  outline: 2px solid var(--green-mid, #27ae60);
+  outline-offset: 2px;
+}
+
+/* Screen reader only text */
+.tour-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* High contrast mode support */
+@media (forced-colors: active) {
+  .tour-spotlight {
+    outline: 3px solid Highlight;
+  }
+
+  .tour-modal {
+    border: 2px solid ButtonText;
+  }
+
+  .tour-modal button {
+    border: 1px solid ButtonText;
+  }
+}

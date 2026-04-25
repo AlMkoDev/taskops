@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AuthUser, ReportRecord } from '@/types/domain';
+import { AuthUser } from '@/types/domain';
 import { requireReportUser } from '@/lib/report-auth';
 import { reportEventRepository } from '@/lib/repositories/report-event-repository';
 import { reportRepository } from '@/lib/repositories/report-repository';
+import { toReportRecord } from '@/lib/reports-adapter';
 
-function canSubmitReport(user: AuthUser, report: ReportRecord) {
+function canSubmitReport(user: AuthUser, report: { authorId?: string }) {
   return user.role === 'admin' || user.role === 'manager' || !report.authorId || user.id === report.authorId;
 }
 
@@ -34,9 +35,10 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
   if (!updated) {
     return NextResponse.json({ error: 'Report not found.' }, { status: 404 });
   }
+  const updatedRecord = toReportRecord(updated);
 
   await reportEventRepository.addAudit({
-    reportId: updated.id,
+    reportId: updatedRecord.id,
     action: 'submitted',
     actorId: currentUser.id,
     actorName: currentUser.name,
@@ -45,24 +47,24 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
 
   await reportEventRepository.addNotifications([
     {
-      reportId: updated.id,
+      reportId: updatedRecord.id,
       channel: 'email',
       event: 'report_submitted',
-      recipientUserId: updated.reviewerId,
-      recipientName: updated.reviewerName,
+      recipientUserId: updatedRecord.reviewerId,
+      recipientName: updatedRecord.reviewerName,
       status: 'queued',
-      message: `${updated.title} is ready for review.`
+      message: `${updatedRecord.title} is ready for review.`
     },
     {
-      reportId: updated.id,
+      reportId: updatedRecord.id,
       channel: 'whatsapp',
       event: 'report_submitted',
-      recipientUserId: updated.reviewerId,
-      recipientName: updated.reviewerName,
+      recipientUserId: updatedRecord.reviewerId,
+      recipientName: updatedRecord.reviewerName,
       status: 'queued',
-      message: `${updated.title} was submitted and needs review.`
+      message: `${updatedRecord.title} was submitted and needs review.`
     }
   ]);
 
-  return NextResponse.json({ data: updated });
+  return NextResponse.json({ data: updatedRecord });
 }

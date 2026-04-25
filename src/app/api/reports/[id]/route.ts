@@ -3,8 +3,9 @@ import { AuthUser, ReportRecord } from '@/types/domain';
 import { requireReportUser } from '@/lib/report-auth';
 import { reportEventRepository } from '@/lib/repositories/report-event-repository';
 import { reportRepository } from '@/lib/repositories/report-repository';
+import { toReportRecord, toReportUpdates } from '@/lib/reports-adapter';
 
-function canEditReport(user: AuthUser, report: ReportRecord) {
+function canEditReport(user: AuthUser, report: { authorId?: string }) {
   return user.role === 'admin' || user.role === 'manager' || !report.authorId || user.id === report.authorId;
 }
 
@@ -21,7 +22,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
     return NextResponse.json({ error: 'Report not found.' }, { status: 404 });
   }
 
-  return NextResponse.json({ data: report });
+  return NextResponse.json({ data: toReportRecord(report) });
 }
 
 export async function PUT(request: NextRequest, context: { params: Promise<{ id: string }> }) {
@@ -41,22 +42,23 @@ export async function PUT(request: NextRequest, context: { params: Promise<{ id:
   if (!canEditReport(currentUser, existing)) {
     return NextResponse.json({ error: 'You do not have permission to update this report.' }, { status: 403 });
   }
-  const updated = await reportRepository.update(id, body);
+  const updated = await reportRepository.update(id, toReportUpdates(body));
   if (!updated) {
     return NextResponse.json({ error: 'Report not found.' }, { status: 404 });
   }
+  const updatedRecord = toReportRecord(updated);
 
   const action = body.status === 'draft' && existing.status === 'changes_requested' ? 'reopened' : 'updated';
   await reportEventRepository.addAudit({
-    reportId: updated.id,
+    reportId: updatedRecord.id,
     action,
     actorId: currentUser.id,
     actorName: currentUser.name,
     details:
       action === 'reopened'
         ? `${currentUser.name} reopened the report draft after requested changes.`
-        : `${currentUser.name} updated report content for ${updated.reportingWindow}.`
+        : `${currentUser.name} updated report content for ${updatedRecord.reportingWindow}.`
   });
 
-  return NextResponse.json({ data: updated });
+  return NextResponse.json({ data: updatedRecord });
 }

@@ -1,8 +1,10 @@
 import 'server-only';
 import { Pool, QueryResultRow } from 'pg';
+import { randomBytes, scryptSync } from 'crypto';
 import { runMigrations } from '@/lib/migration-runner';
 import { readReportAuditEntries, readReportNotificationEntries } from '@/lib/report-workflow-events';
 import { readReports } from '@/lib/reports-persistence';
+import { reportAuthSeedUsers } from '@/data/report-users';
 import { ReportAuditEntry, ReportNotificationEntry, ReportRecord } from '@/types/domain';
 
 declare global {
@@ -33,14 +35,18 @@ export function getPgPool() {
   return global.__taskopsPgPool;
 }
 
-async function insertReport(pool: Pool, report: ReportRecord) {
+async function insertAgriReport(pool: Pool, report: ReportRecord) {
   await pool.query(
-    `INSERT INTO reports (
-      id, title, period, role_id, role_name, category, status, author_id, author_name, reviewer_id, reviewer_name, reporting_window,
-      submitted_at, reviewed_at, last_saved_at, signature, reviewer_signature, review_comments, data, created_at, updated_at
+    `INSERT INTO agri_reports (
+      id, title, period, role, role_name, category, reporting_window, status,
+      author_id, author_name, author_email, reviewer_id, reviewer_name, reviewer_email,
+      data, signature, reviewer_signature, review_comments, submitted_at, reviewed_at,
+      last_saved_at, created_at, updated_at
     ) VALUES (
-      $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,
-      $13,$14,$15,$16,$17,$18,$19::jsonb,$20,$21
+      $1,$2,$3,$4,$5,$6,$7,$8,
+      $9,$10,$11,$12,$13,$14,
+      $15::jsonb,$16,$17,$18,$19,$20,
+      $21,$22,$23
     )
     ON CONFLICT (id) DO NOTHING`,
     [
@@ -50,75 +56,195 @@ async function insertReport(pool: Pool, report: ReportRecord) {
       report.roleId,
       report.roleName,
       report.category,
+      report.reportingWindow,
       report.status,
       report.authorId ?? null,
       report.authorName,
+      null,
       report.reviewerId ?? null,
       report.reviewerName,
-      report.reportingWindow,
-      report.submittedAt ?? null,
-      report.reviewedAt ?? null,
-      report.lastSavedAt ?? null,
+      null,
+      JSON.stringify(report.data),
       report.signature ?? null,
       report.reviewerSignature ?? null,
       report.reviewComments ?? null,
-      JSON.stringify(report.data),
+      report.submittedAt ?? null,
+      report.reviewedAt ?? null,
+      report.lastSavedAt ?? null,
       report.createdAt,
       report.updatedAt
     ]
   );
 }
 
-async function insertAuditEntry(pool: Pool, entry: ReportAuditEntry) {
+async function insertAgriAuditEntry(pool: Pool, entry: ReportAuditEntry) {
   await pool.query(
-    `INSERT INTO report_audit_entries (id, report_id, action, actor_id, actor_name, details, created_at)
-     VALUES ($1,$2,$3,$4,$5,$6,$7)
+    `INSERT INTO agri_report_audit_log (id, report_id, action, actor_id, actor_name, details, metadata, created_at)
+     VALUES ($1,$2,$3,$4,$5,$6,$7::jsonb,$8)
      ON CONFLICT (id) DO NOTHING`,
-    [entry.id, entry.reportId, entry.action, entry.actorId ?? null, entry.actorName, entry.details, entry.createdAt]
+    [
+      entry.id,
+      entry.reportId,
+      entry.action,
+      entry.actorId ?? null,
+      entry.actorName,
+      entry.details,
+      JSON.stringify({ source: 'bootstrap-json' }),
+      entry.createdAt
+    ]
   );
 }
 
-async function insertNotificationEntry(pool: Pool, entry: ReportNotificationEntry) {
-  await pool.query(
-    `INSERT INTO report_notification_entries (id, report_id, channel, event, recipient_user_id, recipient_name, status, message, created_at)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
-     ON CONFLICT (id) DO NOTHING`,
-    [entry.id, entry.reportId, entry.channel, entry.event, entry.recipientUserId ?? null, entry.recipientName, entry.status, entry.message, entry.createdAt]
-  );
-}
-
-async function seedLegacyData(pool: Pool) {
-  const reports = await readReports();
-  for (const report of reports) {
-    await insertReport(pool, report);
+function mapLegacyNotificationEvent(event: ReportNotificationEntry['event']) {
+  if (event === 'report_created' || event === 'report_submitted' || event === 'report_reviewed') {
+    return event;
   }
-  const knownReportIds = new Set(reports.map((report) => report.id));
 
-  const auditCount = await pool.query<{ count: string }>('SELECT COUNT(*)::text AS count FROM report_audit_entries');
+  return 'report_created';
+}
+
+async function insertAgriNotificationEntry(pool: Pool, entry: ReportNotificationEntry) {
+  await pool.query(
+    `INSERT INTO agri_notifications (
+      id, report_id, recipient_id, recipient_name, recipient_email, recipient_phone,
+      channel, event, subject, message, status, created_at, updated_at
+    )
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+     ON CONFLICT (id) DO NOTHING`,
+    [
+      entry.id,
+      entry.reportId,
+      entry.recipientUserId ?? null,
+      entry.recipientName,
+      null,
+      null,
+      entry.channel,
+      mapLegacyNotificationEvent(entry.event),
+      null,
+      entry.message,
+      entry.status,
+      entry.createdAt,
+      entry.createdAt
+    ]
+  );
+}
+
+function mapAuthRoleToAgriRole(role: (typeof reportAuthSeedUsers)[number]['role']) {
+  switch (role) {
+    case 'admin':
+      return 'admin';
+    case 'manager':
+      return 'manager';
+    case 'reviewer':
+      return 'reviewer';
+    case 'author':
+    default:
+      return 'field_staff';
+  }
+}
+
+function mapTeamToCategory(team: string): ReportRecord['category'] {
+  const normalized = team.trim().toLowerCase();
+  if (normalized.includes('management') || normalized.includes('executive')) return 'Management';
+  if (normalized.includes('quality')) return 'Compliance';
+  if (normalized.includes('finance')) return 'Admin';
+  if (normalized.includes('regional') || normalized.includes('logistics')) return 'Logistics';
+  if (normalized.includes('technical')) return 'Technical';
+  return 'Field Ops';
+}
+
+async function seedAgriUsers(pool: Pool) {
+  const count = await pool.query<{ count: string }>('SELECT COUNT(*)::text AS count FROM agri_users');
+  if (Number(count.rows[0]?.count ?? '0') > 0) return;
+
+  const now = new Date().toISOString();
+  for (const user of reportAuthSeedUsers) {
+    const salt = randomBytes(16).toString('hex');
+    const derived = scryptSync(user.password, salt, 64).toString('hex');
+    const passwordHash = `${salt}:${derived}`;
+
+    await pool.query(
+      `INSERT INTO agri_users (
+        id, email, name, phone, password_hash, role, farm_role, category, wa_opt_in,
+        email_notifications, whatsapp_notifications, status, must_change_password, created_at, updated_at
+      )
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)
+       ON CONFLICT (id) DO NOTHING`,
+      [
+        user.id,
+        user.email,
+        user.name,
+        null,
+        passwordHash,
+        mapAuthRoleToAgriRole(user.role),
+        user.team,
+        mapTeamToCategory(user.team),
+        false,
+        true,
+        false,
+        'active',
+        user.mustChangePassword ?? false,
+        now,
+        now
+      ]
+    );
+  }
+}
+
+async function seedAgriBootstrapData(pool: Pool) {
+  const reportCount = await pool.query<{ count: string }>('SELECT COUNT(*)::text AS count FROM agri_reports');
+  if (Number(reportCount.rows[0]?.count ?? '0') === 0) {
+    const reports = await readReports();
+    for (const report of reports) {
+      await insertAgriReport(pool, report);
+    }
+  }
+
+  const auditCount = await pool.query<{ count: string }>('SELECT COUNT(*)::text AS count FROM agri_report_audit_log');
   if (Number(auditCount.rows[0]?.count ?? '0') === 0) {
     const auditEntries = await readReportAuditEntries();
     for (const entry of auditEntries) {
-      if (knownReportIds.has(entry.reportId)) {
-        await insertAuditEntry(pool, entry);
-      }
+      await insertAgriAuditEntry(pool, entry);
     }
   }
 
-  const notificationCount = await pool.query<{ count: string }>('SELECT COUNT(*)::text AS count FROM report_notification_entries');
+  const notificationCount = await pool.query<{ count: string }>('SELECT COUNT(*)::text AS count FROM agri_notifications');
   if (Number(notificationCount.rows[0]?.count ?? '0') === 0) {
     const notificationEntries = await readReportNotificationEntries();
     for (const entry of notificationEntries) {
-      if (knownReportIds.has(entry.reportId)) {
-        await insertNotificationEntry(pool, entry);
-      }
+      await insertAgriNotificationEntry(pool, entry);
     }
+  }
+}
+
+async function seedAgriSessionsFromLegacy(pool: Pool) {
+  const sessionCount = await pool.query<{ count: string }>('SELECT COUNT(*)::text AS count FROM agri_sessions');
+  if (Number(sessionCount.rows[0]?.count ?? '0') > 0) return;
+
+  const legacySessions = await pool.query<{
+    id: string;
+    user_id: string;
+    token: string;
+    expires_at: string;
+    created_at: string;
+  }>('SELECT * FROM auth_sessions ORDER BY created_at ASC');
+
+  for (const session of legacySessions.rows) {
+    await pool.query(
+      `INSERT INTO agri_sessions (id, user_id, token, expires_at, created_at)
+       VALUES ($1,$2,$3,$4,$5)
+       ON CONFLICT (id) DO NOTHING`,
+      [session.id, session.user_id, session.token, session.expires_at, session.created_at]
+    );
   }
 }
 
 async function initializeSchema() {
   const pool = getPgPool();
   await runMigrations(pool);
-  await seedLegacyData(pool);
+  await seedAgriUsers(pool);
+  await seedAgriBootstrapData(pool);
+  await seedAgriSessionsFromLegacy(pool);
 }
 
 export async function ensurePostgresReady() {

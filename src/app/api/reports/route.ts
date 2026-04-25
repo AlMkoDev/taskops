@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireReportUser, resolveReportUser } from '@/lib/report-auth';
 import { reportEventRepository } from '@/lib/repositories/report-event-repository';
 import { reportRepository } from '@/lib/repositories/report-repository';
+import { toReportRecord } from '@/lib/reports-adapter';
 import { ReportRecord } from '@/types/domain';
 
 type CreateBody = Pick<ReportRecord, 'title' | 'period' | 'roleId' | 'roleName' | 'category' | 'reviewerId' | 'reviewerName' | 'reportingWindow' | 'data'>;
@@ -14,7 +15,7 @@ export async function GET(request: NextRequest) {
   }
 
   const reports = await reportRepository.list();
-  return NextResponse.json({ data: reports });
+  return NextResponse.json({ data: reports.map(toReportRecord) });
 }
 
 export async function POST(request: NextRequest) {
@@ -39,9 +40,15 @@ export async function POST(request: NextRequest) {
   const created = await reportRepository.create({
     title: body.title,
     period: body.period,
-    roleId: body.roleId,
+    role: body.roleId,
     roleName: body.roleName,
     category: body.category,
+    status: 'draft',
+    author: {
+      id: currentUser.id,
+      name: currentUser.name,
+      email: currentUser.email
+    },
     authorId: currentUser.id,
     authorName: currentUser.name,
     reviewerId: reviewer?.id,
@@ -49,26 +56,27 @@ export async function POST(request: NextRequest) {
     reportingWindow: body.reportingWindow,
     data: body.data || {}
   });
+  const createdRecord = toReportRecord(created);
 
   await reportEventRepository.addAudit({
     reportId: created.id,
     action: 'created',
     actorId: currentUser.id,
     actorName: currentUser.name,
-    details: `Created ${created.period} ${created.roleName} report for ${created.reportingWindow} (authenticated actor).`
+    details: `Created ${createdRecord.period} ${createdRecord.roleName} report for ${createdRecord.reportingWindow} (authenticated actor).`
   });
 
   await reportEventRepository.addNotifications([
     {
-      reportId: created.id,
+      reportId: createdRecord.id,
       channel: 'in_app',
       event: 'report_created',
       recipientUserId: reviewer?.id,
-      recipientName: created.reviewerName,
+      recipientName: createdRecord.reviewerName,
       status: 'queued',
-      message: `${created.authorName} created ${created.title}.`
+      message: `${createdRecord.authorName} created ${createdRecord.title}.`
     }
   ]);
 
-  return NextResponse.json({ data: created }, { status: 201 });
+  return NextResponse.json({ data: createdRecord }, { status: 201 });
 }

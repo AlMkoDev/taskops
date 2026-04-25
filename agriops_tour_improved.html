@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriOps Workspace | Interactive Tour</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:ital,wght@0,600;0,700;1,500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green-deep: #1a3a2a;
+            --green-mid: #27ae60;
+            --green-light: #d4edda;
+            --green-xlight: #f0faf4;
+            --amber: #e67e22;
+            --amber-light: #fef3e2;
+            --red: #c0392b;
+            --red-light: #fdecea;
+            --blue: #2980b9;
+            --blue-light: #dbeafe;
+            --ink: #1c2b20;
+            --ink-mid: #4a5c52;
+            --ink-light: #8a9e92;
+            --border: #dde8e2;
+            --surface: #f8faf9;
+            --white: #ffffff;
+            --shadow-sm: 0 1px 4px rgba(26,58,42,0.08);
+            --shadow-md: 0 4px 16px rgba(26,58,42,0.12);
+            --shadow-lg: 0 12px 48px rgba(26,58,42,0.18);
+            --radius: 10px;
+            --radius-lg: 16px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--surface);
+            color: var(--ink);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* ─── Layout ─── */
+        .app-container {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            height: 100vh;
+        }
+
+        /* ─── Sidebar ─── */
+        .sidebar {
+            background: var(--green-deep);
+            padding: 20px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .logo {
+            font-family: 'Fraunces', serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 28px;
+            padding: 4px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: -0.3px;
+        }
+        .logo span { font-size: 26px; }
+
+        .nav-item {
+            padding: 11px 14px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.18s;
+            color: rgba(255,255,255,0.65);
+        }
+        .nav-item:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .nav-item.active { background: var(--green-mid); color: #fff; }
+        .nav-item .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .help-btn {
+            padding: 11px 14px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            font-size: 14px;
+            color: rgba(255,255,255,0.55);
+            transition: all 0.18s;
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+        }
+        .help-btn:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.9); }
+
+        /* ─── Top Bar ─── */
+        .main-content { display: flex; flex-direction: column; overflow: hidden; }
+
+        .top-bar {
+            height: 60px;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+            gap: 16px;
+        }
+
+        .search-bar {
+            flex: 1;
+            max-width: 400px;
+            padding: 9px 14px 9px 36px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--surface);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            color: var(--ink);
+            outline: none;
+            position: relative;
+        }
+        .search-wrap { position: relative; flex: 1; max-width: 400px; }
+        .search-wrap::before {
+            content: '⌕';
+            position: absolute;
+            left: 11px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--ink-light);
+            font-size: 16px;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .search-wrap input { padding-left: 36px; width: 100%; }
+
+        .btn-new {
+            background: var(--green-mid);
+            color: white;
+            border: none;
+            padding: 9px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: background 0.15s;
+        }
+        .btn-new:hover { background: #229954; }
+
+        .avatar {
+            width: 34px; height: 34px;
+            border-radius: 50%;
+            background: var(--green-mid);
+            color: white;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 13px;
+        }
+
+        /* ─── Content ─── */
+        .content-area {
+            flex: 1;
+            padding: 28px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .section-title {
+            font-family: 'Fraunces', serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 20px;
+        }
+
+        .module-nav {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+            padding-bottom: 14px;
+            border-bottom: 2px solid var(--border);
+        }
+        .module-tab {
+            padding: 7px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            color: var(--ink-mid);
+            transition: all 0.15s;
+        }
+        .module-tab:hover { background: var(--surface); }
+        .module-tab.active { background: var(--green-mid); color: white; }
+
+        .filter-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+        .filter-pill {
+            padding: 7px 15px;
+            border: 1.5px solid var(--border);
+            border-radius: 20px;
+            background: var(--white);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 13px;
+            color: var(--ink-mid);
+            transition: all 0.15s;
+        }
+        .filter-pill:hover { border-color: var(--green-mid); color: var(--green-mid); }
+        .filter-pill.active { background: var(--green-mid); color: white; border-color: var(--green-mid); }
+
+        .task-list { display: flex; flex-direction: column; gap: 10px; }
+        .task-row {
+            background: var(--white);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+            transition: all 0.18s;
+        }
+        .task-row:hover { border-color: var(--green-mid); box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+
+        .task-checkbox {
+            width: 18px; height: 18px;
+            border: 2px solid var(--border);
+            border-radius: 4px; flex-shrink: 0;
+        }
+        .task-checkbox.done { background: var(--green-mid); border-color: var(--green-mid); }
+
+        .priority-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%; flex-shrink: 0;
+        }
+        .p1 { background: var(--red); }
+        .p2 { background: var(--amber); }
+        .p3 { background: var(--blue); }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        .card {
+            background: var(--white);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            transition: box-shadow 0.2s;
+        }
+        .card:hover { box-shadow: var(--shadow-md); }
+
+        .progress-bar-wrap { height: 6px; background: var(--surface); border-radius: 3px; }
+        .progress-bar-fill { height: 100%; border-radius: 3px; background: var(--green-mid); }
+
+        .util-fill-red { background: var(--red); }
+        .util-fill-amber { background: var(--amber); }
+
+        .badge {
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+        }
+        .badge-blue { background: var(--blue-light); color: #1e40af; }
+        .badge-green { background: var(--green-light); color: #166534; }
+        .badge-red { background: var(--red-light); color: var(--red); }
+        .badge-amber { background: var(--amber-light); color: #92400e; }
+        .badge-grey { background: var(--surface); color: var(--ink-mid); border: 1px solid var(--border); }
+
+        /* ─── Detail Panel ─── */
+        .detail-panel {
+            position: absolute;
+            right: 0; top: 0;
+            width: 380px; height: 100%;
+            background: var(--white);
+            border-left: 1.5px solid var(--border);
+            box-shadow: -6px 0 24px rgba(0,0,0,0.08);
+            padding: 24px;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            z-index: 5;
+        }
+        .detail-panel.open { transform: translateX(0); }
+
+        .panel-close {
+            position: absolute; top: 16px; right: 16px;
+            width: 30px; height: 30px;
+            border-radius: 50%; background: var(--surface);
+            border: 1px solid var(--border);
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 16px; color: var(--ink-mid);
+        }
+        .panel-close:hover { background: var(--border); }
+
+        .form-label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 13px; color: var(--ink-mid); }
+        .form-select {
+            width: 100%; padding: 9px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 7px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px; color: var(--ink);
+            background: var(--white);
+        }
+
+        .panel-btn {
+            width: 100%;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            border: none;
+            transition: all 0.15s;
+        }
+        .panel-btn-primary { background: var(--green-mid); color: white; }
+        .panel-btn-primary:hover { background: #229954; }
+        .panel-btn-secondary { background: var(--surface); color: var(--ink-mid); border: 1.5px solid var(--border); }
+        .panel-btn-secondary:hover { border-color: var(--ink-light); }
+        .panel-btn-danger { background: var(--red-light); color: var(--red); border: 1.5px solid #f5c6c4; }
+        .panel-btn-danger:hover { background: #f8d7d5; }
+
+        .checklist-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 9px 12px; background: var(--surface);
+            border-radius: 7px; margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        /* ─── TOUR OVERLAY ─── */
+        .tour-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 1000;
+            pointer-events: none;
+            display: none;
+        }
+        .tour-overlay.active { display: block; }
+
+        /* Spotlight with padding */
+        .tour-spotlight {
+            position: absolute;
+            border-radius: 12px;
+            box-shadow: 0 0 0 9999px rgba(15, 30, 20, 0.78);
+            transition: all 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: auto;
+            z-index: 1001;
+        }
+
+        /* Pulse animation ring */
+        .tour-spotlight::after {
+            content: '';
+            position: absolute;
+            inset: -6px;
+            border-radius: 16px;
+            border: 2.5px solid var(--green-mid);
+            animation: pulse-ring 2s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes pulse-ring {
+            0%, 100% { opacity: 0.9; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.02); }
+        }
+
+        /* Tour Modal */
+        .tour-modal {
+            position: absolute;
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 26px 28px 22px;
+            box-shadow: var(--shadow-lg);
+            max-width: 400px;
+            width: 92%;
+            z-index: 1002;
+            pointer-events: auto;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 0.28s, transform 0.28s;
+            border: 1.5px solid var(--border);
+        }
+        .tour-modal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ─── Progress Dots ─── */
+        .tour-dots {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+        .tour-dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: var(--border);
+            transition: all 0.25s;
+        }
+        .tour-dot.active {
+            background: var(--green-mid);
+            width: 20px;
+            border-radius: 4px;
+        }
+        .tour-dot.done { background: var(--green-light); }
+
+        .tour-step-label {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--green-mid);
+            margin-bottom: 8px;
+        }
+
+        .tour-title {
+            font-family: 'Fraunces', serif;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--ink);
+            line-height: 1.3;
+        }
+
+        .tour-description {
+            color: var(--ink-mid);
+            line-height: 1.65;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .tour-context {
+            font-size: 13px;
+            color: var(--green-mid);
+            background: var(--green-xlight);
+            border-left: 3px solid var(--green-mid);
+            padding: 8px 12px;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 20px;
+            font-style: italic;
+            line-height: 1.5;
+        }
+
+        .tour-nav {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .tour-btn {
+            padding: 9px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            border: none;
+            transition: all 0.15s;
+        }
+        .tour-btn-primary { background: var(--green-mid); color: white; flex: 1; }
+        .tour-btn-primary:hover { background: #229954; }
+        .tour-btn-back { background: var(--surface); color: var(--ink-mid); border: 1.5px solid var(--border); }
+        .tour-btn-back:hover { border-color: var(--ink-light); }
+        .tour-btn-skip {
+            background: none; color: var(--ink-light);
+            font-size: 13px; padding: 9px 10px;
+            position: relative;
+        }
+        .tour-btn-skip:hover { color: var(--ink-mid); }
+
+        /* Tooltip Arrows — all 4 directions */
+        .tooltip-arrow {
+            position: absolute;
+            width: 12px; height: 12px;
+            background: var(--white);
+            transform: rotate(45deg);
+        }
+        .tooltip-arrow.top { top: -7px; left: 32px; box-shadow: -2px -2px 4px rgba(0,0,0,0.06); }
+        .tooltip-arrow.bottom { bottom: -7px; left: 32px; box-shadow: 2px 2px 4px rgba(0,0,0,0.06); }
+        .tooltip-arrow.left { left: -7px; top: 28px; box-shadow: -2px 2px 4px rgba(0,0,0,0.06); }
+        .tooltip-arrow.right { right: -7px; top: 28px; box-shadow: 2px -2px 4px rgba(0,0,0,0.06); }
+        .tooltip-arrow.hidden { display: none; }
+
+        /* Skip Confirm Toast */
+        .skip-confirm {
+            position: fixed;
+            bottom: 24px; left: 50%; transform: translateX(-50%);
+            background: var(--ink);
+            color: white;
+            padding: 14px 24px;
+            border-radius: 10px;
+            box-shadow: var(--shadow-lg);
+            z-index: 2100;
+            display: flex; gap: 16px; align-items: center;
+            font-size: 14px;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.2s;
+        }
+        .skip-confirm.visible { opacity: 1; pointer-events: auto; }
+        .skip-confirm button {
+            padding: 6px 14px; border-radius: 6px;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600; font-size: 13px;
+            cursor: pointer; border: none;
+        }
+        .skip-confirm .skip-yes { background: var(--red); color: white; }
+        .skip-confirm .skip-no { background: rgba(255,255,255,0.15); color: white; }
+
+        /* ─── Completion Modal ─── */
+        .completion-modal {
+            position: fixed; inset: 0;
+            background: rgba(15,30,20,0.72);
+            backdrop-filter: blur(6px);
+            z-index: 2000;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .completion-modal.active { opacity: 1; pointer-events: auto; }
+
+        .completion-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 44px 40px;
+            text-align: center;
+            max-width: 460px; width: 92%;
+            box-shadow: var(--shadow-lg);
+        }
+        .completion-icon { font-size: 56px; margin-bottom: 16px; }
+        .completion-title {
+            font-family: 'Fraunces', serif;
+            font-size: 26px; font-weight: 700;
+            color: var(--ink); margin-bottom: 10px;
+        }
+        .completion-sub { color: var(--ink-mid); margin-bottom: 28px; font-size: 15px; line-height: 1.6; }
+
+        .completion-actions { display: flex; flex-direction: column; gap: 10px; }
+        .comp-btn {
+            width: 100%; padding: 12px;
+            border-radius: 9px;
+            font-weight: 600; font-size: 15px;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer; border: none;
+            transition: all 0.15s;
+        }
+        .comp-btn-primary { background: var(--green-mid); color: white; }
+        .comp-btn-primary:hover { background: #229954; }
+        .comp-btn-outline { background: var(--white); color: var(--ink-mid); border: 1.5px solid var(--border); }
+        .comp-btn-outline:hover { border-color: var(--green-mid); color: var(--green-mid); }
+
+        /* ─── Analytics metric cards ─── */
+        .metric-val { font-size: 30px; font-weight: 700; }
+        .metric-label { font-size: 13px; color: var(--ink-light); margin-bottom: 6px; }
+
+        /* ─── Settings toggle ─── */
+        .toggle-track {
+            width: 44px; height: 24px; border-radius: 12px;
+            background: var(--green-mid); position: relative; flex-shrink: 0;
+        }
+        .toggle-thumb {
+            position: absolute; right: 3px; top: 3px;
+            width: 18px; height: 18px; border-radius: 50%; background: white;
+        }
+        .toggle-track.off { background: var(--border); }
+        .toggle-track.off .toggle-thumb { right: auto; left: 3px; }
+
+        /* ─── Misc ─── */
+        .stat-row { display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--ink-mid); flex-wrap: wrap; }
+        .stat-chip { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px; font-size: 12px; font-weight: 600; }
+
+        .wbs-tree { margin-top: 16px; }
+        .wbs-item { padding: 7px 0 7px 20px; border-left: 2px solid var(--border); margin-left: 8px; font-size: 14px; color: var(--ink-mid); }
+        .wbs-item strong { color: var(--ink); }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <!-- ─── Sidebar ─── -->
+    <aside class="sidebar" id="sidebar">
+        <div class="logo"><span>🌾</span> AgriOps</div>
+
+        <div class="nav-item active" data-module="tasks" onclick="switchModule('tasks')">
+            <span class="nav-icon">📋</span> My Work
+        </div>
+        <div class="nav-item" data-module="projects" onclick="switchModule('projects')">
+            <span class="nav-icon">📁</span> Projects
+        </div>
+        <div class="nav-item" data-module="team" onclick="switchModule('team')">
+            <span class="nav-icon">👥</span> Team
+        </div>
+        <div class="nav-item" data-module="reports" onclick="switchModule('reports')">
+            <span class="nav-icon">📄</span> Reports
+        </div>
+        <div class="nav-item" data-module="analytics" onclick="switchModule('analytics')">
+            <span class="nav-icon">📊</span> Analytics
+        </div>
+        <div class="nav-item" data-module="settings" onclick="switchModule('settings')">
+            <span class="nav-icon">⚙️</span> Settings
+        </div>
+
+        <div class="sidebar-footer">
+            <button class="help-btn" onclick="restartTour()">
+                <span class="nav-icon">❓</span> Restart Tour
+            </button>
+        </div>
+    </aside>
+
+    <!-- ─── Main Content ─── -->
+    <main class="main-content">
+        <div class="top-bar">
+            <div class="search-wrap">
+                <input type="text" class="search-bar" placeholder="Search tasks, projects, or reports..." id="globalSearch">
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+                <button class="btn-new">+ New Task</button>
+                <div class="avatar">JD</div>
+            </div>
+        </div>
+
+        <div class="content-area" id="contentArea"></div>
+
+        <!-- Detail Panel -->
+        <div class="detail-panel" id="detailPanel">
+            <button class="panel-close" onclick="closeDetailPanel()">✕</button>
+            <h2 style="font-family:'Fraunces',serif;font-size:18px;margin-bottom:20px;margin-right:30px;">Irrigation System Check — Field B</h2>
+
+            <div style="margin-bottom:18px;">
+                <label class="form-label">Status</label>
+                <select class="form-select" id="statusSelect">
+                    <option>Backlog</option>
+                    <option selected>Ready</option>
+                    <option>In Progress</option>
+                    <option>Review</option>
+                    <option>Done</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom:8px;" id="logWorkBtn">
+                <button class="panel-btn panel-btn-primary">+ Log Hours / Notes</button>
+            </div>
+            <div style="margin-bottom:18px;">
+                <button class="panel-btn panel-btn-secondary">📷 Add Field Photos</button>
+            </div>
+
+            <h3 style="font-size:14px;font-weight:700;margin-bottom:12px;" id="checklistSection">Checklist <span style="color:var(--ink-light);font-weight:400;">(1/3)</span></h3>
+            <div class="checklist-item"><input type="checkbox" checked> <span>Prepare equipment & tools</span></div>
+            <div class="checklist-item"><input type="checkbox"> <span>Inspect irrigation lines</span></div>
+            <div class="checklist-item"><input type="checkbox"> <span>Record water flow readings</span></div>
+
+            <div style="margin-top:24px;" id="blockerBtn">
+                <button class="panel-btn panel-btn-danger">🚨 Mark as Blocker</button>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- ─── Tour Overlay ─── -->
+<div class="tour-overlay" id="tourOverlay">
+    <div class="tour-spotlight" id="spotlight"></div>
+    <div class="tour-modal" id="tourModal">
+        <div class="tooltip-arrow hidden" id="tooltipArrow"></div>
+        <div class="tour-dots" id="tourDots"></div>
+        <div class="tour-step-label" id="tourStepLabel">Step 1 of 8</div>
+        <h2 class="tour-title" id="tourTitle">Welcome</h2>
+        <p class="tour-description" id="tourDesc"></p>
+        <p class="tour-context" id="tourContext"></p>
+        <div class="tour-nav">
+            <button class="tour-btn tour-btn-back" id="btnBack" onclick="prevStep()">← Back</button>
+            <button class="tour-btn tour-btn-primary" id="btnNext" onclick="nextStep()">Next →</button>
+            <button class="tour-btn tour-btn-skip" onclick="confirmSkip()">Exit Tour</button>
+        </div>
+    </div>
+</div>
+
+<!-- ─── Skip Confirmation Toast ─── -->
+<div class="skip-confirm" id="skipConfirm">
+    <span>Exit tour? You can restart anytime from the sidebar.</span>
+    <button class="skip-yes" onclick="doSkip()">Exit</button>
+    <button class="skip-no" onclick="cancelSkip()">Keep Going</button>
+</div>
+
+<!-- ─── Completion Modal ─── -->
+<div class="completion-modal" id="completionModal">
+    <div class="completion-card">
+        <div class="completion-icon">🎉</div>
+        <div class="completion-title">You're all set!</div>
+        <p class="completion-sub">You've mastered the AgriOps Workspace. Start optimising your field operations, team workloads, and harvest cycles.</p>
+        <div class="completion-actions">
+            <button class="comp-btn comp-btn-primary" onclick="closeCompletion()">Start Using Workspace</button>
+            <button class="comp-btn comp-btn-outline" onclick="replayTour()">↺ Replay Tour</button>
+            <button class="comp-btn comp-btn-outline" onclick="closeCompletion()">📖 Help Centre</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ─── Tour Steps ───────────────────────────────────────────────────────────────
+const tourSteps = [
+    {
+        target: null,
+        title: "Welcome to AgriOps Workspace",
+        description: "This guided tour walks you through the 6 core modules — from logging daily field tasks to monitoring team workloads, cashflow, and compliance reporting.",
+        context: "Designed for agricultural operations: track field visits, harvest cycles, irrigation schedules, and more.",
+        position: "center",
+        module: null,
+        beforeShow: null
+    },
+    {
+        target: "#sidebar",
+        title: "Navigate Your Workspace",
+        description: "Every module lives in the sidebar — My Work for daily tasks, Projects for seasonal planning, Team for workload management, Reports, Analytics, and Settings.",
+        context: "Tip: The active module is highlighted in green. You're currently on My Work.",
+        position: "right",
+        module: "tasks",
+        beforeShow: null
+    },
+    {
+        target: "#filterBar",
+        title: "Daily Workflow — My Work",
+        description: "Filter by Due Today to surface urgent tasks like today's irrigation schedule. Switch between List, Board, Timeline, and Calendar views to match your planning style.",
+        context: "Due Today shows all field tasks requiring action before end of shift.",
+        position: "bottom",
+        module: "tasks",
+        beforeShow: null
+    },
+    {
+        target: "#detailPanel",
+        title: "Task Detail Panel",
+        description: "Click any task row to open the detail panel. Update status as you progress, log hours for labor cost tracking, work through checklists, and flag equipment failures instantly.",
+        context: "Logged hours flow directly into Labor Cost Analytics — keeping you within harvest-season budget.",
+        position: "left",
+        module: "tasks",
+        beforeShow: () => openDetailPanel()
+    },
+    {
+        target: "[data-module='projects']",
+        title: "Project Workbench & WBS",
+        description: "Monitor project health at a glance — task count, progress %, blocked items, and logged hours. Open a Workbench to manage phases and work breakdown structures.",
+        context: "Use pre-built templates: Seasonal Planting, Livestock Rotation, Irish Potato Harvest.",
+        position: "right",
+        module: "projects",
+        beforeShow: null
+    },
+    {
+        target: "[data-module='team']",
+        title: "Team Management",
+        description: "Spot overloaded team members before they delay field work. View workload utilisation, open/blocked tasks, and use the HR Import Wizard for seasonal worker bulk-onboarding.",
+        context: "Filter by 'Overloaded' (>90% capacity) to reallocate tasks before harvest crunch time.",
+        position: "right",
+        module: "team",
+        beforeShow: null
+    },
+    {
+        target: "[data-module='reports']",
+        title: "Agricultural Reports",
+        description: "Create monthly field summaries, quarterly cost reports, and incident logs. Track the compliance workflow from Draft → Review → Approved with a full audit trail.",
+        context: "Report templates auto-populate from your logged tasks and team hours — saving hours of manual entry.",
+        position: "right",
+        module: "reports",
+        beforeShow: null
+    },
+    {
+        target: "[data-module='analytics']",
+        title: "Analytics Dashboard",
+        description: "Switch between Task Analytics (completion rates, overdue trends) and Labor Cost Analytics (cost per role, utilisation vs budget). See exactly how field delays affect cashflow.",
+        context: "Cross-signal insights connect task blockers directly to labour cost overruns.",
+        position: "right",
+        module: "analytics",
+        beforeShow: null
+    }
+];
+
+// ─── Module Content ────────────────────────────────────────────────────────────
+const moduleContent = {
+    tasks: `
+        <h2 class="section-title">My Work</h2>
+        <div class="module-nav">
+            <div class="module-tab active">List View</div>
+            <div class="module-tab">Board</div>
+            <div class="module-tab">Timeline</div>
+            <div class="module-tab">Calendar</div>
+        </div>
+        <div class="filter-bar" id="filterBar">
+            <div class="filter-pill active">Due Today</div>
+            <div class="filter-pill">Blocked</div>
+            <div class="filter-pill">Overdue</div>
+            <div class="filter-pill">Review</div>
+            <div class="filter-pill">Recurring</div>
+        </div>
+        <div class="task-list">
+            <div class="task-row" onclick="openDetailPanel()">
+                <div class="task-checkbox"></div>
+                <div class="priority-dot p1"></div>
+                <div style="flex:1;">
+                    <div style="font-weight:600;margin-bottom:3px;">Irrigation System Check — Field B</div>
+                    <div class="stat-row">
+                        <span>Due Today</span>
+                        <span>•</span>
+                        <span>Marcus T.</span>
+                        <span>•</span>
+                        <span>2h est.</span>
+                    </div>
+                </div>
+                <span class="badge badge-blue">Ready</span>
+            </div>
+            <div class="task-row">
+                <div class="task-checkbox"></div>
+                <div class="priority-dot p2"></div>
+                <div style="flex:1;">
+                    <div style="font-weight:600;margin-bottom:3px;">Soil pH Testing — Greenhouse 4</div>
+                    <div class="stat-row">
+                        <span>Due Tomorrow</span>
+                        <span>•</span>
+                        <span>Sarah L.</span>
+                        <span>•</span>
+                        <span>3h est.</span>
+                    </div>
+                </div>
+                <span class="badge badge-grey">Backlog</span>
+            </div>
+            <div class="task-row">
+                <div class="task-checkbox"></div>
+                <div class="priority-dot p3"></div>
+                <div style="flex:1;">
+                    <div style="font-weight:600;margin-bottom:3px;">Baby Marrow Rotation Prep — Block C</div>
+                    <div class="stat-row">
+                        <span>Due Today</span>
+                        <span>•</span>
+                        <span>John D.</span>
+                        <span>•</span>
+                        <span>4h est.</span>
+                    </div>
+                </div>
+                <span class="badge badge-amber">In Progress</span>
+            </div>
+            <div class="task-row">
+                <div class="task-checkbox done"></div>
+                <div class="priority-dot p3"></div>
+                <div style="flex:1;opacity:0.6;">
+                    <div style="font-weight:600;margin-bottom:3px;text-decoration:line-through;">Fertiliser Stock Count — Storage A</div>
+                    <div class="stat-row"><span>Completed</span><span>•</span><span>Sarah L.</span></div>
+                </div>
+                <span class="badge badge-green">Done</span>
+            </div>
+        </div>`,
+
+    projects: `
+        <h2 class="section-title">Projects</h2>
+        <div class="card-grid">
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+                    <h3 style="font-size:15px;font-weight:700;">Q3 Irish Potato Rotation</h3>
+                    <span class="badge badge-green">On Track</span>
+                </div>
+                <div style="font-size:28px;font-weight:700;font-family:'Fraunces',serif;margin:8px 0;">68%</div>
+                <div class="progress-bar-wrap" style="margin-bottom:12px;">
+                    <div class="progress-bar-fill" style="width:68%;"></div>
+                </div>
+                <div class="stat-row" style="margin-bottom:14px;">
+                    <span class="stat-chip">12 Tasks</span>
+                    <span class="stat-chip">142h Logged</span>
+                    <span class="stat-chip">1 Blocked</span>
+                </div>
+                <button class="panel-btn panel-btn-secondary" style="font-size:13px;padding:8px;">Open Workbench →</button>
+                <div class="wbs-tree">
+                    <div style="font-size:12px;font-weight:700;color:var(--ink-light);text-transform:uppercase;margin-bottom:8px;">WBS Preview</div>
+                    <div class="wbs-item"><strong>Land Preparation</strong> — 4 tasks</div>
+                    <div class="wbs-item"><strong>Planting Phase</strong> — 3 tasks ⚠️</div>
+                    <div class="wbs-item"><strong>Growth Monitoring</strong> — 3 tasks</div>
+                    <div class="wbs-item"><strong>Harvest Logistics</strong> — 2 tasks</div>
+                </div>
+            </div>
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+                    <h3 style="font-size:15px;font-weight:700;">Irrigation System Upgrade</h3>
+                    <span class="badge badge-red">1 Blocked</span>
+                </div>
+                <div style="font-size:28px;font-weight:700;font-family:'Fraunces',serif;margin:8px 0;">34%</div>
+                <div class="progress-bar-wrap" style="margin-bottom:12px;">
+                    <div class="progress-bar-fill" style="width:34%;background:var(--amber);"></div>
+                </div>
+                <div class="stat-row" style="margin-bottom:14px;">
+                    <span class="stat-chip">8 Tasks</span>
+                    <span class="stat-chip">56h Logged</span>
+                    <span class="stat-chip">2 Overdue</span>
+                </div>
+                <button class="panel-btn panel-btn-secondary" style="font-size:13px;padding:8px;">Open Workbench →</button>
+            </div>
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+                    <h3 style="font-size:15px;font-weight:700;">Q4 Seed Procurement</h3>
+                    <span class="badge badge-blue">In Planning</span>
+                </div>
+                <div style="font-size:28px;font-weight:700;font-family:'Fraunces',serif;margin:8px 0;">12%</div>
+                <div class="progress-bar-wrap" style="margin-bottom:12px;">
+                    <div class="progress-bar-fill" style="width:12%;background:var(--blue);"></div>
+                </div>
+                <div class="stat-row" style="margin-bottom:14px;">
+                    <span class="stat-chip">5 Tasks</span>
+                    <span class="stat-chip">18h Logged</span>
+                </div>
+                <button class="panel-btn panel-btn-secondary" style="font-size:13px;padding:8px;">Open Workbench →</button>
+            </div>
+        </div>`,
+
+    team: `
+        <h2 class="section-title">Team Management</h2>
+        <div class="filter-bar">
+            <div class="filter-pill active">All</div>
+            <div class="filter-pill">⚠️ Overloaded</div>
+            <div class="filter-pill">🚨 Blocked</div>
+            <div class="filter-pill">🕐 Overdue</div>
+        </div>
+        <div class="card-grid">
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                    <div>
+                        <div style="font-weight:700;font-size:15px;">Marcus Thompson</div>
+                        <div style="color:var(--ink-light);font-size:13px;margin-top:2px;">Field Supervisor</div>
+                    </div>
+                    <span class="badge badge-red">94% Util.</span>
+                </div>
+                <div class="progress-bar-wrap" style="margin:12px 0;">
+                    <div class="progress-bar-fill util-fill-red" style="width:94%;"></div>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-chip">8 Open</span>
+                    <span class="stat-chip">1 Blocked</span>
+                    <span class="stat-chip">38h this week</span>
+                </div>
+            </div>
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                    <div>
+                        <div style="font-weight:700;font-size:15px;">Sarah Langa</div>
+                        <div style="color:var(--ink-light);font-size:13px;margin-top:2px;">Agronomist</div>
+                    </div>
+                    <span class="badge badge-amber">72% Util.</span>
+                </div>
+                <div class="progress-bar-wrap" style="margin:12px 0;">
+                    <div class="progress-bar-fill util-fill-amber" style="width:72%;"></div>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-chip">5 Open</span>
+                    <span class="stat-chip">0 Blocked</span>
+                    <span class="stat-chip">29h this week</span>
+                </div>
+            </div>
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                    <div>
+                        <div style="font-weight:700;font-size:15px;">John Dlamini</div>
+                        <div style="color:var(--ink-light);font-size:13px;margin-top:2px;">Field Technician</div>
+                    </div>
+                    <span class="badge badge-green">55% Util.</span>
+                </div>
+                <div class="progress-bar-wrap" style="margin:12px 0;">
+                    <div class="progress-bar-fill" style="width:55%;"></div>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-chip">3 Open</span>
+                    <span class="stat-chip">22h this week</span>
+                </div>
+            </div>
+            <div class="card" style="border-style:dashed;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;min-height:120px;cursor:pointer;">
+                <div style="font-size:28px;">+</div>
+                <div style="font-weight:600;color:var(--ink-mid);font-size:14px;">HR Import Wizard</div>
+                <div style="font-size:12px;color:var(--ink-light);">Bulk import seasonal workers</div>
+            </div>
+        </div>`,
+
+    reports: `
+        <h2 class="section-title">Reports</h2>
+        <div class="filter-bar">
+            <div class="filter-pill active">All</div>
+            <div class="filter-pill">Draft</div>
+            <div class="filter-pill">In Review</div>
+            <div class="filter-pill">Approved</div>
+        </div>
+        <div class="card-grid">
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                    <h3 style="font-size:15px;font-weight:700;">Monthly Field Summary</h3>
+                    <span class="badge badge-blue">Draft</span>
+                </div>
+                <p style="color:var(--ink-light);font-size:13px;margin-bottom:14px;">Auto-populates from tasks & logged hours</p>
+                <div style="display:flex;gap:6px;align-items:center;font-size:12px;color:var(--ink-light);margin-bottom:14px;">
+                    <span style="padding:3px 8px;border-radius:4px;background:var(--green-light);color:#166534;font-weight:600;">Draft</span>
+                    <span>→</span>
+                    <span style="padding:3px 8px;border-radius:4px;background:var(--surface);border:1px solid var(--border);">Review</span>
+                    <span>→</span>
+                    <span style="padding:3px 8px;border-radius:4px;background:var(--surface);border:1px solid var(--border);">Approved</span>
+                </div>
+                <button class="panel-btn panel-btn-primary" style="font-size:13px;padding:8px;">Open Report</button>
+            </div>
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                    <h3 style="font-size:15px;font-weight:700;">Q3 Cost & Labour Report</h3>
+                    <span class="badge badge-amber">In Review</span>
+                </div>
+                <p style="color:var(--ink-light);font-size:13px;margin-bottom:14px;">Quarterly payroll vs budget breakdown</p>
+                <div style="display:flex;gap:6px;align-items:center;font-size:12px;margin-bottom:14px;">
+                    <span style="padding:3px 8px;border-radius:4px;background:var(--surface);border:1px solid var(--border);">Draft ✓</span>
+                    <span>→</span>
+                    <span style="padding:3px 8px;border-radius:4px;background:var(--amber-light);border:1px solid var(--amber);color:#92400e;font-weight:600;">Review</span>
+                    <span>→</span>
+                    <span style="padding:3px 8px;border-radius:4px;background:var(--surface);border:1px solid var(--border);">Approved</span>
+                </div>
+                <button class="panel-btn panel-btn-secondary" style="font-size:13px;padding:8px;">View Draft</button>
+            </div>
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                    <h3 style="font-size:15px;font-weight:700;">Incident Log — Field B</h3>
+                    <span class="badge badge-green">Approved</span>
+                </div>
+                <p style="color:var(--ink-light);font-size:13px;margin-bottom:14px;">Equipment failure & resolution record</p>
+                <div style="display:flex;gap:6px;align-items:center;font-size:12px;margin-bottom:14px;">
+                    <span style="padding:3px 8px;border-radius:4px;background:var(--surface);border:1px solid var(--border);">Draft ✓</span>
+                    <span>→</span>
+                    <span style="padding:3px 8px;border-radius:4px;background:var(--surface);border:1px solid var(--border);">Review ✓</span>
+                    <span>→</span>
+                    <span style="padding:3px 8px;border-radius:4px;background:var(--green-light);border:1px solid var(--green-mid);color:#166534;font-weight:600;">Approved</span>
+                </div>
+                <button class="panel-btn panel-btn-secondary" style="font-size:13px;padding:8px;">Export PDF</button>
+            </div>
+        </div>`,
+
+    analytics: `
+        <h2 class="section-title">Analytics Dashboard</h2>
+        <div class="module-nav">
+            <div class="module-tab active">Task Analytics</div>
+            <div class="module-tab">Labour Cost</div>
+        </div>
+        <div class="card-grid">
+            <div class="card" style="text-align:center;">
+                <div class="metric-label">Completion Rate</div>
+                <div class="metric-val" style="color:var(--green-mid);">84%</div>
+                <div style="font-size:12px;color:var(--ink-light);margin-top:4px;">↑ 6% vs last month</div>
+            </div>
+            <div class="card" style="text-align:center;">
+                <div class="metric-label">Overdue Tasks</div>
+                <div class="metric-val" style="color:var(--red);">7</div>
+                <div style="font-size:12px;color:var(--ink-light);margin-top:4px;">↑ 2 from last week</div>
+            </div>
+            <div class="card" style="text-align:center;">
+                <div class="metric-label">Active Blockers</div>
+                <div class="metric-val" style="color:var(--amber);">3</div>
+                <div style="font-size:12px;color:var(--ink-light);margin-top:4px;">Avg. 2.4h to resolve</div>
+            </div>
+            <div class="card" style="text-align:center;">
+                <div class="metric-label">Hours Logged (Week)</div>
+                <div class="metric-val" style="color:var(--blue);">142h</div>
+                <div style="font-size:12px;color:var(--ink-light);margin-top:4px;">89% of target</div>
+            </div>
+            <div class="card" style="grid-column:1/-1;">
+                <div style="font-weight:700;margin-bottom:14px;">Labour Cost vs Budget — This Quarter</div>
+                <div style="display:flex;flex-direction:column;gap:10px;">
+                    ${['Field Supervisor','Agronomist','Field Technician','Seasonal Labour'].map((r,i)=>{
+                        const pcts=[88,72,61,95]; const cols=['var(--amber)','var(--green-mid)','var(--blue)','var(--red)'];
+                        return `<div style="display:flex;align-items:center;gap:12px;font-size:13px;">
+                            <div style="width:130px;color:var(--ink-mid);">${r}</div>
+                            <div style="flex:1;height:8px;background:var(--surface);border-radius:4px;">
+                                <div style="width:${pcts[i]}%;height:100%;border-radius:4px;background:${cols[i]};"></div>
+                            </div>
+                            <div style="width:36px;text-align:right;font-weight:600;">${pcts[i]}%</div>
+                        </div>`;
+                    }).join('')}
+                </div>
+            </div>
+        </div>`,
+
+    settings: `
+        <h2 class="section-title">Settings & Automation</h2>
+        <div class="card" style="margin-bottom:16px;">
+            <div style="font-weight:700;font-size:14px;margin-bottom:14px;color:var(--ink-light);text-transform:uppercase;letter-spacing:0.06em;">Automation Rules</div>
+            ${[
+                ['Auto-Escalate Blockers','Notify manager if blocker unresolved > 4h', true, 'green'],
+                ['Harvest Completion Alert','Notify Packaging Team when Harvest=Done', true, 'green'],
+                ['Overdue Task Digest','Daily 7am email of overdue field tasks', false, 'off'],
+                ['Labour Cost Threshold Alert','Alert if weekly cost exceeds R12,000', true, 'green'],
+            ].map(([title, sub, on])=>`
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--border);">
+                    <div>
+                        <div style="font-weight:600;font-size:14px;margin-bottom:3px;">${title}</div>
+                        <div style="color:var(--ink-light);font-size:13px;">${sub}</div>
+                    </div>
+                    <div class="toggle-track ${on?'':'off'}"><div class="toggle-thumb"></div></div>
+                </div>
+            `).join('')}
+        </div>
+        <div class="card-grid">
+            <div class="card">
+                <div style="font-weight:700;margin-bottom:8px;">Task Templates</div>
+                <p style="font-size:13px;color:var(--ink-light);margin-bottom:12px;">Reusable task structures for common field operations</p>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                    ${['Daily Irrigation Check','Soil Testing Protocol','Equipment Maintenance'].map(t=>`
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px;background:var(--surface);border-radius:6px;font-size:13px;">
+                            <span>${t}</span><span style="color:var(--green-mid);font-size:12px;cursor:pointer;">Edit</span>
+                        </div>`).join('')}
+                </div>
+            </div>
+            <div class="card">
+                <div style="font-weight:700;margin-bottom:8px;">Escalation Rules</div>
+                <p style="font-size:13px;color:var(--ink-light);margin-bottom:12px;">Define who gets notified and when</p>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                    ${['P1 Blocker → Farm Manager','P2 Overdue > 2d → Supervisor','Budget Breach → Finance'].map(t=>`
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px;background:var(--surface);border-radius:6px;font-size:13px;">
+                            <span>${t}</span><span style="color:var(--green-mid);font-size:12px;cursor:pointer;">Edit</span>
+                        </div>`).join('')}
+                </div>
+            </div>
+        </div>`
+};
+
+// ─── State ────────────────────────────────────────────────────────────────────
+let currentStep = 0;
+let currentModule = 'tasks';
+let skipPending = false;
+
+// ─── Module Switch ────────────────────────────────────────────────────────────
+function switchModule(module) {
+    currentModule = module;
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.toggle('active', item.dataset.module === module);
+    });
+    document.getElementById('contentArea').innerHTML = moduleContent[module] || moduleContent.tasks;
+    const panel = document.getElementById('detailPanel');
+    if (panel.classList.contains('open')) panel.classList.remove('open');
+}
+
+function openDetailPanel() {
+    document.getElementById('detailPanel').classList.add('open');
+}
+function closeDetailPanel() {
+    document.getElementById('detailPanel').classList.remove('open');
+}
+
+// ─── Tour Dots ────────────────────────────────────────────────────────────────
+function renderDots(activeIdx) {
+    const container = document.getElementById('tourDots');
+    container.innerHTML = tourSteps.map((_, i) => {
+        let cls = 'tour-dot';
+        if (i < activeIdx) cls += ' done';
+        else if (i === activeIdx) cls += ' active';
+        return `<div class="${cls}"></div>`;
+    }).join('');
+}
+
+// ─── Modal Positioning ────────────────────────────────────────────────────────
+function updateTourPosition() {
+    const step = tourSteps[currentStep];
+    const spotlight = document.getElementById('spotlight');
+    const modal = document.getElementById('tourModal');
+    const arrow = document.getElementById('tooltipArrow');
+    const PAD = 12; // spotlight breathing room
+
+    if (!step.target) {
+        spotlight.style.cssText = 'width:0;height:0;top:50%;left:50%;box-shadow:0 0 0 9999px rgba(15,30,20,0.78);';
+        modal.style.top = '50%';
+        modal.style.left = '50%';
+        modal.style.transform = 'translate(-50%,-50%)';
+        arrow.className = 'tooltip-arrow hidden';
+        return;
+    }
+
+    const target = document.querySelector(step.target);
+    if (!target) return;
+
+    const rect = target.getBoundingClientRect();
+    const MODAL_W = 400, MODAL_H = 320;
+
+    // Spotlight with padding
+    spotlight.style.width  = (rect.width  + PAD * 2) + 'px';
+    spotlight.style.height = (rect.height + PAD * 2) + 'px';
+    spotlight.style.top    = (rect.top    - PAD) + 'px';
+    spotlight.style.left   = (rect.left   - PAD) + 'px';
+    spotlight.style.transform = 'none';
+
+    let modalTop, modalLeft, arrowDir;
+    const GAP = 18;
+
+    if (step.position === 'right' || (rect.left < window.innerWidth * 0.35)) {
+        // Attach to the right of the element
+        modalLeft = rect.right + GAP;
+        modalTop  = rect.top;
+        arrowDir  = 'left';
+    } else if (step.position === 'left' || (rect.right > window.innerWidth * 0.65)) {
+        // Attach to the left of the element
+        modalLeft = rect.left - MODAL_W - GAP;
+        modalTop  = rect.top;
+        arrowDir  = 'right';
+    } else if (rect.top > window.innerHeight * 0.5) {
+        // Above the element
+        modalLeft = rect.left;
+        modalTop  = rect.top - MODAL_H - GAP;
+        arrowDir  = 'bottom';
+    } else {
+        // Below
+        modalLeft = rect.left;
+        modalTop  = rect.bottom + GAP;
+        arrowDir  = 'top';
+    }
+
+    // Clamp to viewport
+    if (modalLeft + MODAL_W > window.innerWidth - 16) modalLeft = window.innerWidth - MODAL_W - 16;
+    if (modalLeft < 16) modalLeft = 16;
+    if (modalTop < 16) modalTop = 16;
+    if (modalTop + MODAL_H > window.innerHeight - 16) modalTop = window.innerHeight - MODAL_H - 16;
+
+    modal.style.top = modalTop + 'px';
+    modal.style.left = modalLeft + 'px';
+    modal.style.transform = 'none';
+    arrow.className = 'tooltip-arrow ' + arrowDir;
+}
+
+// ─── Show Step ────────────────────────────────────────────────────────────────
+function showStep(idx) {
+    const step = tourSteps[idx];
+
+    // Navigate to correct module first
+    if (step.module && step.module !== currentModule) {
+        switchModule(step.module);
+    }
+
+    // Run beforeShow hook (e.g. open detail panel)
+    if (step.beforeShow) {
+        step.beforeShow();
+    }
+
+    // Populate modal content
+    document.getElementById('tourStepLabel').textContent = `Step ${idx + 1} of ${tourSteps.length}`;
+    document.getElementById('tourTitle').textContent = step.title;
+    document.getElementById('tourDesc').textContent = step.description;
+
+    const ctx = document.getElementById('tourContext');
+    if (step.context) {
+        ctx.textContent = step.context;
+        ctx.style.display = 'block';
+    } else {
+        ctx.style.display = 'none';
+    }
+
+    document.getElementById('btnBack').style.visibility = idx === 0 ? 'hidden' : 'visible';
+    document.getElementById('btnNext').textContent = idx === tourSteps.length - 1 ? 'Finish Tour ✓' : 'Next →';
+
+    renderDots(idx);
+
+    // Position then show
+    const delay = step.beforeShow ? 350 : 80;
+    setTimeout(() => {
+        updateTourPosition();
+        document.getElementById('tourModal').classList.add('visible');
+    }, delay);
+}
+
+// ─── Navigation ───────────────────────────────────────────────────────────────
+function nextStep() {
+    if (currentStep < tourSteps.length - 1) {
+        document.getElementById('tourModal').classList.remove('visible');
+        setTimeout(() => { currentStep++; showStep(currentStep); }, 280);
+    } else {
+        completeTour();
+    }
+}
+
+function prevStep() {
+    if (currentStep > 0) {
+        document.getElementById('tourModal').classList.remove('visible');
+        // Close detail panel when going back past step 3
+        if (currentStep === 3) closeDetailPanel();
+        setTimeout(() => { currentStep--; showStep(currentStep); }, 280);
+    }
+}
+
+// ─── Skip with Confirmation ───────────────────────────────────────────────────
+function confirmSkip() {
+    skipPending = true;
+    const toast = document.getElementById('skipConfirm');
+    toast.classList.add('visible');
+    setTimeout(() => { if (skipPending) cancelSkip(); }, 6000);
+}
+
+function doSkip() {
+    skipPending = false;
+    document.getElementById('skipConfirm').classList.remove('visible');
+    document.getElementById('tourOverlay').classList.remove('active');
+    closeDetailPanel();
+}
+
+function cancelSkip() {
+    skipPending = false;
+    document.getElementById('skipConfirm').classList.remove('visible');
+}
+
+// ─── Completion ───────────────────────────────────────────────────────────────
+function completeTour() {
+    document.getElementById('tourOverlay').classList.remove('active');
+    closeDetailPanel();
+    document.getElementById('completionModal').classList.add('active');
+}
+
+function closeCompletion() {
+    document.getElementById('completionModal').classList.remove('active');
+}
+
+function replayTour() {
+    document.getElementById('completionModal').classList.remove('active');
+    startTour();
+}
+
+function restartTour() {
+    doSkip(); // close existing tour if open
+    setTimeout(startTour, 100);
+}
+
+// ─── Start Tour ───────────────────────────────────────────────────────────────
+function startTour() {
+    currentStep = 0;
+    switchModule('tasks');
+    document.getElementById('tourOverlay').classList.add('active');
+    document.getElementById('tourModal').classList.remove('visible');
+    setTimeout(() => showStep(0), 100);
+}
+
+// ─── Keyboard Navigation (fixed guard) ───────────────────────────────────────
+document.addEventListener('keydown', (e) => {
+    const overlay = document.getElementById('tourOverlay');
+    if (!overlay.classList.contains('active')) return; // fixed: was checking .style.display
+    if (e.key === 'ArrowRight' || e.key === 'Enter') nextStep();
+    if (e.key === 'ArrowLeft') prevStep();
+    if (e.key === 'Escape') confirmSkip();
+});
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+window.onload = () => {
+    switchModule('tasks');
+    setTimeout(startTour, 600);
+};
+</script>
+</body>
+</html>

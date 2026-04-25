@@ -1,5 +1,149 @@
 [
   {
+    "id": "audit_1776779726039",
+    "createdAt": "2026-04-21T13:55:26.039Z",
+    "reportId": "report_1776674185649",
+    "action": "updated",
+    "actorId": "user_shift_lead",
+    "actorName": "Shift Lead",
+    "details": "Shift Lead updated report content for 18 Apr 2026."
+  },
+  {
+    "id": "audit_1776779580849",
+    "createdAt": "2026-04-21T13:53:00.849Z",
+    "reportId": "report_1776674185649",
+    "action": "updated",
+    "actorId": "user_shift_lead",
+    "actorName": "Shift Lead",
+    "details": "Shift Lead updated report content for 18 Apr 2026."
+  },
+  {
+    "id": "audit_1776779551062",
+    "createdAt": "2026-04-21T13:52:31.062Z",
+    "reportId": "report_1776674185649",
+    "action": "updated",
+    "actorId": "user_shift_lead",
+    "actorName": "Shift Lead",
+    "details": "Shift Lead updated report content for 18 Apr 2026."
+  },
+  {
+    "id": "audit_1776779508140",
+    "createdAt": "2026-04-21T13:51:48.140Z",
+    "reportId": "report_1776674185649",
+    "action": "updated",
+    "actorId": "user_shift_lead",
+    "actorName": "Shift Lead",
+    "details": "Shift Lead updated report content for 18 Apr 2026."
+  },
+  {
+    "id": "audit_1776779484268",
+    "createdAt": "2026-04-21T13:51:24.268Z",
+    "reportId": "report_1776674185649",
+    "action": "updated",
+    "actorId": "user_shift_lead",
+    "actorName": "Shift Lead",
+    "details": "Shift Lead updated report content for 18 Apr 2026."
+  },
+  {
+    "id": "audit_1776779459661",
+    "createdAt": "2026-04-21T13:50:59.661Z",
+    "reportId": "report_1776674185649",
+    "action": "updated",
+    "actorId": "user_shift_lead",
+    "actorName": "Shift Lead",
+    "details": "Shift Lead updated report content for 18 Apr 2026."
+  },
+  {
+    "id": "audit_1776779447147",
+    "createdAt": "2026-04-21T13:50:47.147Z",
+    "reportId": "report_daily_ops_001",
+    "action": "updated",
+    "actorId": "user_shift_lead",
+    "actorName": "Shift Lead",
+    "details": "Shift Lead updated report content for 18 Apr 2026."
+  },
+  {
+    "id": "audit_1776779401519",
+    "createdAt": "2026-04-21T13:50:01.519Z",
+    "reportId": "report_1776674185649",
+    "action": "updated",
+    "actorId": "user_shift_lead",
+    "actorName": "Shift Lead",
+    "details": "Shift Lead updated report content for 18 Apr 2026."
+  },
+  {
+    "id": "audit_1776779341951",
+    "createdAt": "2026-04-21T13:49:01.951Z",
+    "reportId": "report_daily_ops_001",
+    "action": "updated",
+    "actorId": "user_shift_lead",
+    "actorName": "Shift Lead",
+    "details": "Shift Lead updated report content for 18 Apr 2026."
+  },
+  {
+    "id": "audit_1776779320058",
+    "createdAt": "2026-04-21T13:48:40.058Z",
+    "reportId": "report_daily_ops_001",
+    "action": "updated",
+    "actorId": "user_shift_lead",
+    "actorName": "Shift Lead",
+    "details": "Shift Lead updated report content for 18 Apr 2026."
+  },
+  {
+    "id": "audit_1776779293731",
+    "createdAt": "2026-04-21T13:48:13.731Z",
+    "reportId": "report_daily_ops_001",
+    "action": "updated",
+    "actorId": "user_shift_lead",
+    "actorName": "Shift Lead",
+    "details": "Shift Lead updated report content for 18 Apr 2026."
+  },
+  {
+    "id": "audit_1776779291440",
+    "createdAt": "2026-04-21T13:48:11.440Z",
+    "reportId": "report_daily_ops_001",
+    "action": "updated",
+    "actorId": "user_shift_lead",
+    "actorName": "Shift Lead",
+    "details": "Shift Lead updated report content for 18 Apr 2026."
+  },
+  {
+    "id": "audit_1776779286676",
+    "createdAt": "2026-04-21T13:48:06.676Z",
+    "reportId": "report_1776674185649",
+    "action": "updated",
+    "actorId": "user_shift_lead",
+    "actorName": "Shift Lead",
+    "details": "Shift Lead updated report content for 18 Apr 2026."
+  },
+  {
+    "id": "audit_1776779269970",
+    "createdAt": "2026-04-21T13:47:49.970Z",
+    "reportId": "report_daily_ops_001",
+    "action": "updated",
+    "actorId": "user_shift_lead",
+    "actorName": "Shift Lead",
+    "details": "Shift Lead updated report content for 18 Apr 2026."
+  },
+  {
+    "id": "audit_1776779259555",
+    "createdAt": "2026-04-21T13:47:39.555Z",
+    "reportId": "report_1776674185649",
+    "action": "updated",
+    "actorId": "user_shift_lead",
+    "actorName": "Shift Lead",
+    "details": "Shift Lead updated report content for 18 Apr 2026."
+  },
+  {
+    "id": "audit_1776779246757",
+    "createdAt": "2026-04-21T13:47:26.758Z",
+    "reportId": "report_1776674185649",
+    "action": "updated",
+    "actorId": "user_shift_lead",
+    "actorName": "Shift Lead",
+    "details": "Shift Lead updated report content for 18 Apr 2026."
+  },
+  {
     "id": "audit_1776694499919",
     "createdAt": "2026-04-20T14:14:59.919Z",
     "reportId": "report_1776674185649",
