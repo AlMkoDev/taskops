@@ -11,7 +11,14 @@ services:
     runtime: node
     region: oregon
     plan: free
-    buildCommand: rm -rf node_modules .next && npm install --no-cache --legacy-peer-deps && npm run build
+    buildCommand: |
+      echo "Starting clean build..."
+      rm -rf node_modules .next
+      echo "Installing dependencies..."
+      npm install --legacy-peer-deps
+      echo "Building application..."
+      npm run build
+      echo "Build complete!"
     startCommand: npm start
     autoDeploy: true
     envVars:
