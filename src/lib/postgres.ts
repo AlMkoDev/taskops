@@ -16,20 +16,11 @@ export function getDatabaseUrl() {
   return process.env.DATABASE_URL?.trim() || null;
 }
 
-function requireDatabaseUrl() {
-  const value = getDatabaseUrl();
-  if (!value) {
-    throw new Error('DATABASE_URL is required for PostgreSQL-backed report storage.');
-  }
-  return value;
-}
-
-export function getPgPool() {
+export function getPgPool(): Pool {
   if (!global.__taskopsPgPool) {
     const dbUrl = getDatabaseUrl();
     if (!dbUrl) {
-      // Return a dummy pool that will throw clear errors
-      return null as any;
+      throw new Error('DATABASE_URL is not configured. Please set the DATABASE_URL environment variable.');
     }
     
     global.__taskopsPgPool = new Pool({

@@ -36,7 +36,7 @@ export function LoginForm({ onLoginSuccess, onBack }: LoginFormProps) {
 
       // Login successful
       onLoginSuccess();
-    } catch (err) {
+    } catch {
       setError('Network error. Please check your connection and try again.');
     } finally {
       setLoading(false);

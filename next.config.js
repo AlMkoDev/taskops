@@ -2,9 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   serverExternalPackages: ['pg'],
-  experimental: {
-    typedRoutes: true,
-  },
+  typedRoutes: true,
 };
 
 module.exports = nextConfig;
