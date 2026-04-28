@@ -289,6 +289,33 @@ export interface ReportNotificationEntry {
   createdAt: string;
 }
 
+export interface WhatsAppMessage {
+  id: string;
+  reportId: string;
+  recipientPhone: string;
+  waMessageId: string;
+  messageType: 'template' | 'text';
+  templateName?: string;
+  messageBody: string;
+  status: 'queued' | 'sent' | 'delivered' | 'read' | 'failed';
+  errorMessage?: string;
+  sentAt?: string;
+  deliveredAt?: string;
+  readAt?: string;
+  createdAt: string;
+}
+
+export interface ReportActivityEntry {
+  id: string;
+  reportId: string;
+  userId?: string;
+  userName: string;
+  activityType: 'comment' | 'status_change' | 'view' | 'download' | 'share';
+  title: string;
+  description?: string;
+  createdAt: string;
+}
+
 export interface ReportTemplate {
   id: string;
   name: string;

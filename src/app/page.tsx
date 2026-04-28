@@ -1,5 +1,5 @@
-import { TasksWorkspaceClient } from '@/components/tasks/tasks-workspace-client';
+import { LandingPage } from '@/components/landing-page';
 
 export default function HomePage() {
-  return <TasksWorkspaceClient />;
+  return <LandingPage />;
 }

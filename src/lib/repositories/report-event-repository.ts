@@ -6,7 +6,7 @@ import {
   readReportAuditEntries,
   readReportNotificationEntries
 } from '@/lib/report-workflow-events';
-import { ReportAuditEntry, ReportNotificationEntry } from '@/types/domain';
+import { ReportAuditEntry, ReportNotificationEntry, WhatsAppMessage, ReportActivityEntry } from '@/types/domain';
 
 function shouldFallbackToJson(error: unknown) {
   return error instanceof Error && /(does not exist|relation .* does not exist|column .* does not exist)/i.test(error.message);
@@ -62,6 +62,64 @@ function mapNotificationRow(row: NotificationRow): ReportNotificationEntry {
     recipientName: row.recipient_name,
     status: row.status === 'queued' ? 'queued' : 'sent',
     message: row.message,
+    createdAt: row.created_at
+  };
+}
+
+type WhatsAppRow = {
+  id: string;
+  report_id: string | null;
+  recipient_phone: string;
+  wa_message_id: string;
+  message_type: 'template' | 'text';
+  template_name: string | null;
+  message_body: string;
+  status: string;
+  error_message: string | null;
+  sent_at: string | null;
+  delivered_at: string | null;
+  read_at: string | null;
+  created_at: string;
+};
+
+type ActivityRow = {
+  id: string;
+  report_id: string;
+  user_id: string | null;
+  user_name: string;
+  activity_type: string;
+  title: string;
+  description: string | null;
+  created_at: string;
+};
+
+function mapWhatsAppRow(row: WhatsAppRow): WhatsAppMessage {
+  return {
+    id: row.id,
+    reportId: row.report_id ?? '',
+    recipientPhone: row.recipient_phone,
+    waMessageId: row.wa_message_id,
+    messageType: row.message_type,
+    templateName: row.template_name ?? undefined,
+    messageBody: row.message_body,
+    status: row.status as WhatsAppMessage['status'],
+    errorMessage: row.error_message ?? undefined,
+    sentAt: row.sent_at ?? undefined,
+    deliveredAt: row.delivered_at ?? undefined,
+    readAt: row.read_at ?? undefined,
+    createdAt: row.created_at
+  };
+}
+
+function mapActivityRow(row: ActivityRow): ReportActivityEntry {
+  return {
+    id: row.id,
+    reportId: row.report_id,
+    userId: row.user_id ?? undefined,
+    userName: row.user_name,
+    activityType: row.activity_type as ReportActivityEntry['activityType'],
+    title: row.title,
+    description: row.description ?? undefined,
     createdAt: row.created_at
   };
 }
@@ -174,6 +232,38 @@ export const reportEventRepository = {
     }
 
     return records;
+  },
+  async listWhatsAppMessages(reportId?: string): Promise<WhatsAppMessage[]> {
+    if (!getDatabaseUrl()) {
+      return [];
+    }
+    try {
+      const result = reportId
+        ? await queryPostgres<WhatsAppRow>('SELECT * FROM agri_whatsapp_messages WHERE report_id = $1 ORDER BY created_at DESC', [reportId])
+        : await queryPostgres<WhatsAppRow>('SELECT * FROM agri_whatsapp_messages ORDER BY created_at DESC');
+      return result.rows.map(mapWhatsAppRow);
+    } catch (error) {
+      if (shouldFallbackToJson(error)) {
+        return [];
+      }
+      throw error;
+    }
+  },
+  async listActivityLogs(reportId?: string): Promise<ReportActivityEntry[]> {
+    if (!getDatabaseUrl()) {
+      return [];
+    }
+    try {
+      const result = reportId
+        ? await queryPostgres<ActivityRow>('SELECT * FROM agri_report_activity WHERE report_id = $1 ORDER BY created_at DESC', [reportId])
+        : await queryPostgres<ActivityRow>('SELECT * FROM agri_report_activity ORDER BY created_at DESC');
+      return result.rows.map(mapActivityRow);
+    } catch (error) {
+      if (shouldFallbackToJson(error)) {
+        return [];
+      }
+      throw error;
+    }
   }
 };
 

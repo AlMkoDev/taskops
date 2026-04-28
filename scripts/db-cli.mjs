@@ -14,7 +14,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const projectRoot = path.resolve(__dirname, '..', '..', '..');
+const projectRoot = path.resolve(__dirname, '..');
 
 const MIGRATIONS_DIR = path.join(projectRoot, 'src', 'db', 'migrations');
 const SEEDS_DIR = path.join(projectRoot, 'src', 'db', 'seeds');

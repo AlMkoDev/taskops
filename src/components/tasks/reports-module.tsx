@@ -6,7 +6,7 @@ import { getDefaultReportData, reportPeriods } from '@/data/report-framework';
 import { agrireportsApi, setToken as setApiToken } from '@/lib/agrireports-api-client';
 import { clearQueuedReportActions, enqueueReportAction, QueuedReportAction, readQueuedReportActions, replaceQueuedReportActions } from '@/lib/report-offline-queue';
 import { useTaskOpsStore } from '@/store/use-task-ops-store';
-import { AuthSessionView, AuthUser, ReportAuditEntry, ReportFrequency, ReportItemStatus, ReportNotificationEntry, ReportRecord, ReportReviewAction, ReportRoleDefinition } from '@/types/domain';
+import { AuthSessionView, AuthUser, ReportAuditEntry, ReportFrequency, ReportItemStatus, ReportNotificationEntry, ReportRecord, ReportReviewAction, ReportRoleDefinition, WhatsAppMessage, ReportActivityEntry } from '@/types/domain';
 import { RichTextEditor } from './rich-text-editor';
 import { ToastContainer, toastManager } from './toast-notification';
 
@@ -258,6 +258,8 @@ export function ReportsModule() {
   const [isSyncing, setIsSyncing] = useState(false);
   const [auditEntries, setAuditEntries] = useState<ReportAuditEntry[]>([]);
   const [notificationEntries, setNotificationEntries] = useState<ReportNotificationEntry[]>([]);
+  const [whatsappMessages, setWhatsappMessages] = useState<WhatsAppMessage[]>([]);
+  const [activityLogs, setActivityLogs] = useState<ReportActivityEntry[]>([]);
   const [securityAuditEntries, setSecurityAuditEntries] = useState<ReportAuditEntry[]>([]);
   const [securityNotificationEntries, setSecurityNotificationEntries] = useState<ReportNotificationEntry[]>([]);
   const [activeSessions, setActiveSessions] = useState<AuthSessionView[]>([]);
@@ -552,17 +554,25 @@ export function ReportsModule() {
 
   async function loadReportActivity(reportId: string) {
     try {
-      const [auditResponse, notificationsResponse] = await Promise.all([
+      const [auditResponse, notificationsResponse, whatsappResponse, activityResponse] = await Promise.all([
         fetch(`/api/reports/${reportId}/audit`, { cache: 'no-store' }),
-        fetch(`/api/reports/${reportId}/notifications`, { cache: 'no-store' })
+        fetch(`/api/reports/${reportId}/notifications`, { cache: 'no-store' }),
+        fetch(`/api/reports/${reportId}/whatsapp`, { cache: 'no-store' }),
+        fetch(`/api/reports/${reportId}/activity`, { cache: 'no-store' })
       ]);
       const auditPayload = (await auditResponse.json()) as { data?: ReportAuditEntry[] };
       const notificationsPayload = (await notificationsResponse.json()) as { data?: ReportNotificationEntry[] };
+      const whatsappPayload = (await whatsappResponse.json()) as { data?: WhatsAppMessage[] };
+      const activityPayload = (await activityResponse.json()) as { data?: ReportActivityEntry[] };
       setAuditEntries(auditPayload.data ?? []);
       setNotificationEntries(notificationsPayload.data ?? []);
+      setWhatsappMessages(whatsappPayload.data ?? []);
+      setActivityLogs(activityPayload.data ?? []);
     } catch {
       setAuditEntries([]);
       setNotificationEntries([]);
+      setWhatsappMessages([]);
+      setActivityLogs([]);
     }
   }
 
@@ -2439,11 +2449,12 @@ export function ReportsModule() {
                   <section className="reports-capture-card">
                     <div className="reports-capture-card-head">
                       <div>
-                        <h4>Audit trail</h4>
-                        <p>Server-side workflow events and notifications.</p>
+                        <h4>Activity & Audit Center</h4>
+                        <p>Complete timeline of workflow events, notifications, and communications.</p>
                       </div>
                     </div>
                     <div className="reports-activity-columns">
+                      {/* Column 1: Audit Trail */}
                       <div className="reports-section">
                         <div className="reports-section-head">
                           <h4>Audit Trail</h4>
@@ -2452,7 +2463,7 @@ export function ReportsModule() {
                         <div className="reports-activity-list">
                           {auditEntries.length > 0 ? auditEntries.slice(0, 6).map((entry) => (
                             <div key={entry.id} className="reports-activity-item">
-                              <strong>{entry.action.replace('_', ' ')}</strong>
+                              <strong>{entry.action.replace(/_/g, ' ')}</strong>
                               <small>{entry.actorName} · {formatDateLabel(entry.createdAt)}</small>
                               {canInspectIds ? <p className="reports-id-line">Audit ID: {entry.id} · Actor ID: {entry.actorId ?? 'Unavailable'}</p> : null}
                               <p>{entry.details}</p>
@@ -2460,6 +2471,8 @@ export function ReportsModule() {
                           )) : <div className="reports-activity-item"><strong>No audit events yet</strong><p>Server-side workflow events will appear here.</p></div>}
                         </div>
                       </div>
+
+                      {/* Column 2: Notifications */}
                       <div className="reports-section">
                         <div className="reports-section-head">
                           <h4>Notification Queue</h4>
@@ -2468,12 +2481,50 @@ export function ReportsModule() {
                         <div className="reports-activity-list">
                           {notificationEntries.length > 0 ? notificationEntries.slice(0, 6).map((entry) => (
                             <div key={entry.id} className="reports-activity-item">
-                              <strong>{entry.channel} · {entry.event.replace('_', ' ')}</strong>
+                              <strong>{entry.channel} · {entry.event.replace(/_/g, ' ')}</strong>
                               <small>{entry.recipientName} · {entry.status} · {formatDateLabel(entry.createdAt)}</small>
                               {canInspectIds ? <p className="reports-id-line">Notification ID: {entry.id} · Recipient User ID: {entry.recipientUserId ?? 'Unavailable'}</p> : null}
                               <p>{entry.message}</p>
                             </div>
                           )) : <div className="reports-activity-item"><strong>No notifications queued yet</strong><p>Submit and review actions will create delivery records here.</p></div>}
+                        </div>
+                      </div>
+
+                      {/* Column 3: WhatsApp Messages */}
+                      <div className="reports-section">
+                        <div className="reports-section-head">
+                          <h4>WhatsApp Messages</h4>
+                          <span>{whatsappMessages.length} messages</span>
+                        </div>
+                        <div className="reports-activity-list">
+                          {whatsappMessages.length > 0 ? whatsappMessages.slice(0, 6).map((msg) => (
+                            <div key={msg.id} className="reports-activity-item">
+                              <strong>📱 {msg.messageType} · {msg.status}</strong>
+                              <small>{msg.recipientPhone} · {msg.templateName || 'Custom message'}</small>
+                              {msg.sentAt && <small> · Sent: {formatDateLabel(msg.sentAt)}</small>}
+                              {msg.deliveredAt && <small> · Delivered: {formatDateLabel(msg.deliveredAt)}</small>}
+                              {canInspectIds ? <p className="reports-id-line">WA ID: {msg.waMessageId}</p> : null}
+                              <p className="reports-whatsapp-message">{msg.messageBody}</p>
+                              {msg.errorMessage && <p className="reports-error-text">Error: {msg.errorMessage}</p>}
+                            </div>
+                          )) : <div className="reports-activity-item"><strong>No WhatsApp messages yet</strong><p>WhatsApp notifications will be tracked here.</p></div>}
+                        </div>
+                      </div>
+
+                      {/* Column 4: Activity Log */}
+                      <div className="reports-section">
+                        <div className="reports-section-head">
+                          <h4>Activity Feed</h4>
+                          <span>{activityLogs.length} activities</span>
+                        </div>
+                        <div className="reports-activity-list">
+                          {activityLogs.length > 0 ? activityLogs.slice(0, 6).map((activity) => (
+                            <div key={activity.id} className="reports-activity-item">
+                              <strong>{activity.title}</strong>
+                              <small>{activity.userName} · {formatDateLabel(activity.createdAt)}</small>
+                              {activity.description && <p>{activity.description}</p>}
+                            </div>
+                          )) : <div className="reports-activity-item"><strong>No activity logged yet</strong><p>User interactions will appear here.</p></div>}
                         </div>
                       </div>
                     </div>
