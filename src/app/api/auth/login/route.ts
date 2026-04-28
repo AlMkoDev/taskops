@@ -22,6 +22,16 @@ export async function POST(request: NextRequest) {
     return response;
   } catch (error) {
     console.error('[Login] ERROR:', error);
-    return NextResponse.json({ error: error instanceof Error ? error.message : 'Authentication failed.' }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Authentication failed.';
+    
+    // If database is not configured, fall back to file-based auth
+    if (message.includes('DATABASE_URL is required')) {
+      console.warn('[Login] Database not configured, using file-based authentication');
+      return NextResponse.json({ 
+        error: 'Database not configured. Please set DATABASE_URL environment variable.' 
+      }, { status: 503 });
+    }
+    
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

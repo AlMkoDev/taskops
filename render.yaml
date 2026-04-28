@@ -1,0 +1,36 @@
+databases:
+  - name: taskops-db
+    databaseName: taskops
+    user: taskops
+    plan: free
+    region: oregon
+
+services:
+  - type: web
+    name: taskops
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: taskops-db
+          property: connectionString
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_APP_URL
+        fromService:
+          name: taskops
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: APP_BASE_URL
+        fromService:
+          name: taskops
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: POSTGRES_SSL
+        value: "true"
+      - key: USE_NOTIFICATION_QUEUE
+        value: "false"
