@@ -26,9 +26,17 @@ function requireDatabaseUrl() {
 
 export function getPgPool() {
   if (!global.__taskopsPgPool) {
+    const dbUrl = getDatabaseUrl();
+    if (!dbUrl) {
+      // Return a dummy pool that will throw clear errors
+      return null as any;
+    }
+    
     global.__taskopsPgPool = new Pool({
-      connectionString: requireDatabaseUrl(),
-      ssl: process.env.POSTGRES_SSL === 'true' ? { rejectUnauthorized: false } : undefined
+      connectionString: dbUrl,
+      ssl: process.env.POSTGRES_SSL === 'true' ? { rejectUnauthorized: false } : undefined,
+      connectionTimeoutMillis: 5000,
+      idleTimeoutMillis: 10000
     });
   }
 
@@ -248,14 +256,34 @@ async function initializeSchema() {
 }
 
 export async function ensurePostgresReady() {
+  if (!getDatabaseUrl()) {
+    // No database configured, skip initialization
+    return;
+  }
+  
   if (!global.__taskopsPgInitPromise) {
-    global.__taskopsPgInitPromise = initializeSchema();
+    global.__taskopsPgInitPromise = initializeSchema().catch((error) => {
+      console.error('[Postgres] Failed to initialize database:', error.message);
+      // Don't throw - allow app to continue with file-based auth
+    });
   }
 
   await global.__taskopsPgInitPromise;
 }
 
 export async function queryPostgres<T extends QueryResultRow>(text: string, values?: unknown[]) {
+  const dbUrl = getDatabaseUrl();
+  if (!dbUrl) {
+    throw new Error('DATABASE_URL is not configured');
+  }
+  
   await ensurePostgresReady();
-  return getPgPool().query<T>(text, values);
+  
+  const pool = getPgPool();
+  if (!pool) {
+    throw new Error('Database connection not available');
+  }
+  
+  const typedPool = pool as Pool;
+  return typedPool.query<T>(text, values);
 }

@@ -60,7 +60,21 @@ export type ReportUserContact = {
 };
 
 function shouldFallbackToFileAuth(error: unknown) {
-  return error instanceof Error && /(does not exist|relation .* does not exist|column .* does not exist)/i.test(error.message);
+  if (!(error instanceof Error)) return false;
+  
+  // Check for database schema errors
+  if (/(does not exist|relation .* does not exist|column .* does not exist)/i.test(error.message)) {
+    return true;
+  }
+  
+  // Check for connection errors
+  if (error.message.includes('ECONNREFUSED') || 
+      error.message.includes('DATABASE_URL') ||
+      error.message.includes('connection not available')) {
+    return true;
+  }
+  
+  return false;
 }
 
 function mapAgriRoleToAuthRole(role: AgriUserRow['agri_role']): AuthUser['role'] {

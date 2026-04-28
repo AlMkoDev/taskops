@@ -24,11 +24,13 @@ export async function POST(request: NextRequest) {
     console.error('[Login] ERROR:', error);
     const message = error instanceof Error ? error.message : 'Authentication failed.';
     
-    // If database is not configured, fall back to file-based auth
-    if (message.includes('DATABASE_URL is required')) {
-      console.warn('[Login] Database not configured, using file-based authentication');
+    // If database connection is refused or not configured
+    if (message.includes('ECONNREFUSED') || 
+        message.includes('DATABASE_URL') || 
+        message.includes('connection not available')) {
+      console.error('[Login] Database connection failed. Please configure DATABASE_URL environment variable.');
       return NextResponse.json({ 
-        error: 'Database not configured. Please set DATABASE_URL environment variable.' 
+        error: 'Database connection failed. Please check your DATABASE_URL configuration.' 
       }, { status: 503 });
     }
     
