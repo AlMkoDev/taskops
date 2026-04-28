@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { authSecurityEventRepository, buildUserInviteMessage } from '@/lib/auth-security-events';
-import { canManageReportUsers, listReportUsers, requireReportUser, saveReportUser } from '@/lib/report-auth';
-import { AuthUser } from '@/types/domain';
+import { authSecurityEventRepository, buildUserInviteMessage } from '../../../../lib/auth-security-events';
+import { canManageReportUsers, listReportUsers, requireReportUser, saveReportUser } from '../../../../lib/report-auth';
+import { AuthUser } from '../../../../types/domain';
 
 export async function GET(request: NextRequest) {
   try {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { authenticateReportUser, createReportSession, setReportSessionCookie } from '@/lib/report-auth';
+import { authenticateReportUser, createReportSession, setReportSessionCookie } from '../../../../lib/report-auth';
 
 export async function POST(request: NextRequest) {
   try {

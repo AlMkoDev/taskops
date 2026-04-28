@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { authSecurityEventRepository } from '@/lib/auth-security-events';
-import { changeReportUserPassword, requireReportUser } from '@/lib/report-auth';
+import { authSecurityEventRepository } from '../../../../lib/auth-security-events';
+import { changeReportUserPassword, requireReportUser } from '../../../../lib/report-auth';
 
 export async function POST(request: NextRequest) {
   let currentUser;

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { clearReportSessionCookie, revokeReportSession } from '@/lib/report-auth';
+import { clearReportSessionCookie, revokeReportSession } from '../../../../lib/report-auth';
 
 export async function POST(request: NextRequest) {
   await revokeReportSession(request);

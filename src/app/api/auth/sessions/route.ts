@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { authSecurityEventRepository } from '@/lib/auth-security-events';
-import { listReportSessions, REPORT_AUTH_COOKIE, requireReportUser, revokeReportSessionById } from '@/lib/report-auth';
+import { authSecurityEventRepository } from '../../../../lib/auth-security-events';
+import { listReportSessions, REPORT_AUTH_COOKIE, requireReportUser, revokeReportSessionById } from '../../../../lib/report-auth';
 
 export async function GET(request: NextRequest) {
   let currentUser;

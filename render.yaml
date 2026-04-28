@@ -11,8 +11,9 @@ services:
     runtime: node
     region: oregon
     plan: free
-    buildCommand: rm -rf node_modules .next && npm install --legacy-peer-deps && npm run build
+    buildCommand: rm -rf node_modules .next && npm install --no-cache --legacy-peer-deps && npm run build
     startCommand: npm start
+    autoDeploy: true
     envVars:
       - key: DATABASE_URL
         fromDatabase:
