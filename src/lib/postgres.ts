@@ -18,6 +18,17 @@ export function getDatabaseUrl() {
   return process.env.DATABASE_URL?.trim() || null;
 }
 
+export function getPostgresRuntimeStatus() {
+  const configured = Boolean(process.env.DATABASE_URL?.trim());
+  const unavailable = Boolean(global.__taskopsPgUnavailable);
+
+  return {
+    configured,
+    unavailable,
+    mode: configured && !unavailable ? 'postgres' : 'fallback'
+  };
+}
+
 export function isPostgresConnectionError(error: unknown) {
   if (!(error instanceof Error)) return false;
 

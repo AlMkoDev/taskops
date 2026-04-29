@@ -6,7 +6,7 @@ import { getDefaultReportData, reportPeriods } from '../../data/report-framework
 import { agrireportsApi, setToken as setApiToken } from '../../lib/agrireports-api-client';
 import { clearQueuedReportActions, enqueueReportAction, QueuedReportAction, readQueuedReportActions, replaceQueuedReportActions } from '../../lib/report-offline-queue';
 import { useTaskOpsStore } from '../../store/use-task-ops-store';
-import { AuthSessionView, AuthUser, ReportAuditEntry, ReportFrequency, ReportItemStatus, ReportNotificationEntry, ReportRecord, ReportReviewAction, ReportRoleDefinition, WhatsAppMessage, ReportActivityEntry } from '../../types/domain';
+import { AuthSessionView, AuthUser, ReportAuditEntry, ReportFrequency, ReportItemStatus, ReportNotificationEntry, ReportRecord, ReportReviewAction, ReportRoleDefinition, TaskPriority, WhatsAppMessage, ReportActivityEntry } from '../../types/domain';
 import { RichTextEditor } from './rich-text-editor';
 import { ToastContainer, toastManager } from './toast-notification';
 
@@ -26,6 +26,7 @@ type CorrectiveActionItem = {
   completed: boolean;
   priority: CorrectiveActionPriority;
   dueDate?: string;
+  linkedTaskId?: string;
 };
 
 const LEFT_RAIL_STORAGE_KEY = 'taskops.reports.left-rail-collapsed';
@@ -97,7 +98,8 @@ function parseCorrectiveActions(rawList: unknown, rawText: unknown): CorrectiveA
           status: item.status || (item.completed ? 'completed' : 'pending'),
           completed: Boolean(item.completed || item.status === 'completed'),
           priority: item.priority || 'medium',
-          dueDate: item.dueDate || ''
+          dueDate: item.dueDate || '',
+          linkedTaskId: item.linkedTaskId
         }));
       }
     } catch {
@@ -230,7 +232,11 @@ SignaturePad.displayName = 'SignaturePad';
 export function ReportsModule() {
   const {
     reports,
+    tasks,
+    users,
+    projects,
     selectedReportId,
+    addTask,
     updateReportField,
     setSelectedReportId,
     updateReport,
@@ -385,6 +391,51 @@ export function ReportsModule() {
     if (!selectedReport) return;
     updateReportField(selectedReport.id, 'corrective_actions_items', JSON.stringify(items));
     updateReportField(selectedReport.id, 'corrective_actions', summarizeCorrectiveActions(items));
+  }
+
+  function correctiveActionTaskPriority(priority: CorrectiveActionPriority): TaskPriority {
+    if (priority === 'critical' || priority === 'high') return 'P1';
+    if (priority === 'medium') return 'P2';
+    return 'P3';
+  }
+
+  function createTaskFromCorrectiveAction(action: CorrectiveActionItem) {
+    if (!selectedReport || action.linkedTaskId) return;
+
+    const taskId = `t_report_${Date.now()}`;
+    const owner = users.find((user) => user.name.toLowerCase() === action.owner.toLowerCase()) ?? users[0] ?? null;
+    const reviewer = users.find((user) => user.id === selectedReport.reviewerId) ?? users.find((user) => user.name === selectedReport.reviewerName);
+
+    addTask({
+      id: taskId,
+      type: 'report',
+      title: action.text,
+      description: `Follow-up from ${selectedReport.title} (${selectedReport.reportingWindow}).`,
+      status: action.completed ? 'done' : 'ready',
+      priority: correctiveActionTaskPriority(action.priority),
+      projectId: projects[0]?.id,
+      ownerId: owner?.id ?? 'unassigned',
+      reviewerId: reviewer?.id,
+      backupOwnerId: undefined,
+      watcherIds: reviewer?.id ? [reviewer.id] : [],
+      tags: ['report-follow-up', selectedReport.roleName, selectedReport.period],
+      startAt: undefined,
+      dueAt: action.dueDate ? new Date(action.dueDate).toISOString() : undefined,
+      estimateHours: 1,
+      loggedHours: 0,
+      progress: action.completed ? 100 : 0,
+      recurrence: undefined,
+      dependencyIds: [],
+      subtasks: [],
+      blocker: null,
+      sla: { enabled: false },
+      attachmentIds: [],
+      workLogIds: [],
+      activityIds: []
+    });
+
+    updateCorrectiveActionItems(correctiveActionItems.map((item) => item.id === action.id ? { ...item, linkedTaskId: taskId } : item));
+    toastManager.success('Follow-up task created');
   }
 
   function openNarrativeEditor(field: NarrativeField) {
@@ -2318,6 +2369,17 @@ export function ReportsModule() {
                             </div>
                           </div>
                           <div className="reports-action-controls">
+                            {action.linkedTaskId && tasks.some((task) => task.id === action.linkedTaskId) ? (
+                              <span className="reports-linked-task">Task linked</span>
+                            ) : (
+                              <button
+                                className="ghost-button"
+                                type="button"
+                                onClick={() => createTaskFromCorrectiveAction(action)}
+                              >
+                                Create task
+                              </button>
+                            )}
                             <select
                               value={action.status}
                               onChange={(event) => {

@@ -40,6 +40,14 @@ const statusLabel: Record<TaskStatus, string> = {
   archived: 'Archived'
 };
 
+type SystemStatus = {
+  database?: {
+    configured: boolean;
+    unavailable: boolean;
+    mode: 'postgres' | 'fallback';
+  };
+};
+
 const statusTone: Record<TaskStatus, string> = {
   backlog: 'slate',
   ready: 'blue',
@@ -181,7 +189,6 @@ function buildEmptyTaskDraft(projectList: Project[], userList: User[]): NewTaskD
     backupOwnerId: userList[2]?.id ?? ownerId
   };
 }
-
 function findUserByName(userList: User[], ownerName: string) {
   const normalizedOwnerName = ownerName.trim().toLowerCase();
   if (!normalizedOwnerName) return null;
@@ -211,7 +218,6 @@ function SimpleDetailPanel({ title, body, children }: { title: string; body: str
     </aside>
   );
 }
-
 function AnalyticsDetailPanel({ summary, projectSummaries, teamSummaries }: { summary: AnalyticsSummary; projectSummaries: ProjectSummary[]; teamSummaries: TeamSummary[] }) {
   return (
     <SimpleDetailPanel title="Analytics" body="Cross-cutting performance signals derived from the shared task, project, team, and report model.">
@@ -357,6 +363,7 @@ export function TasksWorkspace() {
     capacityHoursPerWeek: '40'
   });
   const [rosterViewMode, setRosterViewMode] = useState<'list' | 'grid'>('list');
+  const [systemStatus, setSystemStatus] = useState<SystemStatus | null>(null);
 
   const taskMap = useMemo(() => new Map(tasks.map((task) => [task.id, task])), [tasks]);
   const selectedTask = selectedTaskId ? taskMap.get(selectedTaskId) ?? null : null;
@@ -385,6 +392,28 @@ export function TasksWorkspace() {
     refreshClock();
     const intervalId = window.setInterval(refreshClock, 60_000);
     return () => window.clearInterval(intervalId);
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadSystemStatus() {
+      try {
+        const response = await fetch('/api/system/status', { cache: 'no-store' });
+        if (!response.ok) return;
+        const payload = await response.json() as { data?: SystemStatus };
+        if (isMounted) setSystemStatus(payload.data ?? null);
+      } catch {
+        if (isMounted) setSystemStatus(null);
+      }
+    }
+
+    void loadSystemStatus();
+    const intervalId = window.setInterval(loadSystemStatus, 30_000);
+    return () => {
+      isMounted = false;
+      window.clearInterval(intervalId);
+    };
   }, []);
 
   useEffect(() => {
@@ -603,7 +632,7 @@ export function TasksWorkspace() {
       body: tasks.length > 0 ? `${tasks.length} task${tasks.length === 1 ? '' : 's'} in the execution model.` : 'Create the first task once ownership and project context exist.',
       complete: tasks.length > 0,
       action: 'New Task',
-      onClick: () => setIsCreateOpen(true)
+      onClick: handleRequestCreateTask
     }
   ];
   const timelineGroups = useMemo(() => {
@@ -758,8 +787,26 @@ export function TasksWorkspace() {
   const handleDraftChange = <K extends keyof NewTaskDraft>(key: K, value: NewTaskDraft[K]) => setDraft((current) => ({ ...current, [key]: value }));
   const handleOpenTask = (taskId: string) => { setSelectedTaskId(taskId); setActiveSection('tasks'); };
 
+  function handleRequestCreateTask() {
+    if (users.length === 0) {
+      setActiveSection('team');
+      return;
+    }
+
+    if (projects.length === 0) {
+      setIsCreateProjectOpen(true);
+      return;
+    }
+
+    setIsCreateOpen(true);
+  }
+
   const handleCreateTask = () => {
     const title = draft.title.trim();
+    if (users.length === 0 || projects.length === 0) {
+      handleRequestCreateTask();
+      return;
+    }
     if (!title) return;
     addTask({ id: `t${Date.now()}`, type: draft.type, title, description: draft.description.trim() || undefined, status: draft.status, priority: draft.priority, projectId: draft.projectId || undefined, ownerId: draft.ownerId || currentUserId || 'unassigned', reviewerId: draft.reviewerId || undefined, backupOwnerId: draft.backupOwnerId || undefined, watcherIds: draft.reviewerId ? [draft.reviewerId] : [], tags: draft.tags.split(',').map((tag) => tag.trim()).filter(Boolean), startAt: draft.startAt ? new Date(draft.startAt).toISOString() : undefined, dueAt: draft.endAt ? new Date(draft.endAt).toISOString() : undefined, estimateHours: Number(draft.estimateHours) || undefined, loggedHours: 0, progress: 0, recurrence: draft.recurrence || undefined, dependencyIds: [], subtasks: [], blocker: null, sla: { enabled: false }, attachmentIds: [], workLogIds: [], activityIds: [] });
     setDraft(buildEmptyTaskDraft(projects, users));
@@ -821,11 +868,27 @@ export function TasksWorkspace() {
   };
 
   const handleDeleteTeamMember = (userId: string) => {
+    const user = users.find((item) => item.id === userId);
+    const ownedTasks = tasks.filter((task) => task.ownerId === userId && task.status !== 'done').length;
+    const label = user?.name ?? 'this team member';
+    const confirmed = window.confirm(
+      ownedTasks > 0
+        ? `Delete ${label}? ${ownedTasks} open task${ownedTasks === 1 ? '' : 's'} will be reassigned.`
+        : `Delete ${label}? This removes them from the team directory.`
+    );
+
+    if (!confirmed) return;
     deleteUser(userId);
   };
 
   const handleDeleteTeam = (teamName: string) => {
     if (!canManageTeams || teamName === 'Unassigned') return;
+    const memberCount = users.filter((user) => user.team === teamName).length;
+    const confirmed = window.confirm(
+      `Delete ${teamName}? ${memberCount} member${memberCount === 1 ? '' : 's'} will move to Unassigned.`
+    );
+
+    if (!confirmed) return;
     deleteTeam(teamName);
     if (selectedTeamName === teamName) {
       setSelectedTeamName('all');
@@ -871,8 +934,18 @@ export function TasksWorkspace() {
           </div>
         </div>
         <div className="searchbox" data-tour="shell.search"><Search size={15} /><input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search tasks, tags, projects, or owners..." /></div>
-        <div className="topbar-actions" data-tour="shell.actions"><button className="ghost-button" onClick={() => startTour(currentTourModule)} style={{ marginLeft: 8 }}>{progress[currentTourModule]?.completed ? '↺ Replay Tour' : '❓ Take Tour'}</button><button className="ghost-button" onClick={() => openWelcome?.()}>All Tours</button><button className="ghost-button" onClick={() => setIsCreateProjectOpen(true)}><FolderKanban size={16} />Create Project</button><button className="primary-button" data-tour="tasks.create-task" onClick={() => setIsCreateOpen(true)}><Plus size={16} />New Task</button></div>
+        <div className="topbar-actions" data-tour="shell.actions"><button className="ghost-button" onClick={() => startTour(currentTourModule)} style={{ marginLeft: 8 }}>{progress[currentTourModule]?.completed ? '↺ Replay Tour' : '❓ Take Tour'}</button><button className="ghost-button" onClick={() => openWelcome?.()}>All Tours</button><button className="ghost-button" onClick={() => setIsCreateProjectOpen(true)}><FolderKanban size={16} />Create Project</button><button className="primary-button" data-tour="tasks.create-task" onClick={handleRequestCreateTask}><Plus size={16} />New Task</button></div>
       </header>
+
+      {systemStatus?.database?.mode === 'fallback' ? (
+        <div className="system-status-banner" role="status">
+          <AlertTriangle size={16} />
+          <div>
+            <strong>{systemStatus.database.configured ? 'Database unavailable' : 'Database not configured'}</strong>
+            <span>{systemStatus.database.configured ? 'Using fallback storage. Changes may not persist after redeploy.' : 'Using local fallback storage until DATABASE_URL is configured.'}</span>
+          </div>
+        </div>
+      ) : null}
 
       <div className="page-header" data-tour="shell.page-header">
         <div>
@@ -923,8 +996,8 @@ export function TasksWorkspace() {
         </aside>
 
         <main className="content">
-          {activeSection === 'today' ? <section className="today-shell"><div className="today-hero panel"><div><span className="today-kicker">Operational start</span><h2>{hasOperationalSetup ? 'Clear the day before browsing modules' : 'Set up the operating model first'}</h2><p>{hasOperationalSetup ? 'Today brings together due work, blockers, review queues, and report exceptions so the next action is obvious.' : 'TaskOps needs team, project, and first-task context before the task board becomes useful.'}</p></div><div className="today-actions"><button className="primary-button" onClick={() => setIsCreateOpen(true)}><Plus size={16} />New Task</button><button className="ghost-button" onClick={() => setIsCreateProjectOpen(true)}><FolderKanban size={16} />Create Project</button></div></div><div className="today-kpi-grid"><button className="metric-box project-card" onClick={() => { setActiveSection('tasks'); setActiveFilter('due_today'); }}><strong>{todayTasks.length}</strong><span>Due today</span></button><button className="metric-box project-card" onClick={() => setActiveSection('blocked')}><strong>{blockedTasks.length}</strong><span>Blocked</span></button><button className="metric-box project-card" onClick={() => { setActiveSection('tasks'); setActiveFilter('overdue'); }}><strong>{overdueTasks.length}</strong><span>Overdue</span></button><button className="metric-box project-card" onClick={() => setActiveSection('reports')}><strong>{reportsAwaitingReview.length}</strong><span>Awaiting review</span></button></div>{!hasOperationalSetup ? <div className="today-setup-grid">{setupSteps.map((step, index) => <button key={step.id} className={`today-setup-card ${step.complete ? 'is-complete' : ''}`} onClick={step.onClick}><span>{step.complete ? '✓' : index + 1}</span><div><strong>{step.title}</strong><p>{step.body}</p><small>{step.action}</small></div></button>)}</div> : null}<div className="today-grid"><section className="today-card"><div className="today-card-head"><h3>Work Queue</h3><button className="ghost-button" onClick={() => { setActiveSection('tasks'); setActiveFilter('due_today'); }}>Open Tasks</button></div>{todayTasks.length > 0 ? todayTasks.slice(0, 5).map((task) => <button key={task.id} className="today-row" onClick={() => handleOpenTask(task.id)}><div><strong>{task.title}</strong><small>{users.find((user) => user.id === task.ownerId)?.name ?? 'Unassigned'} · {projects.find((project) => project.id === task.projectId)?.name ?? 'No project'}</small></div><TaskPriorityBadge priority={task.priority} /></button>) : <div className="today-empty"><Clock3 size={16} /><span>No tasks due today.</span></div>}</section><section className="today-card"><div className="today-card-head"><h3>Risk Queue</h3><button className="ghost-button" onClick={() => setActiveSection('blocked')}>Open Blocked</button></div>{blockedTasks.length > 0 ? blockedTasks.slice(0, 5).map((task) => <button key={task.id} className="today-row" onClick={() => handleOpenTask(task.id)}><div><strong>{task.title}</strong><small>{task.blocker?.reason ?? 'Marked blocked'}</small></div><TaskStatusBadge status="blocked" /></button>) : <div className="today-empty"><AlertTriangle size={16} /><span>No blocked work right now.</span></div>}</section><section className="today-card"><div className="today-card-head"><h3>Report Queue</h3><button className="ghost-button" onClick={() => setActiveSection('reports')}>Open Reports</button></div>{[...reportsNeedingAttention, ...reportsAwaitingReview].slice(0, 5).map((report) => <button key={report.id} className="today-row" onClick={() => { setSelectedReportId(report.id); setActiveSection('reports'); }}><div><strong>{report.title}</strong><small>{report.roleName} · {report.reportingWindow}</small></div><span className="status-badge status-blue">{report.status.replace('_', ' ')}</span></button>)}{reportsNeedingAttention.length + reportsAwaitingReview.length === 0 ? <div className="today-empty"><FileText size={16} /><span>No report actions waiting.</span></div> : null}</section></div></section> : null}
-          {activeSection === 'tasks' && activeView === 'list' ? <section className="panel" data-tour="tasks.list-panel"><div className="table-head" data-tour="tasks.table-head"><span /><span>Task</span><span>Status</span><span>Priority</span><span>Owner</span><span>Due</span><span>Progress</span></div>{filteredTasks.length > 0 ? filteredTasks.map((task, index) => { const owner = users.find((user) => user.id === task.ownerId); return <button key={task.id} data-tour={index === 0 ? 'tasks.first-row' : undefined} className={selectedTaskId === task.id ? 'table-row is-selected' : 'table-row'} onClick={() => setSelectedTaskId(task.id)}><span className={selectedTaskIds.includes(task.id) ? 'select-box is-selected' : 'select-box'} onClick={(event) => { event.stopPropagation(); toggleTaskSelection(task.id); }} /><span className="task-cell"><strong>{task.title}</strong><small>{task.tags.join(' · ') || (task.projectId ? projects.find((project) => project.id === task.projectId)?.name : 'No project assigned')}</small></span><span><TaskStatusBadge status={task.status} /></span><span><TaskPriorityBadge priority={task.priority} /></span><span>{owner?.name ?? 'Unassigned'}</span><span>{task.dueAt ? formatDateTimeLabel(new Date(task.dueAt)) : 'No due date'}</span><span>{task.progress}%</span></button>; }) : <div className="placeholder-panel inset"><ListTodo size={18} /><h2>{activeFilter === 'my_work' ? 'No work assigned yet' : 'No tasks yet'}</h2><p>{activeFilter === 'my_work' ? 'Create your first task or switch to All to browse shared work.' : 'Create a task to start managing real work in TaskOps.'}</p><div className="modal-actions"><button className="ghost-button" onClick={() => setActiveFilter('all')}>Browse All Tasks</button><button className="primary-button" onClick={() => setIsCreateOpen(true)}><Plus size={16} />Create Task</button></div></div>}</section> : null}
+          {activeSection === 'today' ? <section className="today-shell"><div className="today-hero panel"><div><span className="today-kicker">Operational start</span><h2>{hasOperationalSetup ? 'Clear the day before browsing modules' : 'Set up the operating model first'}</h2><p>{hasOperationalSetup ? 'Today brings together due work, blockers, review queues, and report exceptions so the next action is obvious.' : 'TaskOps needs team, project, and first-task context before the task board becomes useful.'}</p></div><div className="today-actions"><button className="primary-button" onClick={handleRequestCreateTask}><Plus size={16} />New Task</button><button className="ghost-button" onClick={() => setIsCreateProjectOpen(true)}><FolderKanban size={16} />Create Project</button></div></div><div className="today-kpi-grid"><button className="metric-box project-card" onClick={() => { setActiveSection('tasks'); setActiveFilter('due_today'); }}><strong>{todayTasks.length}</strong><span>Due today</span></button><button className="metric-box project-card" onClick={() => setActiveSection('blocked')}><strong>{blockedTasks.length}</strong><span>Blocked</span></button><button className="metric-box project-card" onClick={() => { setActiveSection('tasks'); setActiveFilter('overdue'); }}><strong>{overdueTasks.length}</strong><span>Overdue</span></button><button className="metric-box project-card" onClick={() => setActiveSection('reports')}><strong>{reportsAwaitingReview.length}</strong><span>Awaiting review</span></button></div>{!hasOperationalSetup ? <div className="today-setup-grid">{setupSteps.map((step, index) => <button key={step.id} className={`today-setup-card ${step.complete ? 'is-complete' : ''}`} onClick={step.onClick}><span>{step.complete ? '✓' : index + 1}</span><div><strong>{step.title}</strong><p>{step.body}</p><small>{step.action}</small></div></button>)}</div> : null}<div className="today-grid"><section className="today-card"><div className="today-card-head"><h3>Work Queue</h3><button className="ghost-button" onClick={() => { setActiveSection('tasks'); setActiveFilter('due_today'); }}>Open Tasks</button></div>{todayTasks.length > 0 ? todayTasks.slice(0, 5).map((task) => <button key={task.id} className="today-row" onClick={() => handleOpenTask(task.id)}><div><strong>{task.title}</strong><small>{users.find((user) => user.id === task.ownerId)?.name ?? 'Unassigned'} · {projects.find((project) => project.id === task.projectId)?.name ?? 'No project'}</small></div><TaskPriorityBadge priority={task.priority} /></button>) : <div className="today-empty"><Clock3 size={16} /><span>No tasks due today.</span></div>}</section><section className="today-card"><div className="today-card-head"><h3>Risk Queue</h3><button className="ghost-button" onClick={() => setActiveSection('blocked')}>Open Blocked</button></div>{blockedTasks.length > 0 ? blockedTasks.slice(0, 5).map((task) => <button key={task.id} className="today-row" onClick={() => handleOpenTask(task.id)}><div><strong>{task.title}</strong><small>{task.blocker?.reason ?? 'Marked blocked'}</small></div><TaskStatusBadge status="blocked" /></button>) : <div className="today-empty"><AlertTriangle size={16} /><span>No blocked work right now.</span></div>}</section><section className="today-card"><div className="today-card-head"><h3>Report Queue</h3><button className="ghost-button" onClick={() => setActiveSection('reports')}>Open Reports</button></div>{[...reportsNeedingAttention, ...reportsAwaitingReview].slice(0, 5).map((report) => <button key={report.id} className="today-row" onClick={() => { setSelectedReportId(report.id); setActiveSection('reports'); }}><div><strong>{report.title}</strong><small>{report.roleName} · {report.reportingWindow}</small></div><span className="status-badge status-blue">{report.status.replace('_', ' ')}</span></button>)}{reportsNeedingAttention.length + reportsAwaitingReview.length === 0 ? <div className="today-empty"><FileText size={16} /><span>No report actions waiting.</span></div> : null}</section></div></section> : null}
+          {activeSection === 'tasks' && activeView === 'list' ? <section className="panel" data-tour="tasks.list-panel"><div className="table-head" data-tour="tasks.table-head"><span /><span>Task</span><span>Status</span><span>Priority</span><span>Owner</span><span>Due</span><span>Progress</span></div>{filteredTasks.length > 0 ? filteredTasks.map((task, index) => { const owner = users.find((user) => user.id === task.ownerId); return <button key={task.id} data-tour={index === 0 ? 'tasks.first-row' : undefined} className={selectedTaskId === task.id ? 'table-row is-selected' : 'table-row'} onClick={() => setSelectedTaskId(task.id)}><span className={selectedTaskIds.includes(task.id) ? 'select-box is-selected' : 'select-box'} onClick={(event) => { event.stopPropagation(); toggleTaskSelection(task.id); }} /><span className="task-cell"><strong>{task.title}</strong><small>{task.tags.join(' · ') || (task.projectId ? projects.find((project) => project.id === task.projectId)?.name : 'No project assigned')}</small></span><span><TaskStatusBadge status={task.status} /></span><span><TaskPriorityBadge priority={task.priority} /></span><span>{owner?.name ?? 'Unassigned'}</span><span>{task.dueAt ? formatDateTimeLabel(new Date(task.dueAt)) : 'No due date'}</span><span>{task.progress}%</span></button>; }) : <div className="placeholder-panel inset"><ListTodo size={18} /><h2>{activeFilter === 'my_work' ? 'No work assigned yet' : 'No tasks yet'}</h2><p>{activeFilter === 'my_work' ? 'Create your first task or switch to All to browse shared work.' : 'Create a task to start managing real work in TaskOps.'}</p><div className="modal-actions"><button className="ghost-button" onClick={() => setActiveFilter('all')}>Browse All Tasks</button><button className="primary-button" onClick={handleRequestCreateTask}><Plus size={16} />Create Task</button></div></div>}</section> : null}
           {activeSection === 'tasks' && activeView === 'board' ? <section className="kanban">{boardColumns.map((column) => <div key={column} className="kanban-column"><div className="kanban-header"><span>{statusLabel[column]}</span><span>{filteredTasks.filter((task) => task.status === column).length}</span></div>{filteredTasks.filter((task) => task.status === column).map((task) => <button key={task.id} className="kanban-card" onClick={() => setSelectedTaskId(task.id)}><div className="kanban-card-head"><TaskPriorityBadge priority={task.priority} /><span>{task.progress}%</span></div><strong>{task.title}</strong><small>{projects.find((project) => project.id === task.projectId)?.name ?? 'No project'}</small></button>)}</div>)}</section> : null}
           {activeSection === 'tasks' && activeView === 'timeline' ? <section className="timeline-board">{timelineGroups.length > 0 ? timelineGroups.map((group) => <div key={group.id} className="timeline-group"><div className="timeline-group-head"><h3>{group.label}</h3><span>{group.tasks.length}</span></div><div className="timeline-list">{group.tasks.map((task) => <button key={task.id} className={selectedTaskId === task.id ? 'timeline-card is-selected' : 'timeline-card'} onClick={() => setSelectedTaskId(task.id)}><div className="timeline-card-head"><TaskPriorityBadge priority={task.priority} /><TaskStatusBadge status={task.status} /></div><strong>{task.title}</strong><small>{projects.find((project) => project.id === task.projectId)?.name ?? 'No project'} · {users.find((user) => user.id === task.ownerId)?.name ?? 'Unassigned'}</small><div className="timeline-card-meta"><span>{task.dueAt ? formatDayLabel(new Date(task.dueAt)) : 'No due date'}</span><span>{task.progress}%</span></div></button>)}</div></div>) : <section className="placeholder-panel"><Clock3 size={18} /><h2>No scheduled tasks yet</h2><p>No tasks match this view yet. Add a due date or adjust your filters to populate the timeline.</p></section>}</section> : null}
           {activeSection === 'tasks' && activeView === 'calendar' ? <section className="calendar-board"><div className="calendar-header"><h2>{calendarDays.label}</h2><p>Use the calendar to see due-date pressure across the shared task model.</p></div><div className="calendar-grid calendar-weekdays">{['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map((day) => <span key={day}>{day}</span>)}</div><div className="calendar-grid">{calendarDays.days.map((day) => <div key={day.date.toISOString()} className={day.inMonth ? 'calendar-cell' : 'calendar-cell is-muted'}><div className="calendar-cell-head"><span>{day.date.getDate()}</span>{isSameDay(day.date, getCurrentDate()) ? <span className="calendar-today">Today</span> : null}</div><div className="calendar-cell-list">{day.tasks.slice(0, 3).map((task) => <button key={task.id} className={selectedTaskId === task.id ? 'calendar-task is-selected' : 'calendar-task'} onClick={() => setSelectedTaskId(task.id)}>{task.title}</button>)}{day.tasks.length > 3 ? <span className="calendar-overflow">+{day.tasks.length - 3} more</span> : null}</div></div>)}</div></section> : null}
