@@ -10,10 +10,36 @@ import { ReportAuditEntry, ReportNotificationEntry, ReportRecord } from '../type
 declare global {
   var __taskopsPgPool: Pool | undefined;
   var __taskopsPgInitPromise: Promise<void> | undefined;
+  var __taskopsPgUnavailable: boolean | undefined;
 }
 
 export function getDatabaseUrl() {
+  if (global.__taskopsPgUnavailable) return null;
   return process.env.DATABASE_URL?.trim() || null;
+}
+
+export function isPostgresConnectionError(error: unknown) {
+  if (!(error instanceof Error)) return false;
+
+  const code = (error as NodeJS.ErrnoException).code;
+  return (
+    code === 'ENOTFOUND' ||
+    code === 'EAI_AGAIN' ||
+    code === 'ECONNREFUSED' ||
+    code === 'ECONNRESET' ||
+    code === 'ETIMEDOUT' ||
+    /getaddrinfo|connection.*(refused|reset|timeout|terminated)|Connection terminated/i.test(error.message)
+  );
+}
+
+function markPostgresUnavailable(error: unknown) {
+  if (!isPostgresConnectionError(error)) return;
+
+  global.__taskopsPgUnavailable = true;
+  void global.__taskopsPgPool?.end().catch(() => undefined);
+  global.__taskopsPgPool = undefined;
+  global.__taskopsPgInitPromise = undefined;
+  console.warn('[Postgres] Database connection unavailable; falling back to local JSON storage.');
 }
 
 export function getPgPool(): Pool {
@@ -255,6 +281,7 @@ export async function ensurePostgresReady() {
   if (!global.__taskopsPgInitPromise) {
     global.__taskopsPgInitPromise = initializeSchema().catch((error) => {
       console.error('[Postgres] Failed to initialize database:', error.message);
+      markPostgresUnavailable(error);
       // Don't throw - allow app to continue with file-based auth
     });
   }
@@ -276,5 +303,10 @@ export async function queryPostgres<T extends QueryResultRow>(text: string, valu
   }
   
   const typedPool = pool as Pool;
-  return typedPool.query<T>(text, values);
+  try {
+    return await typedPool.query<T>(text, values);
+  } catch (error) {
+    markPostgresUnavailable(error);
+    throw error;
+  }
 }

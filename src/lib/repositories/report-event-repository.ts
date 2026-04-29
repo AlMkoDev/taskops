@@ -1,5 +1,5 @@
 import 'server-only';
-import { getDatabaseUrl, queryPostgres } from '../postgres';
+import { getDatabaseUrl, isPostgresConnectionError, queryPostgres } from '../postgres';
 import {
   appendReportAuditEntry,
   appendReportNotificationEntries,
@@ -9,7 +9,10 @@ import {
 import { ReportAuditEntry, ReportNotificationEntry, WhatsAppMessage, ReportActivityEntry } from '../../types/domain';
 
 function shouldFallbackToJson(error: unknown) {
-  return error instanceof Error && /(does not exist|relation .* does not exist|column .* does not exist)/i.test(error.message);
+  return (
+    isPostgresConnectionError(error) ||
+    (error instanceof Error && /(does not exist|relation .* does not exist|column .* does not exist)/i.test(error.message))
+  );
 }
 
 type AuditRow = {

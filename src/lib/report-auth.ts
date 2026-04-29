@@ -4,7 +4,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { NextRequest, NextResponse } from 'next/server';
 import { reportAuthSeedUsers } from '../data/report-users';
-import { getDatabaseUrl, queryPostgres } from './postgres';
+import { getDatabaseUrl, isPostgresConnectionError, queryPostgres } from './postgres';
 import { AuthSession, AuthSessionView, AuthUser } from '../types/domain';
 
 export const REPORT_AUTH_COOKIE = 'taskops_report_session';
@@ -70,7 +70,8 @@ function shouldFallbackToFileAuth(error: unknown) {
   // Check for connection errors
   if (error.message.includes('ECONNREFUSED') || 
       error.message.includes('DATABASE_URL') ||
-      error.message.includes('connection not available')) {
+      error.message.includes('connection not available') ||
+      isPostgresConnectionError(error)) {
     return true;
   }
   
