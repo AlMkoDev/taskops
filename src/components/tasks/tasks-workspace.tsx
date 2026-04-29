@@ -27,7 +27,7 @@ import { LaborCostAnalytics } from './labor-cost-analytics';
 import { ReportsModule } from './reports-module';
 import { categoryLabels } from '../../data/agricultural-roles';
 import { TourOverlay, TourWelcomeScreen, TourCompletionModal, useTour } from '../tour';
-import '@/components/tour/tour-styles.css';
+import '../tour/tour-styles.css';
 import './team-card-actions.css';
 
 const statusLabel: Record<TaskStatus, string> = {
