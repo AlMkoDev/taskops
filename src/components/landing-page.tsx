@@ -9,6 +9,21 @@ type LandingPageProps = {
 };
 
 export function LandingPage({ onLoginSuccess }: LandingPageProps) {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const handleLoginSuccess = () => {
+    setIsAuthenticated(true);
+    onLoginSuccess?.();
+  };
+
+  if (isAuthenticated) {
+    return <TasksWorkspaceClient />;
+  }
+
+  return <LoginForm onLoginSuccess={handleLoginSuccess} />;
+}
+
+export function MarketingLandingPage({ onLoginSuccess }: LandingPageProps) {
   const [showLogin, setShowLogin] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 

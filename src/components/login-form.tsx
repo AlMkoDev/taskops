@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 type LoginFormProps = {
   onLoginSuccess: () => void;
-  onBack: () => void;
+  onBack?: () => void;
 };
 
 export function LoginForm({ onLoginSuccess, onBack }: LoginFormProps) {
@@ -46,10 +46,11 @@ export function LoginForm({ onLoginSuccess, onBack }: LoginFormProps) {
   return (
     <div className="login-page">
       <div className="login-container">
-        {/* Back button */}
-        <button className="login-back-btn" onClick={onBack}>
-          ← Back to Home
-        </button>
+        {onBack ? (
+          <button className="login-back-btn" onClick={onBack}>
+            ← Back to Home
+          </button>
+        ) : null}
 
         {/* Login card */}
         <div className="login-card">

@@ -237,6 +237,8 @@ export function ReportsModule() {
     projects,
     selectedReportId,
     addTask,
+    setSelectedTaskId,
+    setActiveSection,
     updateReportField,
     setSelectedReportId,
     updateReport,
@@ -436,6 +438,11 @@ export function ReportsModule() {
 
     updateCorrectiveActionItems(correctiveActionItems.map((item) => item.id === action.id ? { ...item, linkedTaskId: taskId } : item));
     toastManager.success('Follow-up task created');
+  }
+
+  function openLinkedTask(taskId: string) {
+    setSelectedTaskId(taskId);
+    setActiveSection('tasks');
   }
 
   function openNarrativeEditor(field: NarrativeField) {
@@ -2370,7 +2377,9 @@ export function ReportsModule() {
                           </div>
                           <div className="reports-action-controls">
                             {action.linkedTaskId && tasks.some((task) => task.id === action.linkedTaskId) ? (
-                              <span className="reports-linked-task">Task linked</span>
+                              <button className="reports-linked-task" type="button" onClick={() => openLinkedTask(action.linkedTaskId as string)}>
+                                Task linked
+                              </button>
                             ) : (
                               <button
                                 className="ghost-button"
