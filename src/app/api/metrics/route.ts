@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { register, dbConnectionsGauge, activeSessionsGauge, queueDepthGauge } from '@/lib/monitoring/metrics';
-import { getPgPool, queryPostgres } from '@/lib/postgres';
+import { register, dbConnectionsGauge, activeSessionsGauge, queueDepthGauge } from '../../../lib/monitoring/metrics';
+import { getPgPool, queryPostgres } from '../../../lib/postgres';
 
 /**
  * Prometheus Metrics Endpoint
@@ -60,11 +60,11 @@ async function updateDynamicMetrics() {
 
     // Update queue depth gauges
     try {
-      const { checkRedisHealth } = await import('@/lib/queue/queue-config');
+      const { checkRedisHealth } = await import('../../../lib/queue/queue-config');
       const redisHealthy = await checkRedisHealth();
 
       if (redisHealthy) {
-        const { notificationQueue, emailQueue, whatsappQueue } = await import('@/lib/queue/queue-config');
+        const { notificationQueue, emailQueue, whatsappQueue } = await import('../../../lib/queue/queue-config');
 
         const [notifWaiting, emailWaiting, whatsappWaiting] = await Promise.all([
           notificationQueue.getWaitingCount(),

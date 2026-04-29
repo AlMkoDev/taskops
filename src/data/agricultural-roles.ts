@@ -1,4 +1,4 @@
-import { AgriculturalRole } from '@/types/domain';
+import { AgriculturalRole } from '../types/domain';
 
 export const agriculturalRoleTemplates: Record<string, AgriculturalRole> = {
   // Management & Planning Roles

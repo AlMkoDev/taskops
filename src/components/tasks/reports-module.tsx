@@ -2,11 +2,11 @@
 
 import { FileCheck2, FilePenLine, PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen, Search } from 'lucide-react';
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { getDefaultReportData, reportPeriods } from '@/data/report-framework';
-import { agrireportsApi, setToken as setApiToken } from '@/lib/agrireports-api-client';
-import { clearQueuedReportActions, enqueueReportAction, QueuedReportAction, readQueuedReportActions, replaceQueuedReportActions } from '@/lib/report-offline-queue';
-import { useTaskOpsStore } from '@/store/use-task-ops-store';
-import { AuthSessionView, AuthUser, ReportAuditEntry, ReportFrequency, ReportItemStatus, ReportNotificationEntry, ReportRecord, ReportReviewAction, ReportRoleDefinition, WhatsAppMessage, ReportActivityEntry } from '@/types/domain';
+import { getDefaultReportData, reportPeriods } from '../../data/report-framework';
+import { agrireportsApi, setToken as setApiToken } from '../../lib/agrireports-api-client';
+import { clearQueuedReportActions, enqueueReportAction, QueuedReportAction, readQueuedReportActions, replaceQueuedReportActions } from '../../lib/report-offline-queue';
+import { useTaskOpsStore } from '../../store/use-task-ops-store';
+import { AuthSessionView, AuthUser, ReportAuditEntry, ReportFrequency, ReportItemStatus, ReportNotificationEntry, ReportRecord, ReportReviewAction, ReportRoleDefinition, WhatsAppMessage, ReportActivityEntry } from '../../types/domain';
 import { RichTextEditor } from './rich-text-editor';
 import { ToastContainer, toastManager } from './toast-notification';
 

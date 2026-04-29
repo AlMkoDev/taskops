@@ -1,7 +1,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
-import { initialReports } from '@/data/report-framework';
-import { ReportRecord, ReportReviewAction } from '@/types/domain';
+import { initialReports } from '../data/report-framework';
+import { ReportRecord, ReportReviewAction } from '../types/domain';
 
 const REPORTS_FILE = path.join(process.cwd(), 'data', 'reports.json');
 

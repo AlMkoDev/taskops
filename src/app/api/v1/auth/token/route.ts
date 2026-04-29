@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { authenticateReportUser } from '@/lib/report-auth';
-import { signJwtToken } from '@/lib/agrireports-auth';
+import { authenticateReportUser } from '../../../../../lib/report-auth';
+import { signJwtToken } from '../../../../../lib/agrireports-auth';
 
 /**
  * POST /api/v1/auth/token

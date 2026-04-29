@@ -2,7 +2,7 @@
 // Provides convenient hooks for interacting with the reports API
 
 import { useState, useEffect, useCallback } from 'react';
-import { agrireportsApi, setToken, clearToken as _clearToken } from '@/lib/agrireports-api-client';
+import { agrireportsApi, setToken, clearToken as _clearToken } from '../lib/agrireports-api-client';
 import {
   ApiError,
   CreateReportRequest,
@@ -10,8 +10,8 @@ import {
   SubmitReportRequest,
   ReviewReportRequest,
   ListReportsQuery,
-} from '@/types/agrireports-api';
-import { Report } from '@/types/agrireports';
+} from '../types/agrireports-api';
+import { Report } from '../types/agrireports';
 
 // ============================================================
 // Authentication Hook

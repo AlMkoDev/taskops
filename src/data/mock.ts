@@ -1,4 +1,4 @@
-import { Activity, Attachment, Project, ProjectPhase, Task, User, WorkLog } from '@/types/domain';
+import { Activity, Attachment, Project, ProjectPhase, Task, User, WorkLog } from '../types/domain';
 
 export const users: User[] = [];
 export const projects: Project[] = [];

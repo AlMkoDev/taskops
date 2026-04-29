@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { withAuth } from '@/lib/agrireports-middleware';
-import { resolveReportUser } from '@/lib/report-auth';
-import { reportRepository } from '@/lib/repositories/report-repository';
-import { CreateReportRequest } from '@/types/agrireports-api';
-import { Report, ReportAuthor } from '@/types/agrireports';
+import { withAuth } from '../../../../../lib/agrireports-middleware';
+import { resolveReportUser } from '../../../../../lib/report-auth';
+import { reportRepository } from '../../../../../lib/repositories/report-repository';
+import { CreateReportRequest } from '../../../../../types/agrireports-api';
+import { Report, ReportAuthor } from '../../../../../types/agrireports';
 
 /**
  * POST /api/v1/reports

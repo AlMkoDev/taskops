@@ -2,8 +2,8 @@
 // Protects API routes with JWT authentication
 
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyJwtToken, AgriReportsJwtPayload } from '@/lib/agrireports-auth';
-import { AuthUser } from '@/types/domain';
+import { verifyJwtToken, AgriReportsJwtPayload } from './agrireports-auth';
+import { AuthUser } from '../types/domain';
 
 export interface AuthenticatedRequest extends NextRequest {
   user: AgriReportsJwtPayload;

@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { activities, attachments, projectPhases, projects, tasks, users, workLogs } from '@/data/mock';
-import { agriculturalRoleTemplates } from '@/data/agricultural-roles';
-import { getDefaultReportData, initialReports, reportPeriods } from '@/data/report-framework';
+import { activities, attachments, projectPhases, projects, tasks, users, workLogs } from '../data/mock';
+import { agriculturalRoleTemplates } from '../data/agricultural-roles';
+import { getDefaultReportData, initialReports, reportPeriods } from '../data/report-framework';
 import {
   Activity,
   Attachment,
@@ -17,7 +17,7 @@ import {
   TaskTemplate,
   User,
   WorkLog
-} from '@/types/domain';
+} from '../types/domain';
 
 type Section = 'tasks' | 'projects' | 'team' | 'reports' | 'analytics' | 'settings' | 'blocked';
 type TaskView = 'list' | 'board' | 'timeline' | 'calendar';

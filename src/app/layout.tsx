@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { DM_Mono, DM_Sans } from 'next/font/google';
 import './globals.css';
-import { TourProvider } from '@/components/tour';
+import { TourProvider } from '../components/tour';
 
 const dmSans = DM_Sans({
   subsets: ['latin'],

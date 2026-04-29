@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireReportUser } from '@/lib/report-auth';
-import { reportEventRepository } from '@/lib/repositories/report-event-repository';
+import { requireReportUser } from '../../../../../lib/report-auth';
+import { reportEventRepository } from '../../../../../lib/repositories/report-event-repository';
 
 export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {

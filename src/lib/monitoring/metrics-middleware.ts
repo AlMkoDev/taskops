@@ -7,7 +7,7 @@ import { recordHttpRequest } from './metrics';
  * Wraps API route handlers to automatically collect metrics
  * 
  * Usage:
- * import { withMetrics } from '@/lib/monitoring/metrics-middleware';
+ * import { withMetrics } from './metrics-middleware';
  * 
  * export async function GET(request: NextRequest) {
  *   return withMetrics(request, async () => {

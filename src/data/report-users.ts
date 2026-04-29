@@ -1,4 +1,4 @@
-import { AuthRole } from '@/types/domain';
+import { AuthRole } from '../types/domain';
 
 export type ReportSeedUser = {
   id: string;

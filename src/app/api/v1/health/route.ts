@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { reportEventRepository } from '@/lib/repositories/report-event-repository';
-import { reportRepository } from '@/lib/repositories/report-repository';
+import { reportEventRepository } from '../../../../lib/repositories/report-event-repository';
+import { reportRepository } from '../../../../lib/repositories/report-repository';
 
 export async function GET() {
   const [reports, auditEntries, notificationEntries] = await Promise.all([

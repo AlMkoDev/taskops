@@ -1,6 +1,6 @@
 import { promises as fs } from 'fs';
 import path from 'path';
-import { ReportAuditEntry, ReportNotificationEntry } from '@/types/domain';
+import { ReportAuditEntry, ReportNotificationEntry } from '../types/domain';
 
 const AUDIT_FILE = path.join(process.cwd(), 'data', 'report-audit-log.json');
 const NOTIFICATIONS_FILE = path.join(process.cwd(), 'data', 'report-notifications.json');

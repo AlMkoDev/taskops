@@ -1,12 +1,12 @@
 import 'server-only';
-import { getDatabaseUrl, queryPostgres } from '@/lib/postgres';
+import { getDatabaseUrl, queryPostgres } from '../postgres';
 import {
   appendReportAuditEntry,
   appendReportNotificationEntries,
   readReportAuditEntries,
   readReportNotificationEntries
-} from '@/lib/report-workflow-events';
-import { ReportAuditEntry, ReportNotificationEntry, WhatsAppMessage, ReportActivityEntry } from '@/types/domain';
+} from '../report-workflow-events';
+import { ReportAuditEntry, ReportNotificationEntry, WhatsAppMessage, ReportActivityEntry } from '../../types/domain';
 
 function shouldFallbackToJson(error: unknown) {
   return error instanceof Error && /(does not exist|relation .* does not exist|column .* does not exist)/i.test(error.message);

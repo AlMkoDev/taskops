@@ -2,10 +2,10 @@
 
 import { BarChart3, Filter, Grid, List, Search } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { categoryIcons, categoryLabels } from '@/data/agricultural-roles';
-import { useTaskOpsStore } from '@/store/use-task-ops-store';
-import { calculateTeamSummary } from '@/utils/export';
-import { formatCurrency } from '@/utils/agricultural-import-validator';
+import { categoryIcons, categoryLabels } from '../../data/agricultural-roles';
+import { useTaskOpsStore } from '../../store/use-task-ops-store';
+import { calculateTeamSummary } from '../../utils/export';
+import { formatCurrency } from '../../utils/agricultural-import-validator';
 
 type SortKey = 'name' | 'monthlyCost' | 'hourlyRate';
 type AnalyticsView = 'overview' | 'roster';

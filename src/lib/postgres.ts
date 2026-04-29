@@ -1,11 +1,11 @@
 import 'server-only';
 import { Pool, QueryResultRow } from 'pg';
 import { randomBytes, scryptSync } from 'crypto';
-import { runMigrations } from '@/lib/migration-runner';
-import { readReportAuditEntries, readReportNotificationEntries } from '@/lib/report-workflow-events';
-import { readReports } from '@/lib/reports-persistence';
-import { reportAuthSeedUsers } from '@/data/report-users';
-import { ReportAuditEntry, ReportNotificationEntry, ReportRecord } from '@/types/domain';
+import { runMigrations } from './migration-runner';
+import { readReportAuditEntries, readReportNotificationEntries } from './report-workflow-events';
+import { readReports } from './reports-persistence';
+import { reportAuthSeedUsers } from '../data/report-users';
+import { ReportAuditEntry, ReportNotificationEntry, ReportRecord } from '../types/domain';
 
 declare global {
   var __taskopsPgPool: Pool | undefined;

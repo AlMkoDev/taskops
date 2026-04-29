@@ -5,7 +5,7 @@ import {
   whatsappQueue,
   failedQueue,
   checkRedisHealth,
-} from '@/lib/queue/queue-config';
+} from '../../../../lib/queue/queue-config';
 
 /**
  * Queue Monitoring API

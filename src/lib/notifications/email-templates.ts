@@ -1,7 +1,7 @@
 // Email Templates for Report Notifications
 // HTML email templates for various report events
 
-import type { Report } from '@/types/agrireports';
+import type { Report } from '../../types/agrireports';
 
 const APP_BASE_URL = process.env.APP_BASE_URL || 'http://localhost:3000';
 

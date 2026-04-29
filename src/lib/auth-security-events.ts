@@ -1,8 +1,8 @@
 import 'server-only';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { getDatabaseUrl, queryPostgres } from '@/lib/postgres';
-import { ReportAuditEntry, ReportNotificationEntry } from '@/types/domain';
+import { getDatabaseUrl, queryPostgres } from './postgres';
+import { ReportAuditEntry, ReportNotificationEntry } from '../types/domain';
 
 const AUTH_SECURITY_STREAM_ID = 'auth_security';
 const AUDIT_FILE = path.join(process.cwd(), 'data', 'auth-security-audit.json');

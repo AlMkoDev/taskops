@@ -1,4 +1,4 @@
-import { ReportPeriodDefinition, ReportRecord, ReportRoleDefinition, RoleCategory } from '@/types/domain';
+import { ReportPeriodDefinition, ReportRecord, ReportRoleDefinition, RoleCategory } from '../types/domain';
 
 export const reportCategoryColors: Record<RoleCategory, { bg: string; text: string; dot: string }> = {
   Management: { bg: '#E6F1FB', text: '#0C447C', dot: '#378ADD' },

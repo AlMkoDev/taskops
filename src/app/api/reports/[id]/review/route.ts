@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireReportUser } from '@/lib/report-auth';
-import { reportEventRepository } from '@/lib/repositories/report-event-repository';
-import { reportRepository } from '@/lib/repositories/report-repository';
-import { toReportRecord } from '@/lib/reports-adapter';
-import { AuthUser, ReportReviewAction } from '@/types/domain';
+import { requireReportUser } from '../../../../../lib/report-auth';
+import { reportEventRepository } from '../../../../../lib/repositories/report-event-repository';
+import { reportRepository } from '../../../../../lib/repositories/report-repository';
+import { toReportRecord } from '../../../../../lib/reports-adapter';
+import { AuthUser, ReportReviewAction } from '../../../../../types/domain';
 
 function canReviewReport(user: AuthUser, report: { reviewerId?: string }) {
   return user.role === 'admin' || user.role === 'manager' || !report.reviewerId || user.id === report.reviewerId;

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { withAuth } from '@/lib/agrireports-middleware';
-import { reportRepository } from '@/lib/repositories/report-repository';
-import { UpdateReportRequest } from '@/types/agrireports-api';
-import { Report } from '@/types/agrireports';
+import { withAuth } from '../../../../../lib/agrireports-middleware';
+import { reportRepository } from '../../../../../lib/repositories/report-repository';
+import { UpdateReportRequest } from '../../../../../types/agrireports-api';
+import { Report } from '../../../../../types/agrireports';
 
 /**
  * GET /api/v1/reports/:id

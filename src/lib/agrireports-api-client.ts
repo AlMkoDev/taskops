@@ -10,8 +10,8 @@ import {
   SubmitReportRequest,
   ReviewReportRequest,
   ListReportsQuery,
-} from '@/types/agrireports-api';
-import { Report } from '@/types/agrireports';
+} from '../types/agrireports-api';
+import { Report } from '../types/agrireports';
 
 // Base API URL
 const API_BASE = '/api/v1';

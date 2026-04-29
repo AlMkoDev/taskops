@@ -2,7 +2,7 @@
 
 import { BarChart3, CalendarDays, FolderTree, Plus, Settings2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
-import { Project, ProjectPhase, Task, TaskPriority, TaskStatus, User, WbsCadence } from '@/types/domain';
+import { Project, ProjectPhase, Task, TaskPriority, TaskStatus, User, WbsCadence } from '../../types/domain';
 
 type ProjectWorkbenchTab = 'wbs' | 'gantt' | 'cadence' | 'daily' | 'summary';
 

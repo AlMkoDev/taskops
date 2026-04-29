@@ -2,7 +2,7 @@
 // Token generation and verification for API authentication
 
 import { SignJWT, jwtVerify, type JWTPayload } from 'jose';
-import { AuthUser } from '@/types/domain';
+import { AuthUser } from '../types/domain';
 
 const JWT_SECRET_KEY = new TextEncoder().encode(
   process.env.JWT_SECRET || 'taskops-dev-secret-key-change-in-production'

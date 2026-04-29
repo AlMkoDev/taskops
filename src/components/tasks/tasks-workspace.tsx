@@ -17,16 +17,16 @@ import {
   Upload
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
-import { useTaskOpsStore } from '@/store/use-task-ops-store';
-import { AutomationRule, Project, ProjectPhase, ProjectType, ReportTemplate, Task, TaskPriority, TaskStatus, TaskTemplate, TaskType, User, UserRole } from '@/types/domain';
-import { formatDateTimeLabel, formatDayLabel, formatMonthLabel, getCurrentDate, isOverdue, isSameDay, isToday, startOfDay } from '@/utils/date';
+import { useTaskOpsStore } from '../../store/use-task-ops-store';
+import { AutomationRule, Project, ProjectPhase, ProjectType, ReportTemplate, Task, TaskPriority, TaskStatus, TaskTemplate, TaskType, User, UserRole } from '../../types/domain';
+import { formatDateTimeLabel, formatDayLabel, formatMonthLabel, getCurrentDate, isOverdue, isSameDay, isToday, startOfDay } from '../../utils/date';
 import { TaskDetailPanel } from './task-detail-panel';
 import { ProjectWorkbench } from './project-workbench';
 import { HrImportWizard } from './hr-import-wizard';
 import { LaborCostAnalytics } from './labor-cost-analytics';
 import { ReportsModule } from './reports-module';
-import { categoryLabels } from '@/data/agricultural-roles';
-import { TourOverlay, TourWelcomeScreen, TourCompletionModal, useTour } from '@/components/tour';
+import { categoryLabels } from '../../data/agricultural-roles';
+import { TourOverlay, TourWelcomeScreen, TourCompletionModal, useTour } from '../tour';
 import '@/components/tour/tour-styles.css';
 import './team-card-actions.css';
 

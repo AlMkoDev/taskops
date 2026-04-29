@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireReportUser, resolveReportUser } from '@/lib/report-auth';
-import { reportEventRepository } from '@/lib/repositories/report-event-repository';
-import { reportRepository } from '@/lib/repositories/report-repository';
-import { toReportRecord } from '@/lib/reports-adapter';
-import { ReportRecord } from '@/types/domain';
+import { requireReportUser, resolveReportUser } from '../../../lib/report-auth';
+import { reportEventRepository } from '../../../lib/repositories/report-event-repository';
+import { reportRepository } from '../../../lib/repositories/report-repository';
+import { toReportRecord } from '../../../lib/reports-adapter';
+import { ReportRecord } from '../../../types/domain';
 
 type CreateBody = Pick<ReportRecord, 'title' | 'period' | 'roleId' | 'roleName' | 'category' | 'reviewerId' | 'reviewerName' | 'reportingWindow' | 'data'>;
 

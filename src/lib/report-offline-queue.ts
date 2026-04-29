@@ -1,4 +1,4 @@
-import { ReportRecord, ReportReviewAction } from '@/types/domain';
+import { ReportRecord, ReportReviewAction } from '../types/domain';
 
 const STORAGE_KEY = 'taskops:report-offline-queue';
 

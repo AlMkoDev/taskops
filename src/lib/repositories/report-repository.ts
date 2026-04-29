@@ -2,11 +2,11 @@
 // Database operations for reports
 
 import { QueryResultRow } from 'pg';
-import { Report, ReportStatus, ReportFrequency, RoleCategory } from '@/types/agrireports';
-import { ListReportsQuery } from '@/types/agrireports-api';
-import { getDatabaseUrl, queryPostgres } from '@/lib/postgres';
-import { toReportModel } from '@/lib/reports-adapter';
-import { createReportRecord, getReportRecord, readReports, replaceReportRecord, reviewReportRecord, submitReportRecord } from '@/lib/reports-persistence';
+import { Report, ReportStatus, ReportFrequency, RoleCategory } from '../../types/agrireports';
+import { ListReportsQuery } from '../../types/agrireports-api';
+import { getDatabaseUrl, queryPostgres } from '../postgres';
+import { toReportModel } from '../reports-adapter';
+import { createReportRecord, getReportRecord, readReports, replaceReportRecord, reviewReportRecord, submitReportRecord } from '../reports-persistence';
 
 type ReportRow = QueryResultRow & {
   id: string;

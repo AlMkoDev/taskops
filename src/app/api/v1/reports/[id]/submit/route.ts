@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { withAuth } from '@/lib/agrireports-middleware';
-import { resolveReportUserContact } from '@/lib/report-auth';
-import { reportRepository } from '@/lib/repositories/report-repository';
-import { canTransition, getTransitionError } from '@/lib/workflow/transitions';
-import { SubmitReportRequest } from '@/types/agrireports-api';
-import { notifyReviewersOnSubmit } from '@/lib/notifications/notification-orchestrator';
+import { withAuth } from '../../../../../../lib/agrireports-middleware';
+import { resolveReportUserContact } from '../../../../../../lib/report-auth';
+import { reportRepository } from '../../../../../../lib/repositories/report-repository';
+import { canTransition, getTransitionError } from '../../../../../../lib/workflow/transitions';
+import { SubmitReportRequest } from '../../../../../../types/agrireports-api';
+import { notifyReviewersOnSubmit } from '../../../../../../lib/notifications/notification-orchestrator';
 
 /**
  * POST /api/v1/reports/:id/submit

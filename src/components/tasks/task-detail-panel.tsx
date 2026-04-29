@@ -8,9 +8,9 @@ import {
   MessageSquare
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
-import { useTaskOpsStore } from '@/store/use-task-ops-store';
-import { formatDateTimeLabel } from '@/utils/date';
-import { Project, Task, TaskBlocker, TaskStatus, User, WorkLog } from '@/types/domain';
+import { useTaskOpsStore } from '../../store/use-task-ops-store';
+import { formatDateTimeLabel } from '../../utils/date';
+import { Project, Task, TaskBlocker, TaskStatus, User, WorkLog } from '../../types/domain';
 
 interface TaskDetailPanelProps {
   task: Task | null;

@@ -2,11 +2,11 @@
 // Coordinates sending notifications via email and WhatsApp
 // Supports both direct sending and queue-based sending
 
-import type { Report } from '@/types/agrireports';
+import type { Report } from '../../types/agrireports';
 import { sendEmail } from './email-service';
 import { reportSubmittedTemplate, reportReviewedTemplate } from './email-templates';
 import { sendWhatsApp, buildSubmittedTemplate, buildReviewedTemplate, buildSubmittedFreeform, buildReviewedFreeform } from './whatsapp-service';
-import { notificationQueue, NotificationJobData } from '@/lib/queue/queue-config';
+import { notificationQueue, NotificationJobData } from '../queue/queue-config';
 
 const APP_BASE_URL = process.env.APP_BASE_URL || 'http://localhost:3000';
 const USE_QUEUE = process.env.USE_NOTIFICATION_QUEUE === 'true';

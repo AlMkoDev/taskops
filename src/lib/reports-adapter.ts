@@ -1,5 +1,5 @@
-import { Report, RoleCategory } from '@/types/agrireports';
-import { ReportRecord } from '@/types/domain';
+import { Report, RoleCategory } from '../types/agrireports';
+import { ReportRecord } from '../types/domain';
 
 const DEFAULT_CATEGORY: RoleCategory = 'Field Ops';
 

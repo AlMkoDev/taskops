@@ -2,7 +2,7 @@
 // Sends WhatsApp messages via Meta Cloud API
 
 import axios from 'axios';
-import type { Report } from '@/types/agrireports';
+import type { Report } from '../../types/agrireports';
 
 const META_API_BASE = 'https://graph.facebook.com/v18.0';
 

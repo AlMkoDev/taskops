@@ -3,9 +3,9 @@ import { randomBytes, scryptSync, timingSafeEqual } from 'crypto';
 import { promises as fs } from 'fs';
 import path from 'path';
 import { NextRequest, NextResponse } from 'next/server';
-import { reportAuthSeedUsers } from '@/data/report-users';
-import { getDatabaseUrl, queryPostgres } from '@/lib/postgres';
-import { AuthSession, AuthSessionView, AuthUser } from '@/types/domain';
+import { reportAuthSeedUsers } from '../data/report-users';
+import { getDatabaseUrl, queryPostgres } from './postgres';
+import { AuthSession, AuthSessionView, AuthUser } from '../types/domain';
 
 export const REPORT_AUTH_COOKIE = 'taskops_report_session';
 

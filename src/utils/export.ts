@@ -1,4 +1,4 @@
-import { User } from '@/types/domain';
+import { User } from '../types/domain';
 
 export interface AgriculturalTeamExport {
   resourceType: string;

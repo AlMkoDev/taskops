@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AuthUser } from '@/types/domain';
-import { requireReportUser } from '@/lib/report-auth';
-import { reportEventRepository } from '@/lib/repositories/report-event-repository';
-import { reportRepository } from '@/lib/repositories/report-repository';
-import { toReportRecord } from '@/lib/reports-adapter';
+import { AuthUser } from '../../../../../types/domain';
+import { requireReportUser } from '../../../../../lib/report-auth';
+import { reportEventRepository } from '../../../../../lib/repositories/report-event-repository';
+import { reportRepository } from '../../../../../lib/repositories/report-repository';
+import { toReportRecord } from '../../../../../lib/reports-adapter';
 
 function canSubmitReport(user: AuthUser, report: { authorId?: string }) {
   return user.role === 'admin' || user.role === 'manager' || !report.authorId || user.id === report.authorId;

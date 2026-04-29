@@ -2,9 +2,9 @@
 
 import { Check, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useState } from 'react';
-import { useTaskOpsStore } from '@/store/use-task-ops-store';
-import { agriculturalRoleTemplates, categoryIcons, categoryLabels } from '@/data/agricultural-roles';
-import { formatCurrency } from '@/utils/agricultural-import-validator';
+import { useTaskOpsStore } from '../../store/use-task-ops-store';
+import { agriculturalRoleTemplates, categoryIcons, categoryLabels } from '../../data/agricultural-roles';
+import { formatCurrency } from '../../utils/agricultural-import-validator';
 
 type WizardStep = 'categories' | 'roles' | 'configure' | 'confirm';
 

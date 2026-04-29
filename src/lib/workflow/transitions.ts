@@ -1,7 +1,7 @@
 // AgriReports Platform - Workflow Transitions
 // Defines allowed state machine transitions for reports
 
-import { ReportStatus } from '@/types/agrireports';
+import { ReportStatus } from '../../types/agrireports';
 
 const ALLOWED_TRANSITIONS: Map<ReportStatus, ReportStatus[]> = new Map([
   ['draft', ['submitted']],
