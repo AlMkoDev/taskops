@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { authenticateReportUser, createReportSession, setReportSessionCookie } from '../../../../lib/report-auth';
+import { isPostgresConnectionError } from '../../../../lib/postgres';
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,12 +26,13 @@ export async function POST(request: NextRequest) {
     const message = error instanceof Error ? error.message : 'Authentication failed.';
     
     // If database connection is refused or not configured
-    if (message.includes('ECONNREFUSED') || 
+    if (message.includes('ECONNREFUSED') ||
         message.includes('DATABASE_URL') || 
-        message.includes('connection not available')) {
-      console.error('[Login] Database connection failed. Please configure DATABASE_URL environment variable.');
-      return NextResponse.json({ 
-        error: 'Database connection failed. Please check your DATABASE_URL configuration.' 
+        message.includes('connection not available') ||
+        isPostgresConnectionError(error)) {
+      console.warn('[Login] Database unavailable during login; fallback auth did not complete.');
+      return NextResponse.json({
+        error: 'Authentication is temporarily unavailable. Please try again.'
       }, { status: 503 });
     }
     

@@ -301,8 +301,8 @@ async function findStoredUserByEmail(email: string) {
     return users.find((user) => user.email.toLowerCase() === email.toLowerCase()) ?? null;
   }
 
-  await ensureDatabaseUsersSeeded();
   try {
+    await ensureDatabaseUsersSeeded();
     const result = await queryPostgres<AgriUserRow>(
       `SELECT
         id,
@@ -337,8 +337,8 @@ async function findStoredUserById(id: string) {
     return users.find((user) => user.id === id) ?? null;
   }
 
-  await ensureDatabaseUsersSeeded();
   try {
+    await ensureDatabaseUsersSeeded();
     const result = await queryPostgres<AgriUserRow>(
       `SELECT
         id,
@@ -373,8 +373,8 @@ async function findStoredUserByName(name: string) {
     return users.find((user) => user.name.toLowerCase() === name.toLowerCase()) ?? null;
   }
 
-  await ensureDatabaseUsersSeeded();
   try {
+    await ensureDatabaseUsersSeeded();
     const result = await queryPostgres<AgriUserRow>(
       `SELECT
         id,
