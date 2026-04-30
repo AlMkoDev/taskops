@@ -86,6 +86,51 @@ function tokenLabel(value: unknown, fallback = 'unknown') {
     : fallback;
 }
 
+async function readJsonPayload<T>(response: Response, fallbackError: string): Promise<{ data?: T; error?: string }> {
+  const text = await response.text();
+  if (!text.trim()) {
+    return response.ok ? {} : { error: fallbackError };
+  }
+
+  try {
+    return JSON.parse(text) as { data?: T; error?: string };
+  } catch {
+    return { error: fallbackError };
+  }
+}
+
+function buildFallbackRoleDefinition(report: ReportRecord): ReportRoleDefinition {
+  const metricIds = new Set<string>();
+  Object.keys(report.data ?? {}).forEach((key) => {
+    const match = key.match(/^(.+)__(status|note|value)$/);
+    if (match) metricIds.add(match[1]);
+  });
+
+  const items = Array.from(metricIds).map((id) => ({
+    id,
+    label: id
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, (letter) => letter.toUpperCase()),
+    status: ((report.data[`${id}__status`] as ReportItemStatus | undefined) ?? 'warning') as ReportItemStatus,
+    trigger: 'Imported report metric',
+    source: 'Saved report data',
+    required: Boolean(report.data[`${id}__note`])
+  }));
+
+  return {
+    id: report.roleId,
+    name: report.roleName,
+    category: report.category,
+    description: 'Imported report framework reconstructed from saved report data.',
+    items
+  };
+}
+
+function reportRowMeta(report: ReportRecord, includeUpdated = false) {
+  const base = `${report.roleName} · ${report.reportingWindow}`;
+  return includeUpdated ? `${base} · Updated ${formatDateLabel(report.updatedAt)}` : base;
+}
+
 function canManageReportUsers(user: AuthUser | null) {
   return user?.role === 'admin' || user?.role === 'manager';
 }
@@ -322,6 +367,7 @@ export function ReportsModule() {
   const reviewerSignatureRef = useRef<SignaturePadHandle | null>(null);
   const richEditorRef = useRef<HTMLDivElement | null>(null);
   const hasStoredRailPreferences = useRef(false);
+  const lastAutosaveSignature = useRef<Record<string, string>>({});
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -658,7 +704,7 @@ export function ReportsModule() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(patch)
       });
-      const payload = (await response.json()) as { data?: ReportRecord; error?: string };
+      const payload = await readJsonPayload<ReportRecord>(response, 'The server returned an invalid report save response.');
       if (!response.ok || !payload.data) {
         throw new Error(payload.error || 'Failed to save report.');
       }
@@ -683,7 +729,7 @@ export function ReportsModule() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(action.payload)
       });
-      const payload = (await response.json()) as { data?: ReportRecord; error?: string };
+      const payload = await readJsonPayload<ReportRecord>(response, 'The server returned an invalid queued report creation response.');
       if (!response.ok || !payload.data) {
         throw new Error(payload.error || 'Failed to create queued report.');
       }
@@ -703,7 +749,7 @@ export function ReportsModule() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(action.payload)
       });
-      const payload = (await response.json()) as { data?: ReportRecord; error?: string };
+      const payload = await readJsonPayload<ReportRecord>(response, 'The server returned an invalid queued submission response.');
       if (!response.ok || !payload.data) {
         throw new Error(payload.error || 'Failed to submit queued report.');
       }
@@ -716,7 +762,7 @@ export function ReportsModule() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(action.payload)
     });
-    const payload = (await response.json()) as { data?: ReportRecord; error?: string };
+    const payload = await readJsonPayload<ReportRecord>(response, 'The server returned an invalid queued review response.');
     if (!response.ok || !payload.data) {
       throw new Error(payload.error || 'Failed to review queued report.');
     }
@@ -823,8 +869,12 @@ export function ReportsModule() {
   }, [newPeriod]);
 
   const selectedReport = useMemo(() => reports.find((report) => report.id === selectedReportId) ?? reports[0] ?? null, [reports, selectedReportId]);
+  const selectedReportDataSignature = useMemo(() => selectedReport ? JSON.stringify(selectedReport.data) : '', [selectedReport]);
   const selectedPeriodDefinition = useMemo(() => reportPeriods.find((period) => period.id === selectedReport?.period) ?? null, [selectedReport?.period]);
-  const selectedRoleDefinition = useMemo(() => selectedPeriodDefinition?.roles.find((role) => role.id === selectedReport?.roleId) ?? null, [selectedPeriodDefinition, selectedReport?.roleId]);
+  const selectedRoleDefinition = useMemo(() => {
+    if (!selectedReport) return null;
+    return selectedPeriodDefinition?.roles.find((role) => role.id === selectedReport.roleId) ?? buildFallbackRoleDefinition(selectedReport);
+  }, [selectedPeriodDefinition, selectedReport]);
   const availableRoles = useMemo(() => reportPeriods.find((period) => period.id === newPeriod)?.roles ?? [], [newPeriod]);
   const reviewerOptions = useMemo(() => authUsers.filter((user) => user.status === 'active' && user.id !== sessionUser?.id), [authUsers, sessionUser?.id]);
   const selectedReviewer = useMemo(() => reviewerOptions.find((user) => user.id === reviewerId) ?? reviewerOptions[0] ?? null, [reviewerId, reviewerOptions]);
@@ -875,6 +925,13 @@ export function ReportsModule() {
   }, [reports, selectedReport, setSelectedReportId]);
 
   useEffect(() => {
+    if (!selectedReport) return;
+    if (lastAutosaveSignature.current[selectedReport.id] === undefined) {
+      lastAutosaveSignature.current[selectedReport.id] = selectedReportDataSignature;
+    }
+  }, [selectedReport?.id, selectedReportDataSignature]);
+
+  useEffect(() => {
     if (!reviewerId && reviewerOptions[0]) {
       setReviewerId(reviewerOptions[0].id);
     }
@@ -882,9 +939,12 @@ export function ReportsModule() {
 
   useEffect(() => {
     if (actorMode === 'reviewer' && !canReviewSelectedReport) {
-      setActorMode('author');
+      const canUseReviewerWorkspace = sessionUser?.role === 'admin' || sessionUser?.role === 'manager' || sessionUser?.role === 'reviewer';
+      if (!canUseReviewerWorkspace) {
+        setActorMode('author');
+      }
     }
-  }, [actorMode, canReviewSelectedReport]);
+  }, [actorMode, canReviewSelectedReport, sessionUser?.role]);
 
   useEffect(() => {
     if (leftPanelView === 'reviewer') {
@@ -912,7 +972,9 @@ export function ReportsModule() {
 
   useEffect(() => {
     if (!selectedReport || selectedReport.status !== 'draft') return;
+    if (lastAutosaveSignature.current[selectedReport.id] === selectedReportDataSignature) return;
     const timeoutId = window.setTimeout(() => {
+      lastAutosaveSignature.current[selectedReport.id] = selectedReportDataSignature;
       const patch = { data: selectedReport.data, lastSavedAt: new Date().toISOString() };
       if (!isOnline || selectedReport.id.startsWith('temp_report_')) {
         enqueueReportAction({
@@ -927,11 +989,11 @@ export function ReportsModule() {
         return;
       }
       saveReportPatch(selectedReport.id, patch, 'Draft autosaved.').catch((error) => {
-        setValidationMessage(error instanceof Error ? error.message : 'Autosave failed.');
+        setValidationMessage(error instanceof Error ? error.message : 'Autosave failed. Use Save draft to retry.');
       });
     }, 3000);
     return () => window.clearTimeout(timeoutId);
-  }, [isOnline, selectedReport?.id, selectedReport?.status, selectedReport?.updatedAt, updateReport]);
+  }, [isOnline, selectedReport, selectedReportDataSignature, updateReport]);
 
   const reportResults = useMemo(() => {
     const normalizedQuery = reportSearch.trim().toLowerCase();
@@ -1052,7 +1114,7 @@ export function ReportsModule() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(createPayload)
       });
-      const result = (await response.json()) as { data?: ReportRecord; error?: string };
+      const result = await readJsonPayload<ReportRecord>(response, 'The server returned an invalid report creation response.');
       if (!response.ok || !result.data) {
         throw new Error(result.error || 'Failed to create report.');
       }
@@ -1106,7 +1168,7 @@ export function ReportsModule() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ signature: authorSignatureRef.current.getDataUrl() })
       });
-      const payload = (await response.json()) as { data?: ReportRecord; error?: string };
+      const payload = await readJsonPayload<ReportRecord>(response, 'The server returned an invalid submission response.');
       if (!response.ok || !payload.data) {
         throw new Error(payload.error || 'Failed to submit report.');
       }
@@ -1185,7 +1247,7 @@ export function ReportsModule() {
           signature: action === 'approve' ? reviewerSignatureRef.current?.getDataUrl() : undefined
         })
       });
-      const payload = (await response.json()) as { data?: ReportRecord; error?: string };
+      const payload = await readJsonPayload<ReportRecord>(response, 'The server returned an invalid review response.');
       if (!response.ok || !payload.data) {
         throw new Error(payload.error || 'Failed to review report.');
       }
@@ -1566,11 +1628,11 @@ export function ReportsModule() {
             </button>
           </div>
             <div className="reports-mode-switch">
-              <button className={actorMode === 'author' ? 'is-active' : ''} onClick={() => setActorMode('author')}>
+              <button className={actorMode === 'author' ? 'is-active' : ''} onClick={() => { setActorMode('author'); setLeftPanelView('author'); }}>
                 <FilePenLine size={14} />
                 Author
               </button>
-              <button className={actorMode === 'reviewer' ? 'is-active' : ''} onClick={() => setActorMode('reviewer')} disabled={!canReviewSelectedReport}>
+              <button className={actorMode === 'reviewer' ? 'is-active' : ''} onClick={() => { setActorMode('reviewer'); setLeftPanelView('reviewer'); }}>
                 <FileCheck2 size={14} />
                 Reviewer
               </button>
@@ -1688,7 +1750,7 @@ export function ReportsModule() {
                         <button key={report.id} className={selectedReport?.id === report.id ? 'reports-list-item is-active' : 'reports-list-item'} onClick={() => { setSelectedReportId(report.id); setValidationMessage(''); }}>
                           <div>
                             <strong>{report.title}</strong>
-                            <small>{report.roleName} · {report.reportingWindow}</small>
+                            <small>{reportRowMeta(report, true)}</small>
                           </div>
                           <span className={`reports-status-chip status-${report.status}`}>{reportStatusLabel(report.status)}</span>
                         </button>
@@ -1703,7 +1765,7 @@ export function ReportsModule() {
                         <button key={report.id} className={selectedReport?.id === report.id ? 'reports-list-item is-active' : 'reports-list-item'} onClick={() => { setSelectedReportId(report.id); setValidationMessage(''); }}>
                           <div>
                             <strong>{report.title}</strong>
-                            <small>{report.roleName} · {report.reportingWindow}</small>
+                            <small>{reportRowMeta(report, true)}</small>
                           </div>
                           <span className={`reports-status-chip status-${report.status}`}>{reportStatusLabel(report.status)}</span>
                         </button>
@@ -1741,7 +1803,7 @@ export function ReportsModule() {
                   >
                     <div>
                       <strong>{report.title}</strong>
-                      <small>{report.authorName} to {report.reviewerName}</small>
+                      <small>{report.authorName} to {report.reviewerName} · {report.reportingWindow}</small>
                     </div>
                     <span className={`reports-status-chip status-${report.status}`}>{reportStatusLabel(report.status)}</span>
                   </button>
@@ -1899,10 +1961,11 @@ export function ReportsModule() {
               <section className="reports-card reports-editor-card reports-workspace-card reports-editor-pane" data-tour="reports.editor">
               <div className="reports-editor-header">
                 <div>
-                  <div className="reports-kicker">{selectedPeriodDefinition?.label} report · {selectedReport.reportingWindow}</div>
+                  <div className="reports-kicker">{selectedPeriodDefinition?.label ?? tokenLabel(selectedReport.period, 'Imported')} report · {selectedReport.reportingWindow}</div>
                   <h3>{selectedReport.title}</h3>
                   <p>{selectedReport.roleName} · {selectedReport.authorName} to {selectedReport.reviewerName}</p>
                   {canInspectIds ? <small className="reports-id-line">Author ID: {selectedReport.authorId ?? 'Unassigned'} · Reviewer ID: {selectedReport.reviewerId ?? 'Unassigned'}</small> : null}
+                  {!selectedPeriodDefinition ? <small className="reports-muted-note">Imported framework reconstructed from saved report data.</small> : null}
                 </div>
                 <div className="reports-editor-meta">
                   <span className={`reports-status-chip status-${selectedReport.status}`}>{reportStatusLabel(selectedReport.status)}</span>
@@ -2110,7 +2173,7 @@ export function ReportsModule() {
                   )}
                   
                   {/* Show completion message when everything is ready for submission */}
-                  {canSubmitReport && (
+                  {isDraftEditable && canSubmitReport && (
                     <div className="reports-alert success reports-ready-to-submit">
                       <strong>✅ Report Ready for Submission!</strong>
                       <p>All required sections are complete. Review your Executive Summary and submit for review.</p>
@@ -2138,7 +2201,7 @@ export function ReportsModule() {
                               {saveStatus === 'saving' && '💾 Saving...'}
                               {saveStatus === 'saved' && '✅ Saved'}
                               {saveStatus === 'error' && '❌ Save failed'}
-                              {saveStatus === 'idle' && (syncMessage ? '🔄 Sync queued' : '💾 Autosave enabled')}
+                              {saveStatus === 'idle' && (isDraftEditable ? '💾 Autosave enabled' : 'Read only')}
                             </span>
                             {section.field === 'executive_summary' && isDraftEditable && (
                               <button
@@ -2744,19 +2807,10 @@ export function ReportsModule() {
                   <div><span>Audit log</span><strong>{auditEntries.length}</strong></div>
                 </div>
                 <div className="reports-side-actions">
-                  {selectedReport.status === 'draft' ? (
-                    <button 
-                      className="primary-button" 
-                      onClick={handleSubmitReport} 
-                      disabled={!canSubmitReport || !canAuthorSelectedReport}
-                      title={!canSubmitReport ? 'Complete all required sections before submitting' : ''}
-                    >
-                      Submit for review
-                    </button>
-                  ) : null}
                   <button className="ghost-button" onClick={handleSaveDraft} disabled={!isDraftEditable}>
                     Save draft
                   </button>
+                  {selectedReport.status === 'draft' ? <span className="reports-muted-note">Submit from Review & submit after completing checks.</span> : null}
                 </div>
               </section>
 
@@ -2770,7 +2824,7 @@ export function ReportsModule() {
                     <button key={report.id} className={selectedReport?.id === report.id ? 'reports-list-item is-active' : 'reports-list-item'} onClick={() => { setSelectedReportId(report.id); setValidationMessage(''); }}>
                       <div>
                         <strong>{report.title}</strong>
-                        <small>{report.reportingWindow}</small>
+                        <small>{reportRowMeta(report)}</small>
                       </div>
                       <span className={`reports-status-chip status-${report.status}`}>{reportStatusLabel(report.status)}</span>
                     </button>

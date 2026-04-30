@@ -3106,7 +3106,32 @@ button.wbs-row:hover,
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 0.85rem;
   text-align: left;
+}
+
+.reports-list-item > div {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.reports-list-item strong,
+.reports-list-item small {
+  display: block;
+  line-height: 1.35;
+}
+
+.reports-list-item strong {
+  overflow-wrap: anywhere;
+}
+
+.reports-list-item small {
+  font-size: 0.78rem;
+}
+
+.reports-list-item .reports-status-chip {
+  flex: 0 0 auto;
 }
 
 .reports-list-item.is-active {
