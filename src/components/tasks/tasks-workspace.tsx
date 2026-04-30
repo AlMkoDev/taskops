@@ -48,6 +48,8 @@ type SystemStatus = {
   };
 };
 
+type SetupWizardStepId = 'team' | 'project' | 'work';
+
 const statusTone: Record<TaskStatus, string> = {
   backlog: 'slate',
   ready: 'blue',
@@ -196,6 +198,7 @@ function findUserByName(userList: User[], ownerName: string) {
 }
 
 const CONTEXT_HINTS_STORAGE_KEY = 'taskops:contextual-module-hints-dismissed';
+const SETUP_WIZARD_COMPLETED_STORAGE_KEY = 'taskops:setup-wizard-completed';
 
 function TaskStatusBadge({ status }: { status: TaskStatus }) {
   return <span className={`status-badge status-${statusTone[status]}`}>{statusLabel[status]}</span>;
@@ -364,6 +367,9 @@ export function TasksWorkspace() {
   });
   const [rosterViewMode, setRosterViewMode] = useState<'list' | 'grid'>('list');
   const [systemStatus, setSystemStatus] = useState<SystemStatus | null>(null);
+  const [isSetupWizardOpen, setIsSetupWizardOpen] = useState(false);
+  const [setupWizardStep, setSetupWizardStep] = useState<SetupWizardStepId>('team');
+  const [setupWizardCompleted, setSetupWizardCompleted] = useState(false);
 
   const taskMap = useMemo(() => new Map(tasks.map((task) => [task.id, task])), [tasks]);
   const selectedTask = selectedTaskId ? taskMap.get(selectedTaskId) ?? null : null;
@@ -426,6 +432,11 @@ export function TasksWorkspace() {
     } catch {
       setDismissedModuleHints({});
     }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    setSetupWizardCompleted(window.localStorage.getItem(SETUP_WIZARD_COMPLETED_STORAGE_KEY) === 'true');
   }, []);
 
   function dismissModuleHint(module: 'reports' | 'analytics' | 'settings') {
@@ -626,7 +637,7 @@ export function TasksWorkspace() {
       body: users.length > 0 ? `${users.length} team member${users.length === 1 ? '' : 's'} ready for ownership.` : 'Add the people who will own work, reviews, and capacity.',
       complete: users.length > 0,
       action: 'Open Team',
-      onClick: () => setActiveSection('team')
+      onClick: () => openSetupWizard('team')
     },
     {
       id: 'project',
@@ -634,7 +645,7 @@ export function TasksWorkspace() {
       body: projects.length > 0 ? `${projects.length} project shell${projects.length === 1 ? '' : 's'} available.` : 'Create the operating shell before tasks start piling up.',
       complete: projects.length > 0,
       action: 'Create Project',
-      onClick: () => setIsCreateProjectOpen(true)
+      onClick: () => openSetupWizard('project')
     },
     {
       id: 'task',
@@ -642,9 +653,33 @@ export function TasksWorkspace() {
       body: tasks.length > 0 ? `${tasks.length} task${tasks.length === 1 ? '' : 's'} in the execution model.` : 'Create the first task or open Reports to confirm the first reporting cadence.',
       complete: tasks.length > 0,
       action: 'New Task / Report',
-      onClick: handleRequestCreateTask
+      onClick: () => openSetupWizard('work')
     }
   ];
+  const setupWizardSteps: Array<{ id: SetupWizardStepId; title: string; complete: boolean; description: string }> = [
+    {
+      id: 'team',
+      title: 'Team',
+      complete: users.length > 0,
+      description: 'Create or import the people who will own work.'
+    },
+    {
+      id: 'project',
+      title: 'Project',
+      complete: projects.length > 0,
+      description: 'Create the first operating shell.'
+    },
+    {
+      id: 'work',
+      title: 'Work',
+      complete: tasks.length > 0 || reports.length > 0 || reportTemplates.length > 0,
+      description: 'Capture first work or confirm report cadence.'
+    }
+  ];
+  const activeSetupStepIndex = Math.max(0, setupWizardSteps.findIndex((step) => step.id === setupWizardStep));
+  const setupWizardProgress = Math.round((setupWizardSteps.filter((step) => step.complete).length / setupWizardSteps.length) * 100);
+  const isSetupReady = setupWizardSteps.every((step) => step.complete);
+  const canContinueSetup = setupWizardSteps[activeSetupStepIndex]?.complete ?? false;
   const timelineGroups = useMemo(() => {
     const today = startOfDay(now);
     const endOfWeek = new Date(today);
@@ -797,6 +832,37 @@ export function TasksWorkspace() {
   const handleDraftChange = <K extends keyof NewTaskDraft>(key: K, value: NewTaskDraft[K]) => setDraft((current) => ({ ...current, [key]: value }));
   const handleOpenTask = (taskId: string) => { setSelectedTaskId(taskId); setActiveSection('tasks'); };
 
+  function openSetupWizard(step: SetupWizardStepId = setupWizardSteps.find((item) => !item.complete)?.id ?? 'work') {
+    setSetupWizardStep(step);
+    setIsSetupWizardOpen(true);
+  }
+
+  function continueSetupWizard() {
+    const nextStep = setupWizardSteps.slice(activeSetupStepIndex + 1).find((step) => !step.complete)
+      ?? setupWizardSteps[activeSetupStepIndex + 1];
+
+    if (nextStep) {
+      setSetupWizardStep(nextStep.id);
+      return;
+    }
+
+    setSetupWizardCompleted(true);
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(SETUP_WIZARD_COMPLETED_STORAGE_KEY, 'true');
+    }
+    setIsSetupWizardOpen(false);
+    setActiveSection('today');
+  }
+
+  function finishSetupWizard() {
+    setSetupWizardCompleted(true);
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(SETUP_WIZARD_COMPLETED_STORAGE_KEY, 'true');
+    }
+    setIsSetupWizardOpen(false);
+    setActiveSection('today');
+  }
+
   function handleRequestCreateTask() {
     if (users.length === 0) {
       setActiveSection('team');
@@ -854,7 +920,7 @@ export function TasksWorkspace() {
 
   const handleAddTeamMember = () => {
     const name = teamMemberDraft.name.trim();
-    const team = teamMemberDraft.team.trim();
+    const team = teamMemberDraft.team.trim() || teamDraftName.trim();
     const position = teamMemberDraft.position.trim();
     if (!name || !team) return;
 
@@ -1003,7 +1069,7 @@ export function TasksWorkspace() {
         </aside>
 
         <main className="content">
-          {activeSection === 'today' ? <section className="today-shell"><div className="today-hero panel"><div><span className="today-kicker">Operations today</span><h2>{hasOperationalSetup ? 'Clear the day before browsing modules' : 'Set up the operating model first'}</h2><p>{hasOperationalSetup ? 'Today brings together assigned work, due dates, blockers, reviews, report cadence, and team gaps so the next action is obvious.' : 'TaskOps needs team, project, and first-work context before the task board becomes useful.'}</p></div><div className="today-actions"><button className="primary-button" onClick={handleRequestCreateTask}><Plus size={16} />New Task</button><button className="ghost-button" onClick={() => setIsCreateProjectOpen(true)}><FolderKanban size={16} />Create Project</button></div></div><div className="today-kpi-grid"><button className="metric-box project-card" onClick={() => { setActiveSection('tasks'); setActiveFilter('my_work'); }}><strong>{myTasks.length}</strong><span>My tasks</span></button><button className="metric-box project-card" onClick={() => { setActiveSection('tasks'); setActiveFilter('due_today'); }}><strong>{todayTasks.length}</strong><span>Due today</span></button><button className="metric-box project-card" onClick={() => setActiveSection('blocked')}><strong>{blockedTasks.length}</strong><span>Blocked</span></button><button className="metric-box project-card" onClick={() => setActiveSection('reports')}><strong>{reportsDue.length}</strong><span>Reports due</span></button><button className="metric-box project-card" onClick={() => setActiveSection('reports')}><strong>{reportsAwaitingReview.length}</strong><span>Awaiting review</span></button><button className="metric-box project-card" onClick={() => setActiveSection('team')}><strong>{teamGapCount}</strong><span>Team gaps</span></button></div>{!hasOperationalSetup ? <div className="today-setup-grid">{setupSteps.map((step, index) => <button key={step.id} className={`today-setup-card ${step.complete ? 'is-complete' : ''}`} onClick={step.onClick}><span>{step.complete ? '✓' : index + 1}</span><div><strong>{step.title}</strong><p>{step.body}</p><small>{step.action}</small></div></button>)}</div> : null}<div className="today-grid"><section className="today-card"><div className="today-card-head"><h3>Work Queue</h3><button className="ghost-button" onClick={() => { setActiveSection('tasks'); setActiveFilter('due_today'); }}>Open Tasks</button></div>{todayTasks.length > 0 ? todayTasks.slice(0, 5).map((task) => <button key={task.id} className="today-row" onClick={() => handleOpenTask(task.id)}><div><strong>{task.title}</strong><small>{users.find((user) => user.id === task.ownerId)?.name ?? 'Unassigned'} · {projects.find((project) => project.id === task.projectId)?.name ?? 'No project'}</small></div><TaskPriorityBadge priority={task.priority} /></button>) : <div className="today-empty"><Clock3 size={16} /><span>No tasks due today.</span></div>}</section><section className="today-card"><div className="today-card-head"><h3>Risk Queue</h3><button className="ghost-button" onClick={() => setActiveSection('blocked')}>Open Blocked</button></div>{blockedTasks.length > 0 ? blockedTasks.slice(0, 5).map((task) => <button key={task.id} className="today-row" onClick={() => handleOpenTask(task.id)}><div><strong>{task.title}</strong><small>{task.blocker?.reason ?? 'Marked blocked'}</small></div><TaskStatusBadge status="blocked" /></button>) : <div className="today-empty"><AlertTriangle size={16} /><span>No blocked work right now.</span></div>}</section><section className="today-card"><div className="today-card-head"><h3>Report Queue</h3><button className="ghost-button" onClick={() => setActiveSection('reports')}>Open Reports</button></div>{[...reportsNeedingAttention, ...reportsAwaitingReview, ...reportsDue].slice(0, 5).map((report) => <button key={report.id} className="today-row" onClick={() => { setSelectedReportId(report.id); setActiveSection('reports'); }}><div><strong>{report.title}</strong><small>{report.roleName} · {report.reportingWindow}</small></div><span className="status-badge status-blue">{report.status.replace('_', ' ')}</span></button>)}{reportsNeedingAttention.length + reportsAwaitingReview.length + reportsDue.length === 0 ? <div className="today-empty"><FileText size={16} /><span>No report actions waiting.</span></div> : null}</section></div></section> : null}
+          {activeSection === 'today' ? <section className="today-shell"><div className="today-hero panel"><div><span className="today-kicker">Operations today</span><h2>{hasOperationalSetup ? 'Clear the day before browsing modules' : 'Set up the operating model first'}</h2><p>{hasOperationalSetup ? 'Today brings together assigned work, due dates, blockers, reviews, report cadence, and team gaps so the next action is obvious.' : 'TaskOps needs team, project, and first-work context before the task board becomes useful.'}</p></div><div className="today-actions"><button className="primary-button" onClick={() => openSetupWizard()}><Plus size={16} />Setup Wizard</button><button className="ghost-button" onClick={handleRequestCreateTask}><Plus size={16} />New Task</button><button className="ghost-button" onClick={() => setIsCreateProjectOpen(true)}><FolderKanban size={16} />Create Project</button></div></div><div className="today-kpi-grid"><button className="metric-box project-card" onClick={() => { setActiveSection('tasks'); setActiveFilter('my_work'); }}><strong>{myTasks.length}</strong><span>My tasks</span></button><button className="metric-box project-card" onClick={() => { setActiveSection('tasks'); setActiveFilter('due_today'); }}><strong>{todayTasks.length}</strong><span>Due today</span></button><button className="metric-box project-card" onClick={() => setActiveSection('blocked')}><strong>{blockedTasks.length}</strong><span>Blocked</span></button><button className="metric-box project-card" onClick={() => setActiveSection('reports')}><strong>{reportsDue.length}</strong><span>Reports due</span></button><button className="metric-box project-card" onClick={() => setActiveSection('reports')}><strong>{reportsAwaitingReview.length}</strong><span>Awaiting review</span></button><button className="metric-box project-card" onClick={() => setActiveSection('team')}><strong>{teamGapCount}</strong><span>Team gaps</span></button></div>{!hasOperationalSetup ? <div className="today-setup-grid">{setupSteps.map((step, index) => <button key={step.id} className={`today-setup-card ${step.complete ? 'is-complete' : ''}`} onClick={step.onClick}><span>{step.complete ? '✓' : index + 1}</span><div><strong>{step.title}</strong><p>{step.body}</p><small>{step.action}</small></div></button>)}</div> : null}<div className="today-grid"><section className="today-card"><div className="today-card-head"><h3>Work Queue</h3><button className="ghost-button" onClick={() => { setActiveSection('tasks'); setActiveFilter('due_today'); }}>Open Tasks</button></div>{todayTasks.length > 0 ? todayTasks.slice(0, 5).map((task) => <button key={task.id} className="today-row" onClick={() => handleOpenTask(task.id)}><div><strong>{task.title}</strong><small>{users.find((user) => user.id === task.ownerId)?.name ?? 'Unassigned'} · {projects.find((project) => project.id === task.projectId)?.name ?? 'No project'}</small></div><TaskPriorityBadge priority={task.priority} /></button>) : <div className="today-empty"><Clock3 size={16} /><span>No tasks due today.</span></div>}</section><section className="today-card"><div className="today-card-head"><h3>Risk Queue</h3><button className="ghost-button" onClick={() => setActiveSection('blocked')}>Open Blocked</button></div>{blockedTasks.length > 0 ? blockedTasks.slice(0, 5).map((task) => <button key={task.id} className="today-row" onClick={() => handleOpenTask(task.id)}><div><strong>{task.title}</strong><small>{task.blocker?.reason ?? 'Marked blocked'}</small></div><TaskStatusBadge status="blocked" /></button>) : <div className="today-empty"><AlertTriangle size={16} /><span>No blocked work right now.</span></div>}</section><section className="today-card"><div className="today-card-head"><h3>Report Queue</h3><button className="ghost-button" onClick={() => setActiveSection('reports')}>Open Reports</button></div>{[...reportsNeedingAttention, ...reportsAwaitingReview, ...reportsDue].slice(0, 5).map((report) => <button key={report.id} className="today-row" onClick={() => { setSelectedReportId(report.id); setActiveSection('reports'); }}><div><strong>{report.title}</strong><small>{report.roleName} · {report.reportingWindow}</small></div><span className="status-badge status-blue">{report.status.replace('_', ' ')}</span></button>)}{reportsNeedingAttention.length + reportsAwaitingReview.length + reportsDue.length === 0 ? <div className="today-empty"><FileText size={16} /><span>No report actions waiting.</span></div> : null}</section></div></section> : null}
           {activeSection === 'tasks' && activeView === 'list' ? <section className="panel" data-tour="tasks.list-panel"><div className="table-head" data-tour="tasks.table-head"><span /><span>Task</span><span>Status</span><span>Priority</span><span>Owner</span><span>Due</span><span>Progress</span></div>{filteredTasks.length > 0 ? filteredTasks.map((task, index) => { const owner = users.find((user) => user.id === task.ownerId); return <button key={task.id} data-tour={index === 0 ? 'tasks.first-row' : undefined} className={selectedTaskId === task.id ? 'table-row is-selected' : 'table-row'} onClick={() => setSelectedTaskId(task.id)}><span className={selectedTaskIds.includes(task.id) ? 'select-box is-selected' : 'select-box'} onClick={(event) => { event.stopPropagation(); toggleTaskSelection(task.id); }} /><span className="task-cell"><strong>{task.title}</strong><small>{task.tags.join(' · ') || (task.projectId ? projects.find((project) => project.id === task.projectId)?.name : 'No project assigned')}</small></span><span><TaskStatusBadge status={task.status} /></span><span><TaskPriorityBadge priority={task.priority} /></span><span>{owner?.name ?? 'Unassigned'}</span><span>{task.dueAt ? formatDateTimeLabel(new Date(task.dueAt)) : 'No due date'}</span><span>{task.progress}%</span></button>; }) : <div className="placeholder-panel inset"><ListTodo size={18} /><h2>{activeFilter === 'my_work' ? 'No work assigned yet' : 'No tasks yet'}</h2><p>{activeFilter === 'my_work' ? 'Create your first task or switch to All to browse shared work.' : 'Create a task to start managing real work in TaskOps.'}</p><div className="modal-actions"><button className="ghost-button" onClick={() => setActiveFilter('all')}>Browse All Tasks</button><button className="primary-button" onClick={handleRequestCreateTask}><Plus size={16} />Create Task</button></div></div>}</section> : null}
           {activeSection === 'tasks' && activeView === 'board' ? <section className="kanban">{boardColumns.map((column) => <div key={column} className="kanban-column"><div className="kanban-header"><span>{statusLabel[column]}</span><span>{filteredTasks.filter((task) => task.status === column).length}</span></div>{filteredTasks.filter((task) => task.status === column).map((task) => <button key={task.id} className="kanban-card" onClick={() => setSelectedTaskId(task.id)}><div className="kanban-card-head"><TaskPriorityBadge priority={task.priority} /><span>{task.progress}%</span></div><strong>{task.title}</strong><small>{projects.find((project) => project.id === task.projectId)?.name ?? 'No project'}</small></button>)}</div>)}</section> : null}
           {activeSection === 'tasks' && activeView === 'timeline' ? <section className="timeline-board">{timelineGroups.length > 0 ? timelineGroups.map((group) => <div key={group.id} className="timeline-group"><div className="timeline-group-head"><h3>{group.label}</h3><span>{group.tasks.length}</span></div><div className="timeline-list">{group.tasks.map((task) => <button key={task.id} className={selectedTaskId === task.id ? 'timeline-card is-selected' : 'timeline-card'} onClick={() => setSelectedTaskId(task.id)}><div className="timeline-card-head"><TaskPriorityBadge priority={task.priority} /><TaskStatusBadge status={task.status} /></div><strong>{task.title}</strong><small>{projects.find((project) => project.id === task.projectId)?.name ?? 'No project'} · {users.find((user) => user.id === task.ownerId)?.name ?? 'Unassigned'}</small><div className="timeline-card-meta"><span>{task.dueAt ? formatDayLabel(new Date(task.dueAt)) : 'No due date'}</span><span>{task.progress}%</span></div></button>)}</div></div>) : <section className="placeholder-panel"><Clock3 size={18} /><h2>No scheduled tasks yet</h2><p>No tasks match this view yet. Add a due date or adjust your filters to populate the timeline.</p></section>}</section> : null}
@@ -1020,6 +1086,95 @@ export function TasksWorkspace() {
 
         {activeSection === 'today' ? <SimpleDetailPanel title="Operational Focus" body={hasOperationalSetup ? 'Use this queue to decide what happens next.' : 'Complete the setup steps to unlock meaningful task and project views.'}><section className="detail-section"><div className="section-title">Setup Health</div><div className="project-detail-stack">{setupSteps.map((step) => <div key={step.id}><strong>{step.complete ? 'Ready' : 'Needed'}</strong><p>{step.title}</p></div>)}</div></section><section className="detail-section"><div className="section-title">Next Best Action</div><p>{!users.length ? 'Create or import the team first.' : !projects.length ? 'Create the first project shell.' : !tasks.length ? 'Capture the first task against the project.' : blockedTasks.length ? 'Resolve or reassign blocked work.' : reportsAwaitingReview.length ? 'Review submitted reports.' : 'The day is clear. Add planned work or inspect analytics.'}</p></section></SimpleDetailPanel> : activeSection === 'projects' ? <SimpleDetailPanel title={selectedProject?.name ?? 'Task Manager'} body={selectedProject?.subtitle ?? selectedProject?.ownerLabel ?? 'Project detail'}>{selectedProject ? <><section className="detail-section"><div className="section-title">Project Shell</div><div className="project-detail-stack"><div><strong>Owner Label</strong><p>{selectedProject.ownerLabel ?? selectedProjectSummary?.ownerName ?? 'Unassigned'}</p></div><div><strong>Type</strong><p>{selectedProject.type}</p></div><div><strong>Planning Horizon</strong><p>{selectedProject.totalWeeks ? `${selectedProject.totalWeeks} weeks` : 'Not set yet'}</p></div></div></section><section className="detail-section"><div className="section-title">Phase Outline</div><div className="project-task-list">{selectedProjectPhases.length > 0 ? selectedProjectPhases.map((phase) => <div key={phase.id} className="project-task-button"><div><strong>{phase.name}</strong><small>{phase.description ?? 'No phase description yet'}</small></div><span>{`W${phase.startWeek}-${phase.endWeek}`}</span></div>) : <div className="calm-card">Add phases to build the WBS spine for this project.</div>}</div></section></> : <section className="detail-section"><div className="section-title">Project Shell</div><p>Create the first project to start building structure.</p></section>}</SimpleDetailPanel> : activeSection === 'team' ? <aside className="detail-panel team-detail-panel"><section className="team-side-card"><div className="detail-header"><div className="detail-header-copy"><h2>{selectedTeamName === 'all' ? 'Team' : selectedTeamName}</h2><p>Team detail</p></div></div><div className="team-side-stats"><div><span>Teams</span><strong>{selectedTeamName === 'all' ? teamDirectory.length : 1}</strong></div><div><span>Members</span><strong>{selectedTeamViewSummary.memberCount}</strong></div><div><span>Avg Capacity</span><strong>{selectedTeamAvgCapacity}h</strong></div><div><span>Utilization</span><strong>{selectedTeamViewSummary.avgUtilization > 0 ? `${selectedTeamViewSummary.avgUtilization}%` : '—'}</strong></div></div></section><section className="team-side-card"><div className="team-section-head"><div><h3>Member Profile</h3><p className="settings-copy">Quick stats</p></div></div>{selectedTeamSummary ? <><div className="team-profile-summary"><div className="team-profile-placeholder"><Users size={18} /></div><div><strong>{selectedTeamSummary.user.name}</strong><p>{selectedTeamSummary.user.position ? `${selectedTeamSummary.user.position} · ` : ''}{selectedTeamSummary.user.role} · {selectedTeamSummary.user.team}</p></div></div><div className="team-profile-quickstats"><div><span>Open</span><strong>{selectedTeamSummary.openCount}</strong></div><div><span>Blocked</span><strong>{selectedTeamSummary.blockedCount}</strong></div><div><span>Overdue</span><strong>{selectedTeamSummary.overdueCount}</strong></div><div><span>Load</span><strong>{selectedTeamSummary.utilization}%</strong></div></div><div className="settings-form-grid"><label className="settings-field settings-field-full"><span>Name</span><input value={selectedTeamSummary.user.name} onChange={(event) => updateUser(selectedTeamSummary.user.id, { name: event.target.value })} /></label><label className="settings-field settings-field-full"><span>Position</span><input value={selectedTeamSummary.user.position || ''} onChange={(event) => updateUser(selectedTeamSummary.user.id, { position: event.target.value || undefined })} placeholder="e.g., Field Supervisor, Agronomist" /></label><label className="settings-field"><span>Role</span><select value={selectedTeamSummary.user.role} onChange={(event) => updateUser(selectedTeamSummary.user.id, { role: event.target.value as UserRole })}><option value="member">Member</option><option value="manager">Manager</option><option value="admin">Admin</option><option value="guest">Guest</option></select></label><label className="settings-field"><span>Team</span><input value={selectedTeamSummary.user.team} onChange={(event) => updateUser(selectedTeamSummary.user.id, { team: event.target.value })} /></label><label className="settings-field"><span>Capacity / Week</span><input type="number" min="1" value={selectedTeamSummary.user.capacityHoursPerWeek ?? ''} onChange={(event) => updateUser(selectedTeamSummary.user.id, { capacityHoursPerWeek: Number(event.target.value) || undefined })} /></label></div><div className="settings-actions"><button className="ghost-button" onClick={() => { if (selectedTeamSummary.tasks[0]) { handleOpenTask(selectedTeamSummary.tasks[0].id); } else { setActiveSection('tasks'); setActiveFilter('all'); } }}>View Tasks</button><button className="ghost-button" onClick={() => handleDeleteTeamMember(selectedTeamSummary.user.id)}>Delete Member</button></div>{selectedTeamSummary.tasks.length > 0 ? <div className="project-task-list">{selectedTeamSummary.tasks.slice(0, 4).map((task) => <button key={task.id} className="project-task-button" onClick={() => handleOpenTask(task.id)}><div><strong>{task.title}</strong><small>{statusLabel[task.status]}</small></div><span>{task.progress}%</span></button>)}</div> : <div className="team-side-empty">Add team members to build the owner database for new projects.</div>}</> : <div className="team-side-empty">Add team members to build the owner database for new projects.</div>}</section><section className="team-tip-card" data-tour="team.cost-flow"><strong>Getting Started</strong><p>Create teams first, then add members. Members can be assigned to projects as owners once added.</p></section></aside> : activeSection === 'reports' ? <SimpleDetailPanel title={selectedReportRecord?.title ?? 'Reports'} body={selectedReportRecord?.roleName ?? 'AgriReports workflow'}>{selectedReportRecord ? <><section className="detail-section"><div className="section-title">Routing</div><div className="project-detail-stack"><div><strong>Author</strong><p>{selectedReportRecord.authorName}</p></div><div><strong>Reviewer</strong><p>{selectedReportRecord.reviewerName}</p></div><div><strong>Window</strong><p>{selectedReportRecord.reportingWindow}</p></div></div></section><section className="detail-section"><div className="section-title">Workflow</div><div className="project-detail-stack"><div><strong>Status</strong><p>{selectedReportRecord.status.replace('_', ' ')}</p></div><div><strong>Updated</strong><p>{formatDateTimeLabel(new Date(selectedReportRecord.updatedAt))}</p></div><div><strong>Saved</strong><p>{selectedReportRecord.lastSavedAt ? formatDateTimeLabel(new Date(selectedReportRecord.lastSavedAt)) : 'Pending autosave'}</p></div></div></section></> : <section className="detail-section"><div className="section-title">Routing</div><p>Create a report to begin.</p></section>}</SimpleDetailPanel> : activeSection === 'analytics' ? <AnalyticsDetailPanel summary={analyticsSummary} projectSummaries={projectSummaries} teamSummaries={teamSummaries} /> : activeSection === 'settings' ? <SettingsDetailPanel summary={settingsSummary} automationRules={automationRules} taskTemplates={taskTemplates} reportTemplates={reportTemplates} onToggleRule={toggleAutomationRuleStatus} /> : <TaskDetailPanel task={selectedTask} users={users} projects={projects} workLogs={workLogs} />}
       </div>
+
+      {isSetupWizardOpen ? (
+        <div className="modal-backdrop" onClick={() => setIsSetupWizardOpen(false)}>
+          <div className="modal-card setup-wizard-modal" onClick={(event) => event.stopPropagation()}>
+            <div className="modal-header">
+              <div>
+                <h2>Set up your operation</h2>
+                <p>Complete the minimum operating model before the workspace becomes daily-use ready.</p>
+              </div>
+              <button className="icon-button" onClick={() => setIsSetupWizardOpen(false)} aria-label="Close setup wizard"><X size={16} /></button>
+            </div>
+
+            <div className="setup-wizard-progress">
+              <div className="setup-wizard-progress-bar"><span style={{ width: `${setupWizardProgress}%` }} /></div>
+              <strong>{setupWizardProgress}% complete</strong>
+            </div>
+
+            <div className="setup-wizard-layout">
+              <aside className="setup-wizard-steps">
+                {setupWizardSteps.map((step, index) => (
+                  <button key={step.id} className={setupWizardStep === step.id ? 'is-active' : step.complete ? 'is-complete' : ''} onClick={() => setSetupWizardStep(step.id)}>
+                    <span>{step.complete ? '✓' : index + 1}</span>
+                    <div><strong>{step.title}</strong><small>{step.description}</small></div>
+                  </button>
+                ))}
+              </aside>
+
+              <section className="setup-wizard-panel">
+                {setupWizardCompleted && isSetupReady ? (
+                  <div className="setup-complete-banner">
+                    <strong>Setup complete</strong>
+                    <span>Today is now ready to act as the daily operating dashboard.</span>
+                  </div>
+                ) : null}
+
+                {setupWizardStep === 'team' ? (
+                  <div className="setup-wizard-section">
+                    <div><h3>Team</h3><p>Add at least one owner. You can create a team manually or import agricultural role templates.</p></div>
+                    <div className="modal-grid">
+                      <label className="field"><span>Team Name</span><input value={teamDraftName} onChange={(event) => setTeamDraftName(event.target.value)} placeholder="Field Operations" /></label>
+                      <label className="field"><span>Member Name</span><input value={teamMemberDraft.name} onChange={(event) => setTeamMemberDraft((current) => ({ ...current, name: event.target.value }))} placeholder="Full name" /></label>
+                      <label className="field"><span>Position</span><input value={teamMemberDraft.position} onChange={(event) => setTeamMemberDraft((current) => ({ ...current, position: event.target.value }))} placeholder="Field Supervisor" /></label>
+                      <label className="field"><span>Role</span><select value={teamMemberDraft.role} onChange={(event) => setTeamMemberDraft((current) => ({ ...current, role: event.target.value as UserRole }))}><option value="member">Member</option><option value="manager">Manager</option><option value="admin">Admin</option><option value="guest">Guest</option></select></label>
+                      <label className="field"><span>Team</span><input value={teamMemberDraft.team} onChange={(event) => setTeamMemberDraft((current) => ({ ...current, team: event.target.value }))} placeholder={teamDraftName || 'Field Operations'} /></label>
+                      <label className="field"><span>Capacity / Week</span><input type="number" min="1" value={teamMemberDraft.capacityHoursPerWeek} onChange={(event) => setTeamMemberDraft((current) => ({ ...current, capacityHoursPerWeek: event.target.value }))} /></label>
+                    </div>
+                    <div className="modal-actions"><button className="ghost-button" onClick={() => setShowImportWizard(true)}><Upload size={14} />Import Roles</button><button className="ghost-button" onClick={handleAddTeam} disabled={!teamDraftName.trim()}>Create Team</button><button className="primary-button" onClick={handleAddTeamMember} disabled={!teamMemberDraft.name.trim() || !(teamMemberDraft.team.trim() || teamDraftName.trim())}>Add Member</button></div>
+                    {!users.length ? <p className="setup-validation">Add or import at least one team member to continue.</p> : null}
+                  </div>
+                ) : null}
+
+                {setupWizardStep === 'project' ? (
+                  <div className="setup-wizard-section">
+                    <div><h3>Project</h3><p>Create the first project shell so tasks and report follow-ups have an operating context.</p></div>
+                    <div className="modal-grid">
+                      <label className="field field-full"><span>Name</span><input value={projectDraft.name} onChange={(event) => setProjectDraft((current) => ({ ...current, name: event.target.value }))} placeholder="Harvest readiness" /></label>
+                      <label className="field field-full"><span>Subtitle</span><input value={projectDraft.subtitle} onChange={(event) => setProjectDraft((current) => ({ ...current, subtitle: event.target.value }))} placeholder="Short descriptor" /></label>
+                      <label className="field"><span>Type</span><input value={projectDraft.type} onChange={(event) => setProjectDraft((current) => ({ ...current, type: event.target.value }))} /></label>
+                      <label className="field"><span>Owner</span><input list="project-owner-options" value={projectDraft.ownerName} onChange={(event) => setProjectDraft((current) => ({ ...current, ownerName: event.target.value }))} placeholder={users[0]?.name ?? 'Owner'} /></label>
+                    </div>
+                    <div className="modal-actions"><button className="primary-button" onClick={handleCreateProject} disabled={!projectDraft.name.trim() || users.length === 0}>Create Project</button></div>
+                    {!projects.length ? <p className="setup-validation">Create at least one project shell to continue.</p> : null}
+                  </div>
+                ) : null}
+
+                {setupWizardStep === 'work' ? (
+                  <div className="setup-wizard-section">
+                    <div><h3>First work or report cadence</h3><p>Capture the first task, or open Reports to confirm the cadence that will generate formal follow-up work.</p></div>
+                    <div className="modal-grid">
+                      <label className="field field-full"><span>Task Title</span><input value={draft.title} onChange={(event) => handleDraftChange('title', event.target.value)} placeholder="First operational task" /></label>
+                      <label className="field"><span>Project</span><select value={draft.projectId} onChange={(event) => handleDraftChange('projectId', event.target.value)}>{projects.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}</select></label>
+                      <label className="field"><span>Owner</span><select value={draft.ownerId} onChange={(event) => handleDraftChange('ownerId', event.target.value)}>{users.map((user) => <option key={user.id} value={user.id}>{user.name}</option>)}</select></label>
+                      <label className="field"><span>Due Date</span><input type="date" value={draft.endAt} onChange={(event) => handleDraftChange('endAt', event.target.value)} /></label>
+                    </div>
+                    <div className="modal-actions"><button className="ghost-button" onClick={() => { setActiveSection('reports'); setIsSetupWizardOpen(false); }}><FileText size={14} />Open Reports</button><button className="primary-button" onClick={handleCreateTask} disabled={!draft.title.trim() || users.length === 0 || projects.length === 0}>Create First Task</button></div>
+                    {!canContinueSetup ? <p className="setup-validation">Create a task or confirm an existing report cadence to finish setup.</p> : null}
+                  </div>
+                ) : null}
+              </section>
+            </div>
+
+            <div className="modal-actions setup-wizard-footer">
+              <button className="ghost-button" onClick={() => setIsSetupWizardOpen(false)}>Close</button>
+              <button className="ghost-button" onClick={() => setSetupWizardStep(setupWizardSteps[Math.max(0, activeSetupStepIndex - 1)].id)} disabled={activeSetupStepIndex === 0}>Back</button>
+              {isSetupReady ? <button className="primary-button" onClick={finishSetupWizard}>Finish Setup</button> : <button className="primary-button" onClick={continueSetupWizard} disabled={!canContinueSetup}>Continue</button>}
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {isCreateProjectOpen ? <div className="modal-backdrop" onClick={() => setIsCreateProjectOpen(false)}><div className="modal-card" onClick={(event) => event.stopPropagation()}><div className="modal-header"><div><h2>Create Project</h2><p>Start from a clean blank project shell, then add phases, WBS tasks, and cadence rules as the plan grows.</p></div><button className="icon-button" onClick={() => setIsCreateProjectOpen(false)} aria-label="Close project modal"><X size={16} /></button></div><div className="modal-grid"><label className="field field-full"><span>Name</span><input value={projectDraft.name} onChange={(event) => setProjectDraft((current) => ({ ...current, name: event.target.value }))} placeholder="Project name" /></label><label className="field field-full"><span>Subtitle</span><input value={projectDraft.subtitle} onChange={(event) => setProjectDraft((current) => ({ ...current, subtitle: event.target.value }))} placeholder="Short descriptor for this project shell" /></label><label className="field field-full"><span>Description</span><textarea value={projectDraft.description} onChange={(event) => setProjectDraft((current) => ({ ...current, description: event.target.value }))} placeholder="What is this project for?" /></label><label className="field"><span>Type</span><input list="project-type-options" value={projectDraft.type} onChange={(event) => setProjectDraft((current) => ({ ...current, type: event.target.value }))} placeholder="Project, operations, campaign..." /></label><label className="field"><span>Owner Label</span><input list="project-owner-options" value={projectDraft.ownerName} onChange={(event) => setProjectDraft((current) => ({ ...current, ownerName: event.target.value }))} placeholder="Optional person, role, or owner label" /></label><label className="field"><span>Total Weeks</span><input type="number" min="1" value={projectDraft.totalWeeks} onChange={(event) => setProjectDraft((current) => ({ ...current, totalWeeks: event.target.value }))} placeholder="12" /></label><label className="field field-full"><span>Owner Details</span><input value={findUserByName(users, projectDraft.ownerName) ? `${findUserByName(users, projectDraft.ownerName)?.role} · ${findUserByName(users, projectDraft.ownerName)?.team}${findUserByName(users, projectDraft.ownerName)?.capacityHoursPerWeek ? ` · ${findUserByName(users, projectDraft.ownerName)?.capacityHoursPerWeek}h/week` : ''}` : projectDraft.ownerName.trim() ? 'Freeform owner label. This project can be created without a saved team member.' : 'Optional. You can keep this blank and update it later in Project Settings.'} readOnly /></label></div><datalist id="project-type-options">{suggestedProjectTypes.map((projectType) => <option key={projectType} value={projectType}>{projectType}</option>)}</datalist><datalist id="project-owner-options">{users.map((user) => <option key={user.id} value={user.name}>{`${user.role} · ${user.team}`}</option>)}</datalist><div className="modal-actions"><button className="ghost-button" onClick={() => setIsCreateProjectOpen(false)}>Cancel</button><button className="primary-button" onClick={handleCreateProject} disabled={!projectDraft.name.trim()}>Create Project</button></div></div></div> : null}
 

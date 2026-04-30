@@ -797,6 +797,109 @@ textarea {
   margin-top: 18px;
 }
 
+.setup-wizard-modal {
+  width: min(1040px, calc(100vw - 32px));
+}
+
+.setup-wizard-progress {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.setup-wizard-progress-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--bg-3);
+  overflow: hidden;
+}
+
+.setup-wizard-progress-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--green);
+}
+
+.setup-wizard-layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 16px;
+}
+
+.setup-wizard-steps,
+.setup-wizard-panel,
+.setup-wizard-section {
+  display: grid;
+  gap: 12px;
+}
+
+.setup-wizard-steps button {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-2);
+  color: var(--text);
+  padding: 12px;
+  text-align: left;
+}
+
+.setup-wizard-steps button > span {
+  display: inline-flex;
+  width: 26px;
+  height: 26px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--blue-dim);
+  color: var(--blue);
+  font-weight: 700;
+}
+
+.setup-wizard-steps button.is-active {
+  border-color: var(--blue);
+}
+
+.setup-wizard-steps button.is-complete > span {
+  background: var(--green-dim);
+  color: var(--green);
+}
+
+.setup-wizard-steps small,
+.setup-wizard-section p,
+.setup-validation {
+  color: var(--text-2);
+}
+
+.setup-complete-banner {
+  border: 1px solid rgba(52, 211, 153, 0.34);
+  border-radius: 12px;
+  background: rgba(13, 61, 42, 0.35);
+  padding: 12px;
+}
+
+.setup-complete-banner span {
+  display: block;
+  margin-top: 4px;
+  color: #bbf7d0;
+}
+
+.setup-validation {
+  margin: 0;
+  font-size: 13px;
+}
+
+.setup-wizard-footer {
+  border-top: 1px solid var(--border);
+  margin-top: 16px;
+  padding-top: 16px;
+}
+
 .field {
   display: flex;
   flex-direction: column;
@@ -871,6 +974,18 @@ textarea {
 
   .modal-grid,
   .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .setup-wizard-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .setup-wizard-steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .setup-wizard-steps button {
     grid-template-columns: 1fr;
   }
 
