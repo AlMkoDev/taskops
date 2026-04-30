@@ -151,6 +151,23 @@ textarea {
   color: white;
 }
 
+.danger-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid rgba(248, 113, 113, 0.5);
+  border-radius: 10px;
+  background: rgba(248, 113, 113, 0.16);
+  color: #fecaca;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.danger-button:hover {
+  background: rgba(248, 113, 113, 0.24);
+}
+
 .ghost-button,
 .icon-button,
 .detail-header-actions button,
@@ -302,6 +319,33 @@ textarea {
 
 .sidebar-item.static {
   cursor: default;
+}
+
+.project-report-obligation {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(22, 27, 39, 0.72);
+  padding: 10px;
+}
+
+.project-report-obligation div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.project-report-obligation strong {
+  color: var(--text);
+  font-size: 13px;
+}
+
+.project-report-obligation small {
+  color: var(--text-2);
+  font-size: 11px;
 }
 
 .quick-start-card {
@@ -937,6 +981,27 @@ textarea {
   border-top: 1px solid var(--border);
   margin-top: 16px;
   padding-top: 16px;
+}
+
+.delete-impact-modal {
+  width: min(620px, 100%);
+}
+
+.delete-impact-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.delete-impact-list div {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  border: 1px solid rgba(248, 113, 113, 0.24);
+  border-radius: 12px;
+  background: rgba(61, 18, 18, 0.32);
+  color: #fecaca;
+  padding: 12px;
 }
 
 .field {

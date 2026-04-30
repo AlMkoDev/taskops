@@ -237,6 +237,7 @@ export function ReportsModule() {
     projects,
     selectedReportId,
     addTask,
+    updateTask,
     setSelectedTaskId,
     setActiveSection,
     updateReportField,
@@ -393,6 +394,13 @@ export function ReportsModule() {
     if (!selectedReport) return;
     updateReportField(selectedReport.id, 'corrective_actions_items', JSON.stringify(items));
     updateReportField(selectedReport.id, 'corrective_actions', summarizeCorrectiveActions(items));
+    items.forEach((item) => {
+      if (!item.linkedTaskId) return;
+      const isDone = item.completed || item.status === 'completed';
+      updateTask(item.linkedTaskId, isDone
+        ? { status: 'done', progress: 100 }
+        : { status: item.status === 'pending' ? 'ready' : 'in_progress' });
+    });
   }
 
   function correctiveActionTaskPriority(priority: CorrectiveActionPriority): TaskPriority {

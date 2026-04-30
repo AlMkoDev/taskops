@@ -26,6 +26,7 @@ import { HrImportWizard } from './hr-import-wizard';
 import { LaborCostAnalytics } from './labor-cost-analytics';
 import { ReportsModule } from './reports-module';
 import { categoryLabels } from '../../data/agricultural-roles';
+import { getDefaultReportData, reportPeriods } from '../../data/report-framework';
 import { TourOverlay, TourWelcomeScreen, TourCompletionModal, useTour } from '../tour';
 import '../tour/tour-styles.css';
 import './team-card-actions.css';
@@ -49,6 +50,7 @@ type SystemStatus = {
 };
 
 type SetupWizardStepId = 'team' | 'project' | 'work';
+type PendingDelete = { type: 'user'; userId: string } | { type: 'team'; teamName: string };
 
 const statusTone: Record<TaskStatus, string> = {
   backlog: 'slate',
@@ -327,6 +329,8 @@ export function TasksWorkspace() {
     updateTaskTemplate,
     addReportTemplate,
     updateReportTemplate,
+    createReport,
+    updateReport,
     setActiveSection,
     setActiveView,
     setActiveFilter,
@@ -372,6 +376,7 @@ export function TasksWorkspace() {
   const [setupWizardCompleted, setSetupWizardCompleted] = useState(false);
   const [sessionUser, setSessionUser] = useState<AuthUser | null>(null);
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null);
 
   const taskMap = useMemo(() => new Map(tasks.map((task) => [task.id, task])), [tasks]);
   const selectedTask = selectedTaskId ? taskMap.get(selectedTaskId) ?? null : null;
@@ -647,10 +652,41 @@ export function TasksWorkspace() {
   const selectedProjectReportObligations = useMemo(
     () => reportTemplates.map((template) => ({
       template,
-      matchingReports: reports.filter((report) => report.period === template.cadence)
+      matchingReports: reports.filter((report) => report.period === template.cadence),
+      nextDueLabel: template.cadence === 'weekly' ? 'Next 7 days' : template.cadence === 'monthly' ? 'This month' : 'This quarter',
+      ownerLabel: selectedProject?.ownerLabel ?? selectedProjectSummary?.ownerName ?? 'Unassigned'
     })),
-    [reportTemplates, reports]
+    [reportTemplates, reports, selectedProject?.ownerLabel, selectedProjectSummary?.ownerName]
   );
+  const pendingDeleteSummary = useMemo(() => {
+    if (!pendingDelete) return null;
+    if (pendingDelete.type === 'user') {
+      const user = users.find((item) => item.id === pendingDelete.userId);
+      const ownedTasks = tasks.filter((task) => task.ownerId === pendingDelete.userId && task.status !== 'done');
+      const projectsOwned = projects.filter((project) => project.ownerId === pendingDelete.userId);
+      return {
+        title: `Delete ${user?.name ?? 'team member'}?`,
+        body: 'This removes the member from the directory and reassigns active ownership where possible.',
+        impacts: [
+          `${ownedTasks.length} open task${ownedTasks.length === 1 ? '' : 's'} will be reassigned`,
+          `${projectsOwned.length} project${projectsOwned.length === 1 ? '' : 's'} will lose this owner`,
+          'Reviewer, backup owner, and watcher references will be removed'
+        ]
+      };
+    }
+
+    const teamMembers = users.filter((user) => user.team === pendingDelete.teamName);
+    const openTasks = tasks.filter((task) => teamMembers.some((user) => user.id === task.ownerId) && task.status !== 'done');
+    return {
+      title: `Delete ${pendingDelete.teamName}?`,
+      body: 'This removes the team label and moves its members to Unassigned.',
+      impacts: [
+        `${teamMembers.length} member${teamMembers.length === 1 ? '' : 's'} will move to Unassigned`,
+        `${openTasks.length} open task${openTasks.length === 1 ? '' : 's'} are owned by those members`,
+        'The Unassigned team will remain available for cleanup'
+      ]
+    };
+  }, [pendingDelete, projects, tasks, users]);
   const hasOperationalSetup = users.length > 0 && projects.length > 0 && tasks.length > 0;
   const setupSteps = [
     {
@@ -979,36 +1015,36 @@ export function TasksWorkspace() {
   };
 
   const handleDeleteTeamMember = (userId: string) => {
-    const user = users.find((item) => item.id === userId);
-    const ownedTasks = tasks.filter((task) => task.ownerId === userId && task.status !== 'done').length;
-    const label = user?.name ?? 'this team member';
-    const confirmed = window.confirm(
-      ownedTasks > 0
-        ? `Delete ${label}? ${ownedTasks} open task${ownedTasks === 1 ? '' : 's'} will be reassigned.`
-        : `Delete ${label}? This removes them from the team directory.`
-    );
-
-    if (!confirmed) return;
-    deleteUser(userId);
+    setPendingDelete({ type: 'user', userId });
   };
 
   const handleDeleteTeam = (teamName: string) => {
     if (!canManageTeams || teamName === 'Unassigned') return;
-    const memberCount = users.filter((user) => user.team === teamName).length;
-    const confirmed = window.confirm(
-      `Delete ${teamName}? ${memberCount} member${memberCount === 1 ? '' : 's'} will move to Unassigned.`
-    );
+    setPendingDelete({ type: 'team', teamName });
+  };
 
-    if (!confirmed) return;
-    deleteTeam(teamName);
-    if (selectedTeamName === teamName) {
+  function confirmPendingDelete() {
+    if (!pendingDelete) return;
+
+    if (pendingDelete.type === 'user') {
+      deleteUser(pendingDelete.userId);
+      if (selectedUserId === pendingDelete.userId) {
+        setSelectedUserId(users.find((user) => user.id !== pendingDelete.userId)?.id ?? null);
+      }
+      setPendingDelete(null);
+      return;
+    }
+
+    deleteTeam(pendingDelete.teamName);
+    if (selectedTeamName === pendingDelete.teamName) {
       setSelectedTeamName('all');
     }
     setTeamMemberDraft((current) => ({
       ...current,
-      team: current.team === teamName ? 'Unassigned' : current.team
+      team: current.team === pendingDelete.teamName ? 'Unassigned' : current.team
     }));
-  };
+    setPendingDelete(null);
+  }
 
   const handleAddAutomationRule = () => {
     if (!ruleDraft.name.trim()) return;
@@ -1025,6 +1061,33 @@ export function TasksWorkspace() {
     addReportTemplate({ id: `report_tpl_${Date.now()}`, name: reportTemplateDraft.name.trim(), description: reportTemplateDraft.description.trim() || 'No description added yet.', cadence: reportTemplateDraft.cadence, reviewerLabel: reportTemplateDraft.reviewerLabel.trim() || 'Unassigned reviewer' });
     setReportTemplateDraft({ name: '', description: '', cadence: 'monthly', reviewerLabel: '' });
   };
+
+  function handleCreateProjectReport(template: ReportTemplate) {
+    if (!selectedProject) return;
+    const periodDefinition = reportPeriods.find((period) => period.id === template.cadence);
+    const roleDefinition = periodDefinition?.roles[0];
+    if (!periodDefinition || !roleDefinition) return;
+
+    const reportId = createReport({
+      period: template.cadence,
+      roleId: roleDefinition.id,
+      reportingWindow: `${template.name} · ${selectedProject.name}`,
+      authorName: selectedProject.ownerLabel ?? selectedProjectSummary?.ownerName,
+      reviewerName: template.reviewerLabel
+    });
+
+    if (!reportId) return;
+    updateReport(reportId, {
+      title: `${selectedProject.name} - ${template.name}`,
+      data: {
+        ...getDefaultReportData(roleDefinition),
+        project_id: selectedProject.id,
+        project_name: selectedProject.name,
+        project_report_template_id: template.id
+      }
+    });
+    setActiveSection('reports');
+  }
 
   return (
     <div className="shell">
@@ -1100,7 +1163,7 @@ export function TasksWorkspace() {
 
       <div className="workspace">
         <aside className="sidebar" data-tour="shell.sidebar">
-          {activeSection === 'today' ? <><div className="sidebar-section"><div className="sidebar-title">Start Here</div><div className="quick-start-card"><p>{hasOperationalSetup ? 'Use Today to clear urgent work before browsing modules.' : 'Set up the operating model before creating loose tasks.'}</p><ol className="quick-start-list">{setupSteps.map((step) => <li key={step.id}><strong>{step.complete ? 'Done' : 'Next'}:</strong> {step.title}</li>)}</ol></div></div><div className="sidebar-section"><div className="sidebar-title">Jump To</div><button className="sidebar-item" onClick={() => { setActiveSection('tasks'); setActiveFilter('due_today'); }}><Clock3 size={14} />Due Today</button><button className="sidebar-item" onClick={() => setActiveSection('blocked')}><AlertTriangle size={14} />Blocked</button><button className="sidebar-item" onClick={() => setActiveSection('reports')}><FileText size={14} />Reports</button></div></> : activeSection === 'tasks' ? <><div className="sidebar-section"><div className="sidebar-title">Quick Start</div><div className="quick-start-card" data-tour="tasks.quick-start"><p>Start here to keep work current and visible.</p><ol className="quick-start-list"><li>Review <strong>My Work</strong> and <strong>Due Today</strong>.</li><li>Open each task and update status as work moves.</li><li>Add a work log when progress or context matters.</li><li>Mark blockers immediately so leads can intervene.</li></ol><button className="quick-start-button" onClick={() => startTour('tasks')}>{progress.tasks?.completed ? 'Replay tasks tour' : 'Start tasks tour'}</button></div></div><div className="sidebar-section"><div className="sidebar-title">Saved Views</div><button className={activeFilter === 'my_work' ? 'sidebar-item is-active' : 'sidebar-item'} onClick={() => setActiveFilter('my_work')}><ListTodo size={14} />My Tasks</button><button className={activeFilter === 'due_today' ? 'sidebar-item is-active' : 'sidebar-item'} onClick={() => setActiveFilter('due_today')}><Clock3 size={14} />Due Today</button><button className={activeFilter === 'blocked' ? 'sidebar-item is-active' : 'sidebar-item'} onClick={() => setActiveFilter('blocked')}><AlertTriangle size={14} />Blocked</button></div><div className="sidebar-section"><div className="sidebar-title">Projects</div>{projects.length > 0 ? projects.map((project) => <button key={project.id} className="sidebar-item" onClick={() => { setSelectedProjectId(project.id); setActiveSection('projects'); }}><FolderKanban size={14} /><span>{project.name}</span></button>) : <div className="sidebar-item static"><span>No projects yet. Create one to begin.</span></div>}</div></> : activeSection === 'projects' ? <><div className="sidebar-section" data-tour="projects.sidebar"><div className="sidebar-title">Project Shells</div>{projects.length > 0 ? projects.map((project) => <button key={project.id} className={selectedProject?.id === project.id ? 'sidebar-item is-active' : 'sidebar-item'} onClick={() => setSelectedProjectId(project.id)}><FolderKanban size={14} /><span>{project.name}</span></button>) : <div className="sidebar-item static"><span>No projects created yet.</span></div>}</div><div className="sidebar-section"><div className="sidebar-title">Phases</div>{selectedProjectPhases.length > 0 ? <><button className={selectedProjectPhaseId === null ? 'sidebar-item is-active' : 'sidebar-item'} onClick={() => setSelectedProjectPhaseId(null)}><span>All phases</span></button>{selectedProjectPhases.map((phase) => <button key={phase.id} className={selectedProjectPhaseId === phase.id ? 'sidebar-item is-active' : 'sidebar-item'} onClick={() => setSelectedProjectPhaseId(phase.id)}><span>{phase.name}</span><small>{`W${phase.startWeek}-W${phase.endWeek}`}</small></button>)}</> : <div className="sidebar-item static"><span>No phases yet. Add one from the workbench.</span></div>}</div><div className="sidebar-section"><div className="sidebar-title">Project Actions</div><div className="sidebar-item static"><span>{selectedProject ? `${selectedProjectTasks.length} project tasks` : 'Select a project shell'}</span></div><div className="sidebar-item static"><span>{selectedProject?.ownerLabel ?? selectedProjectSummary?.ownerName ?? 'No owner label yet'}</span></div><div className="sidebar-item static"><span>{selectedProjectReportObligations.length} report obligations</span></div></div></> : activeSection === 'team' ? <div className="sidebar-section" data-tour="team.sidebar"><div className="sidebar-title">Team Members</div>{filteredTeamSummaries.length > 0 ? filteredTeamSummaries.map((summary) => <button key={summary.user.id} className={selectedTeamSummary?.user.id === summary.user.id ? 'sidebar-item is-active' : 'sidebar-item'} onClick={() => setSelectedUserId(summary.user.id)}><Users size={14} /><span>{summary.user.name}</span></button>) : <div className="sidebar-item static"><span>No team members match the current load filters.</span></div>}</div> : activeSection === 'reports' ? <><div className="sidebar-section"><div className="sidebar-title">Report Status</div><div className="sidebar-item static"><span>{reports.filter((report) => report.status === 'draft').length} drafts in progress</span></div><div className="sidebar-item static"><span>{reports.filter((report) => report.status === 'submitted').length} awaiting review</span></div><div className="sidebar-item static"><span>{reports.filter((report) => report.status === 'approved').length} approved reports</span></div></div><div className="sidebar-section"><div className="sidebar-title">Recent Reports</div>{reports.slice(0, 5).map((report) => <button key={report.id} className={selectedReportRecord?.id === report.id ? 'sidebar-item is-active' : 'sidebar-item'} onClick={() => setSelectedReportId(report.id)}><FileText size={14} /><span>{report.title}</span></button>)}</div></> : activeSection === 'analytics' ? <><div className="sidebar-section"><div className="sidebar-title">Outcome</div><div className="sidebar-item static"><span>{analyticsSummary.completionRate}% completion rate</span></div><div className="sidebar-item static"><span>{analyticsSummary.avgProgress}% average progress</span></div></div><div className="sidebar-section"><div className="sidebar-title">Load</div><div className="sidebar-item static"><span>{analyticsSummary.busiestTeamMember} at {analyticsSummary.busiestTeamLoad}% utilization</span></div></div></> : activeSection === 'settings' ? <><div className="sidebar-section"><div className="sidebar-title">Templates</div><div className="sidebar-item static"><span>{taskTemplates.length} task templates</span></div><div className="sidebar-item static"><span>{reportTemplates.length} report templates</span></div></div><div className="sidebar-section"><div className="sidebar-title">Automation Health</div><div className="sidebar-item static"><span>{settingsSummary.activeAutomations} active rules</span></div><div className="sidebar-item static"><span>{automationRules.length - settingsSummary.activeAutomations} drafts</span></div></div></> : <div className="sidebar-section"><div className="sidebar-title">Escalation Views</div><div className="sidebar-item static"><AlertTriangle size={14} /><span>All blockers</span></div></div>}
+          {activeSection === 'today' ? <><div className="sidebar-section"><div className="sidebar-title">Start Here</div><div className="quick-start-card"><p>{hasOperationalSetup ? 'Use Today to clear urgent work before browsing modules.' : 'Set up the operating model before creating loose tasks.'}</p><ol className="quick-start-list">{setupSteps.map((step) => <li key={step.id}><strong>{step.complete ? 'Done' : 'Next'}:</strong> {step.title}</li>)}</ol></div></div><div className="sidebar-section"><div className="sidebar-title">Jump To</div><button className="sidebar-item" onClick={() => { setActiveSection('tasks'); setActiveFilter('due_today'); }}><Clock3 size={14} />Due Today</button><button className="sidebar-item" onClick={() => setActiveSection('blocked')}><AlertTriangle size={14} />Blocked</button><button className="sidebar-item" onClick={() => setActiveSection('reports')}><FileText size={14} />Reports</button></div></> : activeSection === 'tasks' ? <><div className="sidebar-section"><div className="sidebar-title">Quick Start</div><div className="quick-start-card" data-tour="tasks.quick-start"><p>Start here to keep work current and visible.</p><ol className="quick-start-list"><li>Review <strong>My Work</strong> and <strong>Due Today</strong>.</li><li>Open each task and update status as work moves.</li><li>Add a work log when progress or context matters.</li><li>Mark blockers immediately so leads can intervene.</li></ol><button className="quick-start-button" onClick={() => startTour('tasks')}>{progress.tasks?.completed ? 'Replay tasks tour' : 'Start tasks tour'}</button></div></div><div className="sidebar-section"><div className="sidebar-title">Saved Views</div><button className={activeFilter === 'my_work' ? 'sidebar-item is-active' : 'sidebar-item'} onClick={() => setActiveFilter('my_work')}><ListTodo size={14} />My Tasks</button><button className={activeFilter === 'due_today' ? 'sidebar-item is-active' : 'sidebar-item'} onClick={() => setActiveFilter('due_today')}><Clock3 size={14} />Due Today</button><button className={activeFilter === 'blocked' ? 'sidebar-item is-active' : 'sidebar-item'} onClick={() => setActiveFilter('blocked')}><AlertTriangle size={14} />Blocked</button></div><div className="sidebar-section"><div className="sidebar-title">Projects</div>{projects.length > 0 ? projects.map((project) => <button key={project.id} className="sidebar-item" onClick={() => { setSelectedProjectId(project.id); setActiveSection('projects'); }}><FolderKanban size={14} /><span>{project.name}</span></button>) : <div className="sidebar-item static"><span>No projects yet. Create one to begin.</span></div>}</div></> : activeSection === 'projects' ? <><div className="sidebar-section" data-tour="projects.sidebar"><div className="sidebar-title">Project Shells</div>{projects.length > 0 ? projects.map((project) => <button key={project.id} className={selectedProject?.id === project.id ? 'sidebar-item is-active' : 'sidebar-item'} onClick={() => setSelectedProjectId(project.id)}><FolderKanban size={14} /><span>{project.name}</span></button>) : <div className="sidebar-item static"><span>No projects created yet.</span></div>}</div><div className="sidebar-section"><div className="sidebar-title">Phases</div>{selectedProjectPhases.length > 0 ? <><button className={selectedProjectPhaseId === null ? 'sidebar-item is-active' : 'sidebar-item'} onClick={() => setSelectedProjectPhaseId(null)}><span>All phases</span></button>{selectedProjectPhases.map((phase) => <button key={phase.id} className={selectedProjectPhaseId === phase.id ? 'sidebar-item is-active' : 'sidebar-item'} onClick={() => setSelectedProjectPhaseId(phase.id)}><span>{phase.name}</span><small>{`W${phase.startWeek}-W${phase.endWeek}`}</small></button>)}</> : <div className="sidebar-item static"><span>No phases yet. Add one from the workbench.</span></div>}</div><div className="sidebar-section"><div className="sidebar-title">Project Actions</div><div className="sidebar-item static"><span>{selectedProject ? `${selectedProjectTasks.length} project tasks` : 'Select a project shell'}</span></div><div className="sidebar-item static"><span>{selectedProject?.ownerLabel ?? selectedProjectSummary?.ownerName ?? 'No owner label yet'}</span></div></div><div className="sidebar-section"><div className="sidebar-title">Report Obligations</div>{selectedProjectReportObligations.length > 0 ? selectedProjectReportObligations.map(({ template, matchingReports, nextDueLabel, ownerLabel }) => <div key={template.id} className="project-report-obligation"><div><strong>{template.name}</strong><small>{template.cadence} · {nextDueLabel} · {ownerLabel}</small><small>{matchingReports.length} matching report{matchingReports.length === 1 ? '' : 's'}</small></div><button className="ghost-button" onClick={() => handleCreateProjectReport(template)}>Create</button></div>) : <div className="sidebar-item static"><span>No report templates configured.</span></div>}</div></> : activeSection === 'team' ? <div className="sidebar-section" data-tour="team.sidebar"><div className="sidebar-title">Team Members</div>{filteredTeamSummaries.length > 0 ? filteredTeamSummaries.map((summary) => <button key={summary.user.id} className={selectedTeamSummary?.user.id === summary.user.id ? 'sidebar-item is-active' : 'sidebar-item'} onClick={() => setSelectedUserId(summary.user.id)}><Users size={14} /><span>{summary.user.name}</span></button>) : <div className="sidebar-item static"><span>No team members match the current load filters.</span></div>}</div> : activeSection === 'reports' ? <><div className="sidebar-section"><div className="sidebar-title">Report Status</div><div className="sidebar-item static"><span>{reports.filter((report) => report.status === 'draft').length} drafts in progress</span></div><div className="sidebar-item static"><span>{reports.filter((report) => report.status === 'submitted').length} awaiting review</span></div><div className="sidebar-item static"><span>{reports.filter((report) => report.status === 'approved').length} approved reports</span></div></div><div className="sidebar-section"><div className="sidebar-title">Recent Reports</div>{reports.slice(0, 5).map((report) => <button key={report.id} className={selectedReportRecord?.id === report.id ? 'sidebar-item is-active' : 'sidebar-item'} onClick={() => setSelectedReportId(report.id)}><FileText size={14} /><span>{report.title}</span></button>)}</div></> : activeSection === 'analytics' ? <><div className="sidebar-section"><div className="sidebar-title">Outcome</div><div className="sidebar-item static"><span>{analyticsSummary.completionRate}% completion rate</span></div><div className="sidebar-item static"><span>{analyticsSummary.avgProgress}% average progress</span></div></div><div className="sidebar-section"><div className="sidebar-title">Load</div><div className="sidebar-item static"><span>{analyticsSummary.busiestTeamMember} at {analyticsSummary.busiestTeamLoad}% utilization</span></div></div></> : activeSection === 'settings' ? <><div className="sidebar-section"><div className="sidebar-title">Templates</div><div className="sidebar-item static"><span>{taskTemplates.length} task templates</span></div><div className="sidebar-item static"><span>{reportTemplates.length} report templates</span></div></div><div className="sidebar-section"><div className="sidebar-title">Automation Health</div><div className="sidebar-item static"><span>{settingsSummary.activeAutomations} active rules</span></div><div className="sidebar-item static"><span>{automationRules.length - settingsSummary.activeAutomations} drafts</span></div></div></> : <div className="sidebar-section"><div className="sidebar-title">Escalation Views</div><div className="sidebar-item static"><AlertTriangle size={14} /><span>All blockers</span></div></div>}
         </aside>
 
         <main className="content">
@@ -1121,6 +1184,27 @@ export function TasksWorkspace() {
 
         {activeSection === 'today' ? <SimpleDetailPanel title="Operational Focus" body={hasOperationalSetup ? 'Use this queue to decide what happens next.' : 'Complete the setup steps to unlock meaningful task and project views.'}><section className="detail-section"><div className="section-title">Setup Health</div><div className="project-detail-stack">{setupSteps.map((step) => <div key={step.id}><strong>{step.complete ? 'Ready' : 'Needed'}</strong><p>{step.title}</p></div>)}</div></section><section className="detail-section"><div className="section-title">Next Best Action</div><p>{!users.length ? 'Create or import the team first.' : !projects.length ? 'Create the first project shell.' : !tasks.length ? 'Capture the first task against the project.' : blockedTasks.length ? 'Resolve or reassign blocked work.' : reportsAwaitingReview.length ? 'Review submitted reports.' : 'The day is clear. Add planned work or inspect analytics.'}</p></section></SimpleDetailPanel> : activeSection === 'projects' ? <SimpleDetailPanel title={selectedProject?.name ?? 'Task Manager'} body={selectedProject?.subtitle ?? selectedProject?.ownerLabel ?? 'Project detail'}>{selectedProject ? <><section className="detail-section"><div className="section-title">Project Shell</div><div className="project-detail-stack"><div><strong>Owner Label</strong><p>{selectedProject.ownerLabel ?? selectedProjectSummary?.ownerName ?? 'Unassigned'}</p></div><div><strong>Type</strong><p>{selectedProject.type}</p></div><div><strong>Planning Horizon</strong><p>{selectedProject.totalWeeks ? `${selectedProject.totalWeeks} weeks` : 'Not set yet'}</p></div></div></section><section className="detail-section"><div className="section-title">Phase Outline</div><div className="project-task-list">{selectedProjectPhases.length > 0 ? selectedProjectPhases.map((phase) => <div key={phase.id} className="project-task-button"><div><strong>{phase.name}</strong><small>{phase.description ?? 'No phase description yet'}</small></div><span>{`W${phase.startWeek}-${phase.endWeek}`}</span></div>) : <div className="calm-card">Add phases to build the WBS spine for this project.</div>}</div></section></> : <section className="detail-section"><div className="section-title">Project Shell</div><p>Create the first project to start building structure.</p></section>}</SimpleDetailPanel> : activeSection === 'team' ? <aside className="detail-panel team-detail-panel"><section className="team-side-card"><div className="detail-header"><div className="detail-header-copy"><h2>{selectedTeamName === 'all' ? 'Team' : selectedTeamName}</h2><p>Team detail</p></div></div><div className="team-side-stats"><div><span>Teams</span><strong>{selectedTeamName === 'all' ? teamDirectory.length : 1}</strong></div><div><span>Members</span><strong>{selectedTeamViewSummary.memberCount}</strong></div><div><span>Avg Capacity</span><strong>{selectedTeamAvgCapacity}h</strong></div><div><span>Utilization</span><strong>{selectedTeamViewSummary.avgUtilization > 0 ? `${selectedTeamViewSummary.avgUtilization}%` : '—'}</strong></div></div></section><section className="team-side-card"><div className="team-section-head"><div><h3>Member Profile</h3><p className="settings-copy">Quick stats</p></div></div>{selectedTeamSummary ? <><div className="team-profile-summary"><div className="team-profile-placeholder"><Users size={18} /></div><div><strong>{selectedTeamSummary.user.name}</strong><p>{selectedTeamSummary.user.position ? `${selectedTeamSummary.user.position} · ` : ''}{selectedTeamSummary.user.role} · {selectedTeamSummary.user.team}</p></div></div><div className="team-profile-quickstats"><div><span>Open</span><strong>{selectedTeamSummary.openCount}</strong></div><div><span>Blocked</span><strong>{selectedTeamSummary.blockedCount}</strong></div><div><span>Overdue</span><strong>{selectedTeamSummary.overdueCount}</strong></div><div><span>Load</span><strong>{selectedTeamSummary.utilization}%</strong></div></div><div className="settings-form-grid"><label className="settings-field settings-field-full"><span>Name</span><input value={selectedTeamSummary.user.name} onChange={(event) => updateUser(selectedTeamSummary.user.id, { name: event.target.value })} /></label><label className="settings-field settings-field-full"><span>Position</span><input value={selectedTeamSummary.user.position || ''} onChange={(event) => updateUser(selectedTeamSummary.user.id, { position: event.target.value || undefined })} placeholder="e.g., Field Supervisor, Agronomist" /></label><label className="settings-field"><span>Role</span><select value={selectedTeamSummary.user.role} onChange={(event) => updateUser(selectedTeamSummary.user.id, { role: event.target.value as UserRole })}><option value="member">Member</option><option value="manager">Manager</option><option value="admin">Admin</option><option value="guest">Guest</option></select></label><label className="settings-field"><span>Team</span><input value={selectedTeamSummary.user.team} onChange={(event) => updateUser(selectedTeamSummary.user.id, { team: event.target.value })} /></label><label className="settings-field"><span>Capacity / Week</span><input type="number" min="1" value={selectedTeamSummary.user.capacityHoursPerWeek ?? ''} onChange={(event) => updateUser(selectedTeamSummary.user.id, { capacityHoursPerWeek: Number(event.target.value) || undefined })} /></label></div><div className="settings-actions"><button className="ghost-button" onClick={() => { if (selectedTeamSummary.tasks[0]) { handleOpenTask(selectedTeamSummary.tasks[0].id); } else { setActiveSection('tasks'); setActiveFilter('all'); } }}>View Tasks</button><button className="ghost-button" onClick={() => handleDeleteTeamMember(selectedTeamSummary.user.id)}>Delete Member</button></div>{selectedTeamSummary.tasks.length > 0 ? <div className="project-task-list">{selectedTeamSummary.tasks.slice(0, 4).map((task) => <button key={task.id} className="project-task-button" onClick={() => handleOpenTask(task.id)}><div><strong>{task.title}</strong><small>{statusLabel[task.status]}</small></div><span>{task.progress}%</span></button>)}</div> : <div className="team-side-empty">Add team members to build the owner database for new projects.</div>}</> : <div className="team-side-empty">Add team members to build the owner database for new projects.</div>}</section><section className="team-tip-card" data-tour="team.cost-flow"><strong>Getting Started</strong><p>Create teams first, then add members. Members can be assigned to projects as owners once added.</p></section></aside> : activeSection === 'reports' ? <SimpleDetailPanel title={selectedReportRecord?.title ?? 'Reports'} body={selectedReportRecord?.roleName ?? 'AgriReports workflow'}>{selectedReportRecord ? <><section className="detail-section"><div className="section-title">Routing</div><div className="project-detail-stack"><div><strong>Author</strong><p>{selectedReportRecord.authorName}</p></div><div><strong>Reviewer</strong><p>{selectedReportRecord.reviewerName}</p></div><div><strong>Window</strong><p>{selectedReportRecord.reportingWindow}</p></div></div></section><section className="detail-section"><div className="section-title">Workflow</div><div className="project-detail-stack"><div><strong>Status</strong><p>{selectedReportRecord.status.replace('_', ' ')}</p></div><div><strong>Updated</strong><p>{formatDateTimeLabel(new Date(selectedReportRecord.updatedAt))}</p></div><div><strong>Saved</strong><p>{selectedReportRecord.lastSavedAt ? formatDateTimeLabel(new Date(selectedReportRecord.lastSavedAt)) : 'Pending autosave'}</p></div></div></section></> : <section className="detail-section"><div className="section-title">Routing</div><p>Create a report to begin.</p></section>}</SimpleDetailPanel> : activeSection === 'analytics' ? <AnalyticsDetailPanel summary={analyticsSummary} projectSummaries={projectSummaries} teamSummaries={teamSummaries} /> : activeSection === 'settings' ? <SettingsDetailPanel summary={settingsSummary} automationRules={automationRules} taskTemplates={taskTemplates} reportTemplates={reportTemplates} onToggleRule={toggleAutomationRuleStatus} /> : <TaskDetailPanel task={selectedTask} users={users} projects={projects} workLogs={workLogs} />}
       </div>
+
+      {pendingDelete && pendingDeleteSummary ? (
+        <div className="modal-backdrop" onClick={() => setPendingDelete(null)}>
+          <div className="modal-card delete-impact-modal" onClick={(event) => event.stopPropagation()}>
+            <div className="modal-header">
+              <div>
+                <h2>{pendingDeleteSummary.title}</h2>
+                <p>{pendingDeleteSummary.body}</p>
+              </div>
+              <button className="icon-button" onClick={() => setPendingDelete(null)} aria-label="Close delete confirmation"><X size={16} /></button>
+            </div>
+            <div className="delete-impact-list">
+              {pendingDeleteSummary.impacts.map((impact) => <div key={impact}><AlertTriangle size={15} /><span>{impact}</span></div>)}
+            </div>
+            <div className="modal-actions">
+              <button className="ghost-button" onClick={() => setPendingDelete(null)}>Cancel</button>
+              <button className="danger-button" onClick={confirmPendingDelete}>{pendingDelete.type === 'user' ? 'Delete Member' : 'Delete Team'}</button>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {isSetupWizardOpen ? (
         <div className="modal-backdrop" onClick={() => setIsSetupWizardOpen(false)}>

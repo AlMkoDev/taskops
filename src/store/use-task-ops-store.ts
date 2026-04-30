@@ -19,6 +19,17 @@ import {
   WorkLog
 } from '../types/domain';
 
+type LinkedCorrectiveAction = {
+  id: string;
+  text: string;
+  owner: string;
+  status: 'pending' | 'in_progress' | 'completed';
+  completed: boolean;
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  dueDate?: string;
+  linkedTaskId?: string;
+};
+
 type Section = 'today' | 'tasks' | 'projects' | 'team' | 'reports' | 'analytics' | 'settings' | 'blocked';
 type TaskView = 'list' | 'board' | 'timeline' | 'calendar';
 type TaskFilter = 'all' | 'my_work' | 'due_today' | 'blocked' | 'overdue' | 'review' | 'recurring' | 'watching';
@@ -140,6 +151,51 @@ function dedupeTeams(teamNames: string[]) {
   return Array.from(new Set(teamNames.map((team) => team.trim()).filter(Boolean))).sort((left, right) => left.localeCompare(right));
 }
 
+function parseLinkedCorrectiveActions(raw: unknown): LinkedCorrectiveAction[] {
+  if (typeof raw !== 'string' || !raw.trim()) return [];
+
+  try {
+    const parsed = JSON.parse(raw) as LinkedCorrectiveAction[];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function summarizeLinkedCorrectiveActions(actions: LinkedCorrectiveAction[]) {
+  return actions.map((action) => `${action.completed ? '[Done]' : '[Open]'} ${action.text}${action.owner ? ` - ${action.owner}` : ''}`).join('\n');
+}
+
+function syncLinkedReportActionsForTask(reports: ReportRecord[], taskId: string, taskStatus: Task['status']) {
+  const isCompleted = taskStatus === 'done';
+  const nextActionStatus: LinkedCorrectiveAction['status'] = isCompleted
+    ? 'completed'
+    : taskStatus === 'ready' || taskStatus === 'backlog'
+      ? 'pending'
+      : 'in_progress';
+
+  return reports.map((report) => {
+    const actions = parseLinkedCorrectiveActions(report.data.corrective_actions_items);
+    if (!actions.some((action) => action.linkedTaskId === taskId)) return report;
+
+    const nextActions = actions.map((action) => (
+      action.linkedTaskId === taskId
+        ? { ...action, completed: isCompleted, status: nextActionStatus }
+        : action
+    ));
+
+    return {
+      ...report,
+      data: {
+        ...report.data,
+        corrective_actions_items: JSON.stringify(nextActions),
+        corrective_actions: summarizeLinkedCorrectiveActions(nextActions)
+      },
+      updatedAt: new Date().toISOString()
+    };
+  });
+}
+
 export const useTaskOpsStore = create<TaskOpsStore>()(
   persist(
     (set) => ({
@@ -233,17 +289,24 @@ export const useTaskOpsStore = create<TaskOpsStore>()(
           activeView: 'list'
         })),
       updateTask: (taskId, updates) =>
-        set((state) => ({
-          tasks: state.tasks.map((task) => {
+        set((state) => {
+          let syncedStatus: Task['status'] | null = null;
+          const nextTasks = state.tasks.map((task) => {
             if (task.id !== taskId) return task;
             const nextTask = { ...task, ...updates };
             const nextProgress = updates.progress ?? calculateProgress(nextTask);
+            syncedStatus = nextTask.status;
             return {
               ...nextTask,
               progress: nextTask.status === 'done' ? 100 : nextProgress
             };
-          })
-        })),
+          });
+
+          return {
+            tasks: nextTasks,
+            reports: syncedStatus ? syncLinkedReportActionsForTask(state.reports, taskId, syncedStatus) : state.reports
+          };
+        }),
       toggleSubtask: (taskId, subtaskId) =>
         set((state) => ({
           tasks: state.tasks.map((task) => {
