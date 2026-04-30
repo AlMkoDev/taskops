@@ -648,7 +648,7 @@ export function TasksWorkspace() {
   const todayTasks = useMemo(() => tasks.filter((task) => task.status !== 'done' && isToday(task.dueAt)), [tasks]);
   const myTasks = useMemo(() => tasks.filter((task) => task.ownerId === currentUserId && task.status !== 'done'), [currentUserId, tasks]);
   const overdueTasks = useMemo(() => tasks.filter((task) => task.status !== 'done' && isOverdue(task.dueAt)), [tasks]);
-  const reportsDue = useMemo(() => reports.filter((report) => report.status === 'draft' || report.status === 'changes_requested'), [reports]);
+  const reportsDue = useMemo(() => reports.filter((report) => report.status === 'draft'), [reports]);
   const reportsAwaitingReview = useMemo(() => reports.filter((report) => report.status === 'submitted'), [reports]);
   const reportsNeedingAttention = useMemo(
     () => reports.filter((report) => report.status === 'changes_requested' || report.status === 'rejected'),
