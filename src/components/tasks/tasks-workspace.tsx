@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useTaskOpsStore } from '../../store/use-task-ops-store';
-import { AutomationRule, Project, ProjectPhase, ProjectType, ReportTemplate, Task, TaskPriority, TaskStatus, TaskTemplate, TaskType, User, UserRole } from '../../types/domain';
+import { AuthUser, AutomationRule, Project, ProjectPhase, ProjectType, ReportTemplate, Task, TaskPriority, TaskStatus, TaskTemplate, TaskType, User, UserRole } from '../../types/domain';
 import { formatDateTimeLabel, formatDayLabel, formatMonthLabel, getCurrentDate, isOverdue, isSameDay, isToday, startOfDay } from '../../utils/date';
 import { TaskDetailPanel } from './task-detail-panel';
 import { ProjectWorkbench } from './project-workbench';
@@ -370,6 +370,8 @@ export function TasksWorkspace() {
   const [isSetupWizardOpen, setIsSetupWizardOpen] = useState(false);
   const [setupWizardStep, setSetupWizardStep] = useState<SetupWizardStepId>('team');
   const [setupWizardCompleted, setSetupWizardCompleted] = useState(false);
+  const [sessionUser, setSessionUser] = useState<AuthUser | null>(null);
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
   const taskMap = useMemo(() => new Map(tasks.map((task) => [task.id, task])), [tasks]);
   const selectedTask = selectedTaskId ? taskMap.get(selectedTaskId) ?? null : null;
@@ -419,6 +421,26 @@ export function TasksWorkspace() {
     return () => {
       isMounted = false;
       window.clearInterval(intervalId);
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadSessionUser() {
+      try {
+        const response = await fetch('/api/auth/session', { cache: 'no-store' });
+        if (!response.ok) return;
+        const payload = await response.json() as { data?: AuthUser | null };
+        if (isMounted) setSessionUser(payload.data ?? null);
+      } catch {
+        if (isMounted) setSessionUser(null);
+      }
+    }
+
+    void loadSessionUser();
+    return () => {
+      isMounted = false;
     };
   }, []);
 
@@ -863,6 +885,19 @@ export function TasksWorkspace() {
     setActiveSection('today');
   }
 
+  async function handleSignOut() {
+    setIsSigningOut(true);
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      setSessionUser(null);
+      if (typeof window !== 'undefined') {
+        window.location.reload();
+      }
+    } finally {
+      setIsSigningOut(false);
+    }
+  }
+
   function handleRequestCreateTask() {
     if (users.length === 0) {
       setActiveSection('team');
@@ -1006,7 +1041,7 @@ export function TasksWorkspace() {
           </div>
         </div>
         <div className="searchbox" data-tour="shell.search"><Search size={15} /><input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search tasks, tags, projects, or owners..." /></div>
-        <div className="topbar-actions" data-tour="shell.actions"><button className="ghost-button" onClick={() => startTour(currentTourModule)} style={{ marginLeft: 8 }}>{progress[currentTourModule]?.completed ? '↺ Replay Tour' : '❓ Take Tour'}</button><button className="ghost-button" onClick={() => openWelcome?.()}>All Tours</button><button className="ghost-button" onClick={() => setIsCreateProjectOpen(true)}><FolderKanban size={16} />Create Project</button><button className="primary-button" data-tour="tasks.create-task" onClick={handleRequestCreateTask}><Plus size={16} />New Task</button></div>
+        <div className="topbar-actions" data-tour="shell.actions"><button className="ghost-button" onClick={() => startTour(currentTourModule)} style={{ marginLeft: 8 }}>{progress[currentTourModule]?.completed ? '↺ Replay Tour' : '❓ Take Tour'}</button><button className="ghost-button" onClick={() => openWelcome?.()}>All Tours</button><button className="ghost-button" onClick={() => setIsCreateProjectOpen(true)}><FolderKanban size={16} />Create Project</button><button className="primary-button" data-tour="tasks.create-task" onClick={handleRequestCreateTask}><Plus size={16} />New Task</button>{sessionUser ? <div className="user-menu"><div><strong>{sessionUser.name}</strong><span>{sessionUser.role} · {sessionUser.team}</span></div><button className="ghost-button" onClick={handleSignOut} disabled={isSigningOut}>{isSigningOut ? 'Signing out...' : 'Log out'}</button></div> : <div className="user-menu is-anonymous"><div><strong>Not signed in</strong><span>Session unavailable</span></div></div>}</div>
       </header>
 
       {systemStatus?.database?.mode === 'fallback' ? (

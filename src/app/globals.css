@@ -345,6 +345,45 @@ textarea {
   gap: 10px;
 }
 
+.user-menu {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(22, 27, 39, 0.92);
+  padding: 6px 8px 6px 12px;
+}
+
+.user-menu div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.user-menu strong {
+  max-width: 160px;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-menu span {
+  max-width: 180px;
+  overflow: hidden;
+  color: var(--text-2);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.user-menu.is-anonymous {
+  opacity: 0.72;
+}
+
 .walkthrough-modal {
   width: min(1080px, calc(100vw - 48px));
   max-height: calc(100vh - 48px);
