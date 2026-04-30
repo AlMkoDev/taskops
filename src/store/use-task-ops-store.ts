@@ -529,7 +529,9 @@ export const useTaskOpsStore = create<TaskOpsStore>()(
             if (!template) return;
             
             for (let i = 0; i < quantity; i++) {
-              const roleName = roleKey.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+              const roleName = (typeof roleKey === 'string' && roleKey.trim() ? roleKey : 'Role')
+                .replace(/_/g, ' ')
+                .replace(/\b\w/g, (l) => l.toUpperCase());
               newUsers.push({
                 id: `user_${roleKey}_${Date.now()}_${i}`,
                 name: `${roleName} ${i + 1}`,

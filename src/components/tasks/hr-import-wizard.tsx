@@ -13,6 +13,12 @@ interface HrImportWizardProps {
   onComplete: () => void;
 }
 
+function labelFromToken(value: unknown, fallback = 'unknown') {
+  return typeof value === 'string' && value.trim()
+    ? value.replace(/_/g, ' ')
+    : fallback;
+}
+
 export function HrImportWizard({ onClose, onComplete }: HrImportWizardProps) {
   const { importAgriculturalRoles } = useTaskOpsStore();
   const [step, setStep] = useState<WizardStep>('categories');
@@ -202,7 +208,7 @@ export function HrImportWizard({ onClose, onComplete }: HrImportWizardProps) {
                             <div className="flex justify-between items-start">
                               <div className="flex-1">
                                 <div className="font-semibold text-white capitalize text-base">
-                                  {roleKey.replace(/_/g, ' ')}
+                                  {labelFromToken(roleKey)}
                                 </div>
                                 <div className="text-sm text-gray-400 mt-1">{role.notes}</div>
                               </div>
@@ -214,7 +220,7 @@ export function HrImportWizard({ onClose, onComplete }: HrImportWizardProps) {
                                   {formatCurrency(role.totalCostToEmployer)}/mo
                                 </div>
                                 <div className="text-xs text-gray-500 mt-1 capitalize px-2 py-1 bg-gray-700 rounded inline-block">
-                                  {role.engagementType.replace('_', ' ')}
+                                  {labelFromToken(role.engagementType)}
                                 </div>
                               </div>
                             </div>
@@ -265,7 +271,7 @@ export function HrImportWizard({ onClose, onComplete }: HrImportWizardProps) {
                       >
                         <div className="flex-1">
                           <div className="font-semibold text-white capitalize">
-                            {roleKey.replace(/_/g, ' ')}
+                            {labelFromToken(roleKey)}
                           </div>
                           <div className="text-sm text-gray-400 mt-1">
                             {formatCurrency(role.totalCostToEmployer)} per worker
@@ -344,7 +350,7 @@ export function HrImportWizard({ onClose, onComplete }: HrImportWizardProps) {
 
                         return (
                           <tr key={roleKey} className="border-t border-gray-700 hover:bg-gray-800/50 transition-colors">
-                            <td className="p-4 capitalize text-white">{roleKey.replace(/_/g, ' ')}</td>
+                            <td className="p-4 capitalize text-white">{labelFromToken(roleKey)}</td>
                             <td className="p-4 text-center text-gray-300">{quantity}</td>
                             <td className="p-4 text-right font-semibold text-blue-400">{formatCurrency(total)}</td>
                           </tr>

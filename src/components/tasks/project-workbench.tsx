@@ -83,12 +83,14 @@ function buildSettingsDraft(project: Project): ProjectSettingsDraft {
   };
 }
 
-function statusLabel(status: TaskStatus) {
+function statusLabel(status: TaskStatus | undefined) {
   switch (status) {
     case 'in_progress':
       return 'In Progress';
     default:
-      return status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ');
+      return typeof status === 'string' && status.trim()
+        ? status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')
+        : 'Unknown';
   }
 }
 

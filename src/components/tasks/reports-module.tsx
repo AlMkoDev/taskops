@@ -61,7 +61,7 @@ function formatDateLabel(value?: string) {
   }).format(new Date(value));
 }
 
-function statusLabel(status: ReportItemStatus) {
+function statusLabel(status: ReportItemStatus | undefined) {
   switch (status) {
     case 'on_track':
       return 'On track';
@@ -70,12 +70,20 @@ function statusLabel(status: ReportItemStatus) {
     case 'critical':
       return 'Critical';
     default:
-      return status;
+      return 'Not set';
   }
 }
 
-function reportStatusLabel(status: ReportRecord['status']) {
-  return status.replace('_', ' ');
+function reportStatusLabel(status: ReportRecord['status'] | undefined) {
+  return typeof status === 'string' && status.trim()
+    ? status.replace(/_/g, ' ')
+    : 'unknown';
+}
+
+function tokenLabel(value: unknown, fallback = 'unknown') {
+  return typeof value === 'string' && value.trim()
+    ? value.replace(/_/g, ' ')
+    : fallback;
 }
 
 function canManageReportUsers(user: AuthUser | null) {
@@ -1855,7 +1863,7 @@ export function ReportsModule() {
                 <div className="reports-activity-list">
                   {securityAuditEntries.length > 0 ? securityAuditEntries.slice(0, 6).map((entry) => (
                     <div key={entry.id} className="reports-activity-item">
-                      <strong>{entry.action.replaceAll('_', ' ')}</strong>
+                      <strong>{tokenLabel(entry.action)}</strong>
                       <small>{entry.actorName} · {formatDateLabel(entry.createdAt)}</small>
                       {canInspectIds ? <p className="reports-id-line">Audit ID: {entry.id} · Actor ID: {entry.actorId ?? 'Unavailable'}</p> : null}
                       <p>{entry.details}</p>
@@ -1871,7 +1879,7 @@ export function ReportsModule() {
                 <div className="reports-activity-list">
                   {securityNotificationEntries.length > 0 ? securityNotificationEntries.slice(0, 6).map((entry) => (
                     <div key={entry.id} className="reports-activity-item">
-                      <strong>{entry.channel} · {entry.event.replaceAll('_', ' ')}</strong>
+                      <strong>{entry.channel} · {tokenLabel(entry.event)}</strong>
                       <small>{entry.recipientName} · {entry.status} · {formatDateLabel(entry.createdAt)}</small>
                       {canInspectIds ? <p className="reports-id-line">Notification ID: {entry.id} · Recipient User ID: {entry.recipientUserId ?? 'Unavailable'}</p> : null}
                       <p>{entry.message}</p>
@@ -1913,7 +1921,7 @@ export function ReportsModule() {
                 <div className="reports-progress-metrics">
                   <div><strong>{narrativeComplete ? 'Ready' : 'Missing'}</strong><span>Narrative</span></div>
                   <div><strong>{completedRequiredMetrics}/{Math.max(totalRequiredMetrics, selectedRoleDefinition.items.length)}</strong><span>Metrics</span></div>
-                  <div><strong>{selectedReport.status.replace('_', ' ')}</strong><span>Status</span></div>
+                  <div><strong>{reportStatusLabel(selectedReport.status)}</strong><span>Status</span></div>
                 </div>
               </div>
 
@@ -2370,7 +2378,7 @@ export function ReportsModule() {
                             <strong>{action.text}</strong>
                             <div className="reports-action-meta">
                               <span>{action.owner}</span>
-                              <span className={`reports-action-status status-${action.status}`}>{action.status.replace('_', ' ')}</span>
+                              <span className={`reports-action-status status-${action.status}`}>{tokenLabel(action.status)}</span>
                               {action.priority && action.priority !== 'medium' && (
                                 <span className={`reports-action-priority priority-${action.priority}`}>
                                   {action.priority === 'critical' ? '🔴' : action.priority === 'high' ? '🟠' : '🟢'} {action.priority}
@@ -2542,7 +2550,7 @@ export function ReportsModule() {
                         <div className="reports-activity-list">
                           {auditEntries.length > 0 ? auditEntries.slice(0, 6).map((entry) => (
                             <div key={entry.id} className="reports-activity-item">
-                              <strong>{entry.action.replace(/_/g, ' ')}</strong>
+                              <strong>{tokenLabel(entry.action)}</strong>
                               <small>{entry.actorName} · {formatDateLabel(entry.createdAt)}</small>
                               {canInspectIds ? <p className="reports-id-line">Audit ID: {entry.id} · Actor ID: {entry.actorId ?? 'Unavailable'}</p> : null}
                               <p>{entry.details}</p>
@@ -2560,7 +2568,7 @@ export function ReportsModule() {
                         <div className="reports-activity-list">
                           {notificationEntries.length > 0 ? notificationEntries.slice(0, 6).map((entry) => (
                             <div key={entry.id} className="reports-activity-item">
-                              <strong>{entry.channel} · {entry.event.replace(/_/g, ' ')}</strong>
+                              <strong>{entry.channel} · {tokenLabel(entry.event)}</strong>
                               <small>{entry.recipientName} · {entry.status} · {formatDateLabel(entry.createdAt)}</small>
                               {canInspectIds ? <p className="reports-id-line">Notification ID: {entry.id} · Recipient User ID: {entry.recipientUserId ?? 'Unavailable'}</p> : null}
                               <p>{entry.message}</p>
@@ -2645,7 +2653,7 @@ export function ReportsModule() {
                         {correctiveActionItems.slice(0, 4).map((action) => (
                           <div key={action.id} className="reports-preview-action-item">
                             <strong>{action.text}</strong>
-                            <span>{action.owner} · {action.status.replace('_', ' ')}</span>
+                            <span>{action.owner} · {tokenLabel(action.status)}</span>
                           </div>
                         ))}
                       </div>

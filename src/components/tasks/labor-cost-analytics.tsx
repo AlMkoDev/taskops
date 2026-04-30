@@ -10,6 +10,12 @@ import { formatCurrency } from '../../utils/agricultural-import-validator';
 type SortKey = 'name' | 'monthlyCost' | 'hourlyRate';
 type AnalyticsView = 'overview' | 'roster';
 
+function labelFromToken(value: unknown, fallback = 'unknown') {
+  return typeof value === 'string' && value.trim()
+    ? value.replace(/_/g, ' ')
+    : fallback;
+}
+
 export function LaborCostAnalytics() {
   const { users } = useTaskOpsStore();
   const summary = calculateTeamSummary(users);
@@ -43,7 +49,7 @@ export function LaborCostAnalytics() {
       Object.entries(summary.byEngagementType)
         .map(([type, count]) => ({
           type,
-          label: type.replace(/_/g, ' '),
+          label: labelFromToken(type),
           count,
           percentage: summary.totalWorkers > 0 ? (count / summary.totalWorkers) * 100 : 0
         }))
@@ -60,8 +66,8 @@ export function LaborCostAnalytics() {
         const matchesSearch =
           normalizedSearch.length === 0 ||
           user.name.toLowerCase().includes(normalizedSearch) ||
-          categoryLabels[role.category].toLowerCase().includes(normalizedSearch) ||
-          role.engagementType.replace(/_/g, ' ').toLowerCase().includes(normalizedSearch);
+          (categoryLabels[role.category] ?? role.category ?? 'unknown').toLowerCase().includes(normalizedSearch) ||
+          labelFromToken(role.engagementType).toLowerCase().includes(normalizedSearch);
         const matchesCategory = categoryFilter === 'all' || role.category === categoryFilter;
         const matchesEngagement = engagementFilter === 'all' || role.engagementType === engagementFilter;
         return matchesSearch && matchesCategory && matchesEngagement;
@@ -306,7 +312,7 @@ export function LaborCostAnalytics() {
                       <tr key={user.id} className="border-b border-slate-800/80 bg-slate-950/30 transition-colors hover:bg-slate-900/60">
                         <td className="p-4 font-semibold text-white">{user.name}</td>
                         <td className="p-4 text-slate-300"><span className="flex items-center gap-2"><span className="text-lg">{categoryIcons[role.category]}</span><span>{categoryLabels[role.category]}</span></span></td>
-                        <td className="p-4"><span className="rounded-full border border-slate-600 bg-slate-800 px-3 py-1.5 text-xs capitalize text-slate-200">{role.engagementType.replace(/_/g, ' ')}</span></td>
+                        <td className="p-4"><span className="rounded-full border border-slate-600 bg-slate-800 px-3 py-1.5 text-xs capitalize text-slate-200">{labelFromToken(role.engagementType)}</span></td>
                         <td className="p-4 text-right font-semibold text-emerald-400">{formatCurrency(role.hourlyRate)}</td>
                         <td className="p-4 text-right text-base font-bold text-white">{formatCurrency(role.totalCostToEmployer)}</td>
                         <td className="p-4">
@@ -332,7 +338,7 @@ export function LaborCostAnalytics() {
                         <h4 className="text-lg font-bold text-white">{user.name}</h4>
                         <div className="mt-2 flex items-center gap-2 text-sm text-slate-300"><span className="text-lg">{categoryIcons[role.category]}</span>{categoryLabels[role.category]}</div>
                       </div>
-                      <span className="rounded-full border border-slate-600 bg-slate-800 px-3 py-1.5 text-xs capitalize text-slate-200">{role.engagementType.replace(/_/g, ' ')}</span>
+                      <span className="rounded-full border border-slate-600 bg-slate-800 px-3 py-1.5 text-xs capitalize text-slate-200">{labelFromToken(role.engagementType)}</span>
                     </div>
                     <div className="mt-5 grid gap-3 sm:grid-cols-2">
                       <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3"><div className="text-xs uppercase tracking-[0.16em] text-slate-500">Hourly</div><div className="mt-1 font-semibold text-emerald-400">{formatCurrency(role.hourlyRate)}</div></div>
