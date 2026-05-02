@@ -2,7 +2,7 @@
 
 ## Issue: Login 500 Error on Render
 
-When you see a 500 error on login, it's because the `DATABASE_URL` environment variable is not configured on Render.
+When you see a 500 error on login or the app banner says the database is unavailable, the Render web service is not reaching PostgreSQL safely. In production this app now requires PostgreSQL at startup so operational data is not written to temporary JSON fallback storage.
 
 ## Solution: Configure Database on Render
 
@@ -20,11 +20,11 @@ You have **two options** to fix this:
    - **Name**: `taskops-db`
    - **Database**: `taskops`
    - **User**: `taskops`
-   - **Region**: Choose closest to you
+   - **Region**: Use the same region as the web service. The included Blueprint uses `oregon` for both.
    - **Plan**: Free (for testing)
 4. Click **Create Database**
 5. Wait for the database to be ready (takes 2-3 minutes)
-6. Copy the **Internal Database URL** (looks like: `postgresql://user:password@host:5432/dbname`)
+6. Copy the **Internal Database URL** only if the web service is in the same Render account and region.
 
 #### Step 2: Add Environment Variable to Your Web Service
 
@@ -38,13 +38,17 @@ You have **two options** to fix this:
 6. Add these additional variables:
    - `NODE_ENV` = `production`
    - `POSTGRES_SSL` = `true`
+   - `REQUIRE_DATABASE` = `true`
 7. Click **Save Changes**
 
 #### Step 3: Redeploy
 
-1. Go to **Manual Deploy** → **Deploy latest commit**
-2. Wait for the deployment to complete
-3. Test the login again
+1. In the web service **Settings**, set **Start Command** to `npm run start:render` if it is not already using the repository Blueprint.
+2. Go to **Manual Deploy** → **Deploy latest commit**
+3. Wait for the deployment to complete. The deploy runs `npm run db:migrate` before starting Next.js.
+4. Test the login again
+
+If logs show `getaddrinfo ENOTFOUND dpg-...-a`, the service is using a Render internal database hostname that is not resolvable from that runtime. Fix it by using a Blueprint-managed database/web pair in the same region, or recreate the web service in the database's region. For services outside Render or in another region, use the database's External Database URL instead.
 
 ---
 
@@ -58,7 +62,8 @@ If you have an external PostgreSQL database (Supabase, Neon, Railway, etc.):
    - **Key**: `DATABASE_URL`
    - **Value**: `postgresql://user:password@host:port/database`
 4. Add: `POSTGRES_SSL` = `true`
-5. Redeploy the service
+5. Add: `REQUIRE_DATABASE` = `true`
+6. Redeploy the service
 
 ---
 
@@ -85,6 +90,7 @@ If you want to automate the entire setup:
 | `DATABASE_URL` | PostgreSQL connection string | ✅ Yes |
 | `NODE_ENV` | `production` | ✅ Yes |
 | `POSTGRES_SSL` | `true` | ✅ Yes |
+| `REQUIRE_DATABASE` | `true` | ✅ Yes in production |
 | `NEXT_PUBLIC_APP_URL` | Your Render URL | Auto-set |
 | `APP_BASE_URL` | Your Render URL | Auto-set |
 | `USE_NOTIFICATION_QUEUE` | `false` | Optional |
@@ -124,7 +130,8 @@ The app will automatically run migrations on first connection. If you see errors
 
 1. Verify the connection string format: `postgresql://user:password@host:port/dbname`
 2. Check that SSL is enabled (`POSTGRES_SSL=true`)
-3. Ensure the database allows connections from Render's IP range
+3. If using a Render Internal Database URL, confirm the web service and database are in the same Render account and region
+4. If using an External Database URL, confirm the database allows inbound connections and credentials are current
 
 ---
 
@@ -132,8 +139,8 @@ The app will automatically run migrations on first connection. If you see errors
 
 If you need to test immediately without setting up a database:
 
-1. The app supports file-based authentication as fallback
-2. However, on Render, you still need `DATABASE_URL` set
+1. The app supports file-based authentication as fallback only when `REQUIRE_DATABASE` is not `true`
+2. For Render production, keep `REQUIRE_DATABASE=true` and set a working `DATABASE_URL`
 3. You can use a free tier from:
    - [Supabase](https://supabase.com/) (Free PostgreSQL)
    - [Neon](https://neon.tech/) (Free Serverless PostgreSQL)

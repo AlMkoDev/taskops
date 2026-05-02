@@ -13,18 +13,24 @@ declare global {
   var __taskopsPgUnavailable: boolean | undefined;
 }
 
+function isDatabaseRequired() {
+  return process.env.REQUIRE_DATABASE === 'true';
+}
+
 export function getDatabaseUrl() {
-  if (global.__taskopsPgUnavailable) return null;
+  if (global.__taskopsPgUnavailable && !isDatabaseRequired()) return null;
   return process.env.DATABASE_URL?.trim() || null;
 }
 
 export function getPostgresRuntimeStatus() {
   const configured = Boolean(process.env.DATABASE_URL?.trim());
   const unavailable = Boolean(global.__taskopsPgUnavailable);
+  const required = isDatabaseRequired();
 
   return {
     configured,
     unavailable,
+    required,
     mode: configured && !unavailable ? 'postgres' : 'fallback'
   };
 }
@@ -45,6 +51,11 @@ export function isPostgresConnectionError(error: unknown) {
 
 function markPostgresUnavailable(error: unknown) {
   if (!isPostgresConnectionError(error)) return;
+
+  if (isDatabaseRequired()) {
+    console.error('[Postgres] Required production database is unavailable; refusing fallback storage.');
+    return;
+  }
 
   global.__taskopsPgUnavailable = true;
   void global.__taskopsPgPool?.end().catch(() => undefined);
@@ -285,7 +296,9 @@ async function initializeSchema() {
 
 export async function ensurePostgresReady() {
   if (!getDatabaseUrl()) {
-    // No database configured, skip initialization
+    if (isDatabaseRequired()) {
+      throw new Error('DATABASE_URL is required when REQUIRE_DATABASE=true.');
+    }
     return;
   }
   
@@ -293,7 +306,9 @@ export async function ensurePostgresReady() {
     global.__taskopsPgInitPromise = initializeSchema().catch((error) => {
       console.error('[Postgres] Failed to initialize database:', error.message);
       markPostgresUnavailable(error);
-      // Don't throw - allow app to continue with file-based auth
+      if (isDatabaseRequired()) {
+        throw error;
+      }
     });
   }
 

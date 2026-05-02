@@ -19,7 +19,7 @@ services:
       echo "Building application..."
       npm run build
       echo "Build complete!"
-    startCommand: npm start
+    startCommand: npm run start:render
     autoDeploy: true
     envVars:
       - key: DATABASE_URL
@@ -39,6 +39,8 @@ services:
           type: web
           envVarKey: RENDER_EXTERNAL_URL
       - key: POSTGRES_SSL
+        value: "true"
+      - key: REQUIRE_DATABASE
         value: "true"
       - key: USE_NOTIFICATION_QUEUE
         value: "false"

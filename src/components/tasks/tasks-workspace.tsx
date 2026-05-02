@@ -45,6 +45,7 @@ type SystemStatus = {
   database?: {
     configured: boolean;
     unavailable: boolean;
+    required?: boolean;
     mode: 'postgres' | 'fallback';
   };
 };
@@ -1118,7 +1119,7 @@ export function TasksWorkspace() {
           <AlertTriangle size={16} />
           <div>
             <strong>{systemStatus.database.configured ? 'Database unavailable' : 'Database not configured'}</strong>
-            <span>{systemStatus.database.configured ? 'Using fallback storage. Changes may not persist after redeploy.' : 'Using local fallback storage until DATABASE_URL is configured.'}</span>
+            <span>{systemStatus.database.required ? 'Production requires PostgreSQL. Check DATABASE_URL and redeploy before entering operational data.' : systemStatus.database.configured ? 'Using fallback storage. Changes may not persist after redeploy.' : 'Using local fallback storage until DATABASE_URL is configured.'}</span>
           </div>
         </div>
       ) : null}

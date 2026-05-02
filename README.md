@@ -24,9 +24,12 @@ Optional:
 
 ```bash
 POSTGRES_SSL=true
+REQUIRE_DATABASE=true
 ```
 
 On first API use, the app bootstraps the report tables automatically and migrates any legacy JSON-backed report, audit, and notification data into PostgreSQL if the tables are empty.
+
+For production, set `REQUIRE_DATABASE=true`. This prevents the app from accepting writes into local JSON fallback storage when `DATABASE_URL` is missing or unreachable.
 
 You can also run migrations explicitly:
 
