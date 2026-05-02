@@ -130,6 +130,10 @@ async function updateNotificationStatus(
 
 // Create and start the worker
 export function createNotificationWorker() {
+  if (!redisConnection) {
+    throw new Error('Notification worker requires USE_NOTIFICATION_QUEUE=true and a reachable REDIS_URL.');
+  }
+
   const worker = new Worker<NotificationJobData>(
     'notifications',
     async (job: Job<NotificationJobData>) => {

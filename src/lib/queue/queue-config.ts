@@ -2,21 +2,41 @@ import 'server-only';
 import Redis from 'ioredis';
 import { Queue, Job } from 'bullmq';
 
-// Redis connection
-const redisConnection = new Redis(process.env.REDIS_URL || 'redis://localhost:6379', {
-  maxRetriesPerRequest: null, // Required for BullMQ
-  enableReadyCheck: false,    // Required for BullMQ
-  retryStrategy: (times) => {
-    if (times > 10) {
-      console.error('❌ Redis connection failed after 10 retries');
-      return null; // Stop retrying
-    }
-    return Math.min(times * 200, 2000); // Exponential backoff
-  },
-});
+const queueEnabled = process.env.USE_NOTIFICATION_QUEUE === 'true';
+
+function createDisabledQueue(name: string) {
+  return {
+    name,
+    add: async () => {
+      throw new Error('Notification queue is disabled. Set USE_NOTIFICATION_QUEUE=true and REDIS_URL to enable it.');
+    },
+    getWaitingCount: async () => 0,
+    getActiveCount: async () => 0,
+    getCompletedCount: async () => 0,
+    getFailedCount: async () => 0,
+    getJobs: async () => [],
+    obliterate: async () => undefined
+  } as unknown as Queue;
+}
+
+// Redis connection. Keep this lazy-disabled so builds and direct notifications do
+// not try to connect to localhost Redis when USE_NOTIFICATION_QUEUE=false.
+const redisConnection = queueEnabled
+  ? new Redis(process.env.REDIS_URL || 'redis://localhost:6379', {
+      maxRetriesPerRequest: null, // Required for BullMQ
+      enableReadyCheck: false,    // Required for BullMQ
+      retryStrategy: (times) => {
+        if (times > 10) {
+          console.error('Redis connection failed after 10 retries');
+          return null; // Stop retrying
+        }
+        return Math.min(times * 200, 2000); // Exponential backoff
+      },
+    })
+  : null;
 
 // Queue configurations
-export const notificationQueue = new Queue('notifications', {
+export const notificationQueue = redisConnection ? new Queue('notifications', {
   connection: redisConnection,
   defaultJobOptions: {
     attempts: 5,
@@ -32,9 +52,9 @@ export const notificationQueue = new Queue('notifications', {
       age: 604800, // Keep failed jobs for 7 days
     },
   },
-});
+}) : createDisabledQueue('notifications');
 
-export const emailQueue = new Queue('email-notifications', {
+export const emailQueue = redisConnection ? new Queue('email-notifications', {
   connection: redisConnection,
   defaultJobOptions: {
     attempts: 3,
@@ -47,9 +67,9 @@ export const emailQueue = new Queue('email-notifications', {
       count: 500,
     },
   },
-});
+}) : createDisabledQueue('email-notifications');
 
-export const whatsappQueue = new Queue('whatsapp-notifications', {
+export const whatsappQueue = redisConnection ? new Queue('whatsapp-notifications', {
   connection: redisConnection,
   defaultJobOptions: {
     attempts: 5,
@@ -62,10 +82,10 @@ export const whatsappQueue = new Queue('whatsapp-notifications', {
       count: 500,
     },
   },
-});
+}) : createDisabledQueue('whatsapp-notifications');
 
 // Failed jobs queue (for manual inspection and retry)
-export const failedQueue = new Queue('failed-notifications', {
+export const failedQueue = redisConnection ? new Queue('failed-notifications', {
   connection: redisConnection,
   defaultJobOptions: {
     attempts: 1, // No automatic retries
@@ -73,7 +93,7 @@ export const failedQueue = new Queue('failed-notifications', {
       age: 2592000, // Keep for 30 days
     },
   },
-});
+}) : createDisabledQueue('failed-notifications');
 
 // Job types
 export interface NotificationJobData {
@@ -103,12 +123,14 @@ export { Job };
 
 // Graceful shutdown
 export async function closeRedisConnection() {
-  await redisConnection.quit();
-  console.log('🔌 Redis connection closed');
+  await redisConnection?.quit();
+  console.log('Redis connection closed');
 }
 
 // Health check
 export async function checkRedisHealth(): Promise<boolean> {
+  if (!redisConnection) return false;
+
   try {
     const result = await redisConnection.ping();
     return result === 'PONG';

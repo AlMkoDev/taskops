@@ -5,8 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "start:render": "npm run db:migrate && npm start",
+    "start": "node ./scripts/start.mjs",
+    "start:next": "next start",
+    "start:render": "REQUIRE_DATABASE=true npm run start",
     "lint": "eslint .",
     "test": "jest",
     "test:watch": "jest --watch",
