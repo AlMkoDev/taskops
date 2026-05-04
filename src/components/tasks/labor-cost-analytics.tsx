@@ -96,8 +96,8 @@ export function LaborCostAnalytics() {
         <div className="p-4 bg-gray-700/50 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center">
           <BarChart3 size={40} className="text-gray-400" />
         </div>
-        <h3 className="text-xl font-bold text-white mb-3">No Agricultural Team Data</h3>
-        <p className="text-gray-400">Import agricultural roles to see labor cost analytics.</p>
+        <h3 className="text-xl font-bold text-white mb-3">No Workforce Cost Data</h3>
+        <p className="text-gray-400">Import job roles to see workforce cost analytics.</p>
       </div>
     );
   }

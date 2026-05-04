@@ -31,7 +31,8 @@ export type ProjectType = string;
 export type WbsCadence = 'fixed' | 'stage' | 'threshold' | 'milestone' | 'continuous';
 
 export interface AgriculturalRole {
-  category: 'management' | 'field_operations' | 'post_harvest' | 'logistics' | 'technical' | 'quality_safety' | 'support';
+  industry?: string;
+  category: string;
   engagementType: 'full_time' | 'part_time' | 'casual' | 'seasonal' | 'contract' | 'retainer';
   hourlyRate: number;
   monthlyBase: number;

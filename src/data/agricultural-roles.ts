@@ -663,7 +663,17 @@ export const categoryLabels: Record<string, string> = {
   logistics: 'Logistics & Support',
   technical: 'Technical & Specialist',
   quality_safety: 'Quality, Safety & Compliance',
-  support: 'Support & Administrative'
+  support: 'Support & Administrative',
+  production: 'Production & Operations',
+  maintenance: 'Maintenance & Facilities',
+  customer_service: 'Customer Service',
+  sales_floor: 'Sales Floor',
+  clinical: 'Clinical & Care',
+  safety_compliance: 'Safety & Compliance',
+  project_delivery: 'Project Delivery',
+  warehouse: 'Warehouse & Fulfillment',
+  food_beverage: 'Food & Beverage',
+  guest_services: 'Guest Services'
 };
 
 export const categoryIcons: Record<string, string> = {
@@ -673,5 +683,352 @@ export const categoryIcons: Record<string, string> = {
   logistics: '🚚',
   technical: '🔬',
   quality_safety: '✅',
-  support: '💼'
+  support: '💼',
+  production: '🏭',
+  maintenance: '🛠️',
+  customer_service: '🎧',
+  sales_floor: '🛒',
+  clinical: '🏥',
+  safety_compliance: '🛡️',
+  project_delivery: '📐',
+  warehouse: '📦',
+  food_beverage: '🍽️',
+  guest_services: '🛎️'
+};
+
+export type WorkforceIndustry =
+  | 'agriculture'
+  | 'manufacturing'
+  | 'construction'
+  | 'hospitality'
+  | 'healthcare'
+  | 'logistics'
+  | 'retail'
+  | 'other';
+
+export const industryLabels: Record<WorkforceIndustry, string> = {
+  agriculture: 'Agriculture',
+  manufacturing: 'Manufacturing',
+  construction: 'Construction',
+  hospitality: 'Hospitality',
+  healthcare: 'Healthcare',
+  logistics: 'Logistics',
+  retail: 'Retail',
+  other: 'Other / custom'
+};
+
+export const industryDescriptions: Record<WorkforceIndustry, string> = {
+  agriculture: 'Field, packhouse, logistics, and seasonal workforce templates.',
+  manufacturing: 'Production, maintenance, quality, safety, and shift operations.',
+  construction: 'Site delivery, skilled trades, project controls, and safety roles.',
+  hospitality: 'Front-of-house, kitchen, guest services, and facilities roles.',
+  healthcare: 'Clinical support, care teams, administration, and compliance roles.',
+  logistics: 'Warehouse, transport, dispatch, inventory, and fleet operations.',
+  retail: 'Store operations, sales floor, inventory, and customer service roles.',
+  other: 'Start with neutral operating categories and adapt names after import.'
+};
+
+export const industryCategoryMap: Record<WorkforceIndustry, string[]> = {
+  agriculture: ['management', 'field_operations', 'post_harvest', 'logistics', 'technical', 'quality_safety', 'support'],
+  manufacturing: ['management', 'production', 'maintenance', 'quality_safety', 'safety_compliance', 'warehouse', 'support'],
+  construction: ['management', 'project_delivery', 'technical', 'safety_compliance', 'logistics', 'support'],
+  hospitality: ['management', 'guest_services', 'food_beverage', 'maintenance', 'customer_service', 'support'],
+  healthcare: ['management', 'clinical', 'customer_service', 'quality_safety', 'support'],
+  logistics: ['management', 'warehouse', 'logistics', 'maintenance', 'customer_service', 'support'],
+  retail: ['management', 'sales_floor', 'warehouse', 'customer_service', 'support'],
+  other: ['management', 'production', 'technical', 'quality_safety', 'customer_service', 'support']
+};
+
+const crossIndustryRoleTemplates: Record<string, AgriculturalRole> = {
+  production_operator: {
+    industry: 'manufacturing',
+    category: 'production',
+    engagementType: 'full_time',
+    hourlyRate: 42,
+    monthlyBase: 8190,
+    totalCostToEmployer: 8930,
+    employerCostMultiplier: 1.09,
+    statutoryCompliance: { uifRegistered: true, contractType: 'permanent', overtimeEligible: true },
+    cashflowTiming: 'monthly_payroll',
+    austerityRestricted: false,
+    notes: 'Line operator role for production cells, assembly lines, and shift-based output.'
+  },
+  shift_supervisor: {
+    industry: 'manufacturing',
+    category: 'production',
+    engagementType: 'full_time',
+    hourlyRate: 95,
+    monthlyBase: 18525,
+    totalCostToEmployer: 20200,
+    employerCostMultiplier: 1.09,
+    statutoryCompliance: { uifRegistered: true, contractType: 'permanent', overtimeEligible: true },
+    cashflowTiming: 'monthly_payroll',
+    austerityRestricted: false,
+    notes: 'Supervises shift output, handovers, safety checks, and daily operating discipline.'
+  },
+  maintenance_technician: {
+    industry: 'manufacturing',
+    category: 'maintenance',
+    engagementType: 'full_time',
+    hourlyRate: 90,
+    monthlyBase: 17550,
+    totalCostToEmployer: 19130,
+    employerCostMultiplier: 1.09,
+    statutoryCompliance: { uifRegistered: true, contractType: 'permanent', overtimeEligible: true },
+    cashflowTiming: 'monthly_payroll',
+    austerityRestricted: false,
+    notes: 'Covers preventative maintenance, breakdown response, and equipment readiness.'
+  },
+  qa_inspector: {
+    industry: 'manufacturing',
+    category: 'quality_safety',
+    engagementType: 'full_time',
+    hourlyRate: 62,
+    monthlyBase: 12090,
+    totalCostToEmployer: 13180,
+    employerCostMultiplier: 1.09,
+    statutoryCompliance: { uifRegistered: true, contractType: 'permanent', overtimeEligible: true },
+    cashflowTiming: 'monthly_payroll',
+    austerityRestricted: false,
+    notes: 'Inspection, sampling, non-conformance logging, and production release checks.'
+  },
+  site_manager: {
+    industry: 'construction',
+    category: 'management',
+    engagementType: 'contract',
+    hourlyRate: 150,
+    monthlyBase: 29250,
+    totalCostToEmployer: 31900,
+    employerCostMultiplier: 1.09,
+    statutoryCompliance: { uifRegistered: true, contractType: 'project', overtimeEligible: false },
+    cashflowTiming: 'monthly_payroll',
+    austerityRestricted: false,
+    notes: 'Owns site coordination, subcontractor sequencing, and daily delivery controls.'
+  },
+  skilled_trade_worker: {
+    industry: 'construction',
+    category: 'project_delivery',
+    engagementType: 'contract',
+    hourlyRate: 75,
+    monthlyBase: 14625,
+    totalCostToEmployer: 15950,
+    employerCostMultiplier: 1.09,
+    statutoryCompliance: { uifRegistered: true, contractType: 'project', overtimeEligible: true },
+    cashflowTiming: 'weekly_payroll',
+    austerityRestricted: false,
+    notes: 'Generic skilled-trade slot for electrical, plumbing, carpentry, and masonry teams.'
+  },
+  safety_officer: {
+    industry: 'construction',
+    category: 'safety_compliance',
+    engagementType: 'contract',
+    hourlyRate: 85,
+    monthlyBase: 16575,
+    totalCostToEmployer: 18080,
+    employerCostMultiplier: 1.09,
+    statutoryCompliance: { uifRegistered: true, contractType: 'project', overtimeEligible: false },
+    cashflowTiming: 'monthly_payroll',
+    austerityRestricted: false,
+    notes: 'Tracks permits, inductions, incidents, PPE, and safety compliance evidence.'
+  },
+  project_coordinator: {
+    industry: 'construction',
+    category: 'project_delivery',
+    engagementType: 'full_time',
+    hourlyRate: 80,
+    monthlyBase: 15600,
+    totalCostToEmployer: 17000,
+    employerCostMultiplier: 1.09,
+    statutoryCompliance: { uifRegistered: true, contractType: 'permanent', overtimeEligible: true },
+    cashflowTiming: 'monthly_payroll',
+    austerityRestricted: false,
+    notes: 'Coordinates schedules, procurement follow-ups, change logs, and site reporting.'
+  },
+  front_desk_agent: {
+    industry: 'hospitality',
+    category: 'guest_services',
+    engagementType: 'full_time',
+    hourlyRate: 38,
+    monthlyBase: 7410,
+    totalCostToEmployer: 8080,
+    employerCostMultiplier: 1.09,
+    statutoryCompliance: { uifRegistered: true, contractType: 'permanent', overtimeEligible: true },
+    cashflowTiming: 'monthly_payroll',
+    austerityRestricted: false,
+    notes: 'Guest check-in, issue resolution, booking updates, and service handovers.'
+  },
+  line_cook: {
+    industry: 'hospitality',
+    category: 'food_beverage',
+    engagementType: 'full_time',
+    hourlyRate: 45,
+    monthlyBase: 8775,
+    totalCostToEmployer: 9570,
+    employerCostMultiplier: 1.09,
+    statutoryCompliance: { uifRegistered: true, contractType: 'permanent', overtimeEligible: true },
+    cashflowTiming: 'monthly_payroll',
+    austerityRestricted: false,
+    notes: 'Kitchen production, prep lists, service readiness, and food safety routines.'
+  },
+  housekeeper: {
+    industry: 'hospitality',
+    category: 'guest_services',
+    engagementType: 'full_time',
+    hourlyRate: 34,
+    monthlyBase: 6630,
+    totalCostToEmployer: 7230,
+    employerCostMultiplier: 1.09,
+    statutoryCompliance: { uifRegistered: true, contractType: 'permanent', overtimeEligible: true },
+    cashflowTiming: 'monthly_payroll',
+    austerityRestricted: false,
+    notes: 'Room turns, public-area standards, linen workflows, and daily service checks.'
+  },
+  care_assistant: {
+    industry: 'healthcare',
+    category: 'clinical',
+    engagementType: 'full_time',
+    hourlyRate: 48,
+    monthlyBase: 9360,
+    totalCostToEmployer: 10210,
+    employerCostMultiplier: 1.09,
+    statutoryCompliance: { uifRegistered: true, contractType: 'permanent', overtimeEligible: true },
+    cashflowTiming: 'monthly_payroll',
+    austerityRestricted: false,
+    notes: 'Patient support, care routines, observations, and shift handover duties.'
+  },
+  clinic_administrator: {
+    industry: 'healthcare',
+    category: 'support',
+    engagementType: 'full_time',
+    hourlyRate: 55,
+    monthlyBase: 10725,
+    totalCostToEmployer: 11700,
+    employerCostMultiplier: 1.09,
+    statutoryCompliance: { uifRegistered: true, contractType: 'permanent', overtimeEligible: true },
+    cashflowTiming: 'monthly_payroll',
+    austerityRestricted: false,
+    notes: 'Scheduling, records, billing support, and patient communication workflows.'
+  },
+  compliance_coordinator: {
+    industry: 'healthcare',
+    category: 'quality_safety',
+    engagementType: 'part_time',
+    hourlyRate: 95,
+    monthlyBase: 18525,
+    totalCostToEmployer: 20200,
+    employerCostMultiplier: 1.09,
+    statutoryCompliance: { uifRegistered: true, contractType: 'permanent', overtimeEligible: false },
+    cashflowTiming: 'monthly_payroll',
+    austerityRestricted: false,
+    notes: 'Policy evidence, audits, corrective actions, and certification tracking.'
+  },
+  warehouse_associate: {
+    industry: 'logistics',
+    category: 'warehouse',
+    engagementType: 'full_time',
+    hourlyRate: 38,
+    monthlyBase: 7410,
+    totalCostToEmployer: 8080,
+    employerCostMultiplier: 1.09,
+    statutoryCompliance: { uifRegistered: true, contractType: 'permanent', overtimeEligible: true },
+    cashflowTiming: 'monthly_payroll',
+    austerityRestricted: false,
+    notes: 'Picking, packing, stock movement, scanner use, and dispatch readiness.'
+  },
+  dispatcher: {
+    industry: 'logistics',
+    category: 'logistics',
+    engagementType: 'full_time',
+    hourlyRate: 60,
+    monthlyBase: 11700,
+    totalCostToEmployer: 12760,
+    employerCostMultiplier: 1.09,
+    statutoryCompliance: { uifRegistered: true, contractType: 'permanent', overtimeEligible: true },
+    cashflowTiming: 'monthly_payroll',
+    austerityRestricted: false,
+    notes: 'Dispatch planning, driver communication, route changes, and delivery exceptions.'
+  },
+  forklift_operator: {
+    industry: 'logistics',
+    category: 'warehouse',
+    engagementType: 'full_time',
+    hourlyRate: 52,
+    monthlyBase: 10140,
+    totalCostToEmployer: 11060,
+    employerCostMultiplier: 1.09,
+    statutoryCompliance: { uifRegistered: true, contractType: 'permanent', overtimeEligible: true },
+    cashflowTiming: 'monthly_payroll',
+    austerityRestricted: false,
+    notes: 'Materials handling role where license or competency tracking is usually required.'
+  },
+  store_associate: {
+    industry: 'retail',
+    category: 'sales_floor',
+    engagementType: 'full_time',
+    hourlyRate: 35,
+    monthlyBase: 6825,
+    totalCostToEmployer: 7440,
+    employerCostMultiplier: 1.09,
+    statutoryCompliance: { uifRegistered: true, contractType: 'permanent', overtimeEligible: true },
+    cashflowTiming: 'monthly_payroll',
+    austerityRestricted: false,
+    notes: 'Sales floor coverage, replenishment, customer help, and daily store routines.'
+  },
+  inventory_controller: {
+    industry: 'retail',
+    category: 'warehouse',
+    engagementType: 'full_time',
+    hourlyRate: 50,
+    monthlyBase: 9750,
+    totalCostToEmployer: 10630,
+    employerCostMultiplier: 1.09,
+    statutoryCompliance: { uifRegistered: true, contractType: 'permanent', overtimeEligible: true },
+    cashflowTiming: 'monthly_payroll',
+    austerityRestricted: false,
+    notes: 'Stock counts, shrinkage checks, replenishment planning, and receiving controls.'
+  },
+  customer_support_agent: {
+    industry: 'retail',
+    category: 'customer_service',
+    engagementType: 'full_time',
+    hourlyRate: 42,
+    monthlyBase: 8190,
+    totalCostToEmployer: 8930,
+    employerCostMultiplier: 1.09,
+    statutoryCompliance: { uifRegistered: true, contractType: 'permanent', overtimeEligible: true },
+    cashflowTiming: 'monthly_payroll',
+    austerityRestricted: false,
+    notes: 'Handles customer requests, returns, service follow-ups, and escalation routing.'
+  },
+  operations_manager: {
+    industry: 'other',
+    category: 'management',
+    engagementType: 'full_time',
+    hourlyRate: 120,
+    monthlyBase: 23400,
+    totalCostToEmployer: 25500,
+    employerCostMultiplier: 1.09,
+    statutoryCompliance: { uifRegistered: true, contractType: 'permanent', overtimeEligible: false },
+    cashflowTiming: 'monthly_payroll',
+    austerityRestricted: false,
+    notes: 'Neutral senior role for teams that need an operating lead before customizing templates.'
+  },
+  operations_associate: {
+    industry: 'other',
+    category: 'production',
+    engagementType: 'full_time',
+    hourlyRate: 45,
+    monthlyBase: 8775,
+    totalCostToEmployer: 9570,
+    employerCostMultiplier: 1.09,
+    statutoryCompliance: { uifRegistered: true, contractType: 'permanent', overtimeEligible: true },
+    cashflowTiming: 'monthly_payroll',
+    austerityRestricted: false,
+    notes: 'Neutral frontline role for recurring operational work across industries.'
+  }
+};
+
+export const workforceRoleTemplates: Record<string, AgriculturalRole> = {
+  ...Object.fromEntries(Object.entries(agriculturalRoleTemplates).map(([key, role]) => [key, { ...role, industry: 'agriculture' }])),
+  ...crossIndustryRoleTemplates
 };

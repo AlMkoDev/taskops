@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { activities, attachments, projectPhases, projects, tasks, users, workLogs } from '../data/mock';
-import { agriculturalRoleTemplates } from '../data/agricultural-roles';
+import { workforceRoleTemplates } from '../data/agricultural-roles';
 import { getDefaultReportData, initialReports, reportPeriods } from '../data/report-framework';
 import {
   Activity,
@@ -525,7 +525,7 @@ export const useTaskOpsStore = create<TaskOpsStore>()(
           const newUsers: User[] = [];
           
           roleImports.forEach(({ roleKey, quantity, team }) => {
-            const template = agriculturalRoleTemplates[roleKey];
+            const template = workforceRoleTemplates[roleKey];
             if (!template) return;
             
             for (let i = 0; i < quantity; i++) {
