@@ -54,7 +54,16 @@ export interface User {
   role: UserRole;
   team: string;
   position?: string;
+  email?: string;
   capacityHoursPerWeek?: number;
+  loginAccess?: {
+    enabled: boolean;
+    authUserId?: string;
+    role: AuthRole;
+    status: AuthUserStatus;
+    mustChangePassword?: boolean;
+    lastSyncedAt?: string;
+  };
   agriculturalRole?: AgriculturalRole;
 }
 
