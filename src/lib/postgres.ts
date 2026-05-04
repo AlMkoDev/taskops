@@ -176,6 +176,15 @@ async function insertAgriNotificationEntry(pool: Pool, entry: ReportNotification
   );
 }
 
+async function getExistingAgriReportIds(pool: Pool) {
+  const result = await pool.query<{ id: string }>('SELECT id FROM agri_reports');
+  return new Set(result.rows.map((row) => row.id));
+}
+
+function hasSeedableReportLink(reportIds: Set<string>, reportId: string) {
+  return Boolean(reportId && reportIds.has(reportId));
+}
+
 function mapAuthRoleToAgriRole(role: (typeof reportAuthSeedUsers)[number]['role']) {
   switch (role) {
     case 'admin':
@@ -247,10 +256,13 @@ async function seedAgriBootstrapData(pool: Pool) {
     }
   }
 
+  const existingReportIds = await getExistingAgriReportIds(pool);
+
   const auditCount = await pool.query<{ count: string }>('SELECT COUNT(*)::text AS count FROM agri_report_audit_log');
   if (Number(auditCount.rows[0]?.count ?? '0') === 0) {
     const auditEntries = await readReportAuditEntries();
     for (const entry of auditEntries) {
+      if (!hasSeedableReportLink(existingReportIds, entry.reportId)) continue;
       await insertAgriAuditEntry(pool, entry);
     }
   }
@@ -259,6 +271,7 @@ async function seedAgriBootstrapData(pool: Pool) {
   if (Number(notificationCount.rows[0]?.count ?? '0') === 0) {
     const notificationEntries = await readReportNotificationEntries();
     for (const entry of notificationEntries) {
+      if (!hasSeedableReportLink(existingReportIds, entry.reportId)) continue;
       await insertAgriNotificationEntry(pool, entry);
     }
   }
