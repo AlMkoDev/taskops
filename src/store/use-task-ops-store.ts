@@ -30,7 +30,7 @@ type LinkedCorrectiveAction = {
   linkedTaskId?: string;
 };
 
-type Section = 'today' | 'tasks' | 'projects' | 'team' | 'reports' | 'analytics' | 'settings' | 'blocked';
+type Section = 'today' | 'tasks' | 'projects' | 'team' | 'profiles' | 'reports' | 'analytics' | 'settings' | 'blocked';
 type TaskView = 'list' | 'board' | 'timeline' | 'calendar';
 type TaskFilter = 'all' | 'my_work' | 'due_today' | 'blocked' | 'overdue' | 'review' | 'recurring' | 'watching';
 

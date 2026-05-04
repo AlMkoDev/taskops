@@ -27,6 +27,8 @@ export type WorkLogType =
   | 'handoff';
 
 export type UserRole = 'admin' | 'manager' | 'member' | 'guest';
+export type UserStatus = 'active' | 'inactive';
+export type EmploymentType = 'full_time' | 'part_time' | 'contract' | 'seasonal' | 'casual';
 export type ProjectType = string;
 export type WbsCadence = 'fixed' | 'stage' | 'threshold' | 'milestone' | 'continuous';
 
@@ -52,9 +54,21 @@ export interface User {
   id: string;
   name: string;
   role: UserRole;
+  permissions?: string[];
+  status?: UserStatus;
   team: string;
   position?: string;
   email?: string;
+  phone?: string;
+  location?: string;
+  department?: string;
+  managerId?: string;
+  skills?: string[];
+  certifications?: string[];
+  employmentType?: EmploymentType;
+  startDate?: string;
+  avatarUrl?: string;
+  timezone?: string;
   capacityHoursPerWeek?: number;
   loginAccess?: {
     enabled: boolean;
@@ -64,7 +78,16 @@ export interface User {
     mustChangePassword?: boolean;
     lastSyncedAt?: string;
   };
+  auditTrail?: ProfileAuditEntry[];
   agriculturalRole?: AgriculturalRole;
+}
+
+export interface ProfileAuditEntry {
+  id: string;
+  action: string;
+  actorName: string;
+  details: string;
+  createdAt: string;
 }
 
 export type AuthRole = 'admin' | 'manager' | 'author' | 'reviewer';
