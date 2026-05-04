@@ -54,6 +54,8 @@ export function TaskDetailPanel({ task, users, projects, workLogs }: TaskDetailP
   const [isEditing, setIsEditing] = useState(false);
   const [draftTitle, setDraftTitle] = useState('');
   const [draftDescription, setDraftDescription] = useState('');
+  const [draftStartAt, setDraftStartAt] = useState('');
+  const [draftDueAt, setDraftDueAt] = useState('');
   const [logSummary, setLogSummary] = useState('');
   const [logDetails, setLogDetails] = useState('');
   const [logMinutes, setLogMinutes] = useState('30');
@@ -66,6 +68,8 @@ export function TaskDetailPanel({ task, users, projects, workLogs }: TaskDetailP
   useEffect(() => {
     setDraftTitle(task?.title ?? '');
     setDraftDescription(task?.description ?? '');
+    setDraftStartAt(task?.startAt ? task.startAt.slice(0, 10) : '');
+    setDraftDueAt(task?.dueAt ? task.dueAt.slice(0, 10) : '');
     setLogSummary('');
     setLogDetails('');
     setLogMinutes('30');
@@ -101,7 +105,9 @@ export function TaskDetailPanel({ task, users, projects, workLogs }: TaskDetailP
   const handleSave = () => {
     updateTask(task.id, {
       title: draftTitle.trim() || task.title,
-      description: draftDescription.trim() || undefined
+      description: draftDescription.trim() || undefined,
+      startAt: draftStartAt ? new Date(draftStartAt).toISOString() : undefined,
+      dueAt: draftDueAt ? new Date(draftDueAt).toISOString() : undefined
     });
     setIsEditing(false);
   };
@@ -218,11 +224,23 @@ export function TaskDetailPanel({ task, users, projects, workLogs }: TaskDetailP
           </div>
         ) : null}
         {isEditing ? (
-          <textarea
-            className="detail-textarea"
-            value={draftDescription}
-            onChange={(event) => setDraftDescription(event.target.value)}
-          />
+          <>
+            <textarea
+              className="detail-textarea"
+              value={draftDescription}
+              onChange={(event) => setDraftDescription(event.target.value)}
+            />
+            <div className="inline-form-row">
+              <label className="settings-field">
+                <span>Start Date</span>
+                <input className="detail-input" type="date" value={draftStartAt} onChange={(event) => setDraftStartAt(event.target.value)} />
+              </label>
+              <label className="settings-field">
+                <span>End Date</span>
+                <input className="detail-input" type="date" value={draftDueAt} onChange={(event) => setDraftDueAt(event.target.value)} />
+              </label>
+            </div>
+          </>
         ) : (
           <p>{task.description ?? 'No description yet.'}</p>
         )}
@@ -325,7 +343,8 @@ export function TaskDetailPanel({ task, users, projects, workLogs }: TaskDetailP
           <div><strong>Owner</strong><span>{owner?.name ?? 'Unassigned'}</span></div>
           <div><strong>Reviewer</strong><span>{reviewer?.name ?? 'None'}</span></div>
           <div><strong>Backup</strong><span>{backupOwner?.name ?? 'None'}</span></div>
-          <div><strong>Due Date</strong><span>{task.dueAt ? formatDateTimeLabel(new Date(task.dueAt)) : 'No due date'}</span></div>
+          <div><strong>Start Date</strong><span>{task.startAt ? formatDateTimeLabel(new Date(task.startAt)) : 'No start date'}</span></div>
+          <div><strong>End Date</strong><span>{task.dueAt ? formatDateTimeLabel(new Date(task.dueAt)) : 'No end date'}</span></div>
           <div><strong>Estimate</strong><span>{task.estimateHours ?? 0}h</span></div>
           <div><strong>Recurrence</strong><span>{task.recurrence ?? 'One-time'}</span></div>
         </div>
